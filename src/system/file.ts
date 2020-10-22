@@ -19,6 +19,7 @@ export class File {
     if (preloadText !== originalIcon) {
       return preloadText;
     }
+    return;
   }
 
   /**

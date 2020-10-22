@@ -40,15 +40,12 @@ export class Rectangle extends Handle<rect> {
     RemoveRect(this.handle);
   }
 
-  public enumDestructables(
-    filter: boolexpr | (() => boolean),
-    actionFunc: () => void
-  ) {
-    EnumDestructablesInRect(this.handle, filter, actionFunc);
+  public enumDestructables(filter: () => boolean, actionFunc: () => void) {
+    EnumDestructablesInRect(this.handle, Filter(filter), actionFunc);
   }
 
-  public enumItems(filter: boolexpr | (() => boolean), actionFunc: () => void) {
-    EnumItemsInRect(this.handle, filter, actionFunc);
+  public enumItems(filter: () => boolean, actionFunc: () => void) {
+    EnumItemsInRect(this.handle, Filter(filter), actionFunc);
   }
 
   public move(newCenterX: number, newCenterY: number) {

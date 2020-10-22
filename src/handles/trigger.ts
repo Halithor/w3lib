@@ -52,8 +52,8 @@ export class Trigger extends Handle<trigger> {
     return TriggerAddAction(this.handle, actionFunc);
   }
 
-  public addCondition(condition: boolexpr | (() => boolean)) {
-    return TriggerAddCondition(this.handle, condition);
+  public addCondition(condition: () => boolean) {
+    return TriggerAddCondition(this.handle, Condition(condition));
   }
 
   public destroy() {
@@ -90,21 +90,25 @@ export class Trigger extends Handle<trigger> {
 
   public registerEnterRegion(
     whichRegion: region,
-    filter: boolexpr | (() => boolean) | null
+    filter: (() => boolean) | null
   ) {
-    return TriggerRegisterEnterRegion(this.handle, whichRegion, filter);
+    return TriggerRegisterEnterRegion(
+      this.handle,
+      whichRegion,
+      filter ? Filter(filter) : null
+    );
   }
 
   public registerFilterUnitEvent(
     whichUnit: unit,
     whichEvent: unitevent,
-    filter: boolexpr | (() => boolean) | null
+    filter: (() => boolean) | null
   ) {
     return TriggerRegisterFilterUnitEvent(
       this.handle,
       whichUnit,
       whichEvent,
-      filter
+      filter ? Filter(filter) : null
     );
   }
 
@@ -127,9 +131,13 @@ export class Trigger extends Handle<trigger> {
 
   public registerLeaveRegion(
     whichRegion: region,
-    filter: boolexpr | (() => boolean) | null
+    filter: (() => boolean) | null
   ) {
-    return TriggerRegisterLeaveRegion(this.handle, whichRegion, filter);
+    return TriggerRegisterLeaveRegion(
+      this.handle,
+      whichRegion,
+      filter ? Filter(filter) : null
+    );
   }
 
   public registerPlayerAllianceChange(
@@ -224,13 +232,13 @@ export class Trigger extends Handle<trigger> {
   public registerPlayerUnitEvent(
     whichPlayer: MapPlayer,
     whichPlayerUnitEvent: playerunitevent,
-    filter: boolexpr | (() => boolean) | null
+    filter: (() => boolean) | null
   ) {
     return TriggerRegisterPlayerUnitEvent(
       this.handle,
       whichPlayer.handle,
       whichPlayerUnitEvent,
-      filter
+      filter ? Filter(filter) : null
     );
   }
 
@@ -259,9 +267,14 @@ export class Trigger extends Handle<trigger> {
   public registerUnitInRage(
     whichUnit: unit,
     range: number,
-    filter: boolexpr | (() => boolean) | null
+    filter: (() => boolean) | null
   ) {
-    return TriggerRegisterUnitInRange(this.handle, whichUnit, range, filter);
+    return TriggerRegisterUnitInRange(
+      this.handle,
+      whichUnit,
+      range,
+      filter ? Filter(filter) : null
+    );
   }
 
   public registerUnitStateEvent(

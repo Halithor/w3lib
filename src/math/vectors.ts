@@ -7,20 +7,20 @@ import {Angle} from './angle';
  * Class that encapsulates a position in the game.
  */
 export class Vec2 {
-  private xInternal: number;
-  private yInternal: number;
+  private _x: number;
+  private _y: number;
 
   constructor(x: number, y: number) {
-    this.xInternal = x;
-    this.yInternal = y;
+    this._x = x;
+    this._y = y;
   }
 
   public get x() {
-    return this.xInternal;
+    return this._x;
   }
 
   public get y() {
-    return this.yInternal;
+    return this._y;
   }
 
   public get terrainZ() {
@@ -76,11 +76,11 @@ export class Vec2 {
   }
 
   // TODO(Halithor): Figure out why this doesn't work!
-  // public angleTo(other: Vec2): Angle {
-  //   // const ang = Atan2(other.y - this.y, other.x - this.x)
-  //   // return Angle.fromRadians(0)
-  //   // return new Angle(0)
-  // }
+  public angleTo(other: Vec2): Angle {
+    const dir = this.normalizedPointerTo(other);
+    return Angle.fromRadians(Atan2(dir.y, dir.x));
+    // return new Angle(0)
+  }
 
   // normalizedPointerTo returns a normalized vector in the direction of the
   // target. When the target and this vector are equal, return a vector

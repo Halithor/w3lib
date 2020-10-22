@@ -1,4 +1,4 @@
-import {Timer} from '../../api/handles/timer';
+import {Timer} from '../handles/timer';
 
 let elapsedTime = 0.0;
 
