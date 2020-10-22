@@ -1,7 +1,7 @@
 /** @noSelfInFile */
 
-import { MapPlayer } from "../handles/index";
-import { Timer } from "../handles/timer";
+import { MapPlayer } from "../src/handles/index";
+import { Timer } from "../src/handles/timer";
 import { addScriptHook, W3TS_HOOK } from "../hooks/index";
 import { base64Decode, base64Encode } from "./base64";
 import { BinaryReader } from "./binaryreader";
