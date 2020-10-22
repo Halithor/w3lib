@@ -1,8 +1,8 @@
 /** @noSelfInFile */
 
-import {MapPlayer} from '../../api/handles/player';
-import {Timer} from '../../api/handles/timer';
-import {Trigger} from '../../api/handles/trigger';
+import {MapPlayer} from '../handles/player';
+import {Timer} from '../handles/timer';
+import {Trigger} from '../handles/trigger';
 import {base64Decode, base64Encode} from './base64';
 import {BinaryReader} from './binaryreader';
 import {BinaryWriter} from './binarywriter';
