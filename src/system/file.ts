@@ -10,10 +10,10 @@ export class File {
   /**
    * Character we use for escape sequences. Avoiding `\` since it is
    * automatically escaped by `Preload`.
-  */
+   */
   private static escapeCharacter = String.fromCharCode(27);
   private static escapedSelf = File.escapeCharacter + File.escapeCharacter;
-  private static escapedQuote = File.escapeCharacter + "q";
+  private static escapedQuote = File.escapeCharacter + 'q';
 
   /**
    * Escapes the double quote character, which would otherwise bork file
@@ -35,8 +35,8 @@ export class File {
   }
 
   /**
-  * Read text from a file.
-  */
+   * Read text from a file.
+   */
   public static read(filename: string): string | undefined {
     const originalIcon = BlzGetAbilityIcon(this.dummyAbility);
     Preloader(filename);
@@ -60,14 +60,10 @@ export class File {
     PreloadGenStart();
 
     if (allowReading) {
-<<<<<<< HEAD:src/system/file.ts
       Preload(
-        "\")\n//! beginusercode\nlocal o=''\nPreload=function(s)o=o..s end\nPreloadEnd=function()end\n//!endusercode\n//"
+        `\")\n//! beginusercode\nlocal o=''\nPreload=function(s)o=o..s end\nPreloadEnd=function()end\n//!endusercode\n//`
       );
-=======
-      Preload(`\")\n//! beginusercode\nlocal o=''\nPreload=function(s)o=o..s end\nPreloadEnd=function()end\n//!endusercode\n//`);
       contents = File.escape(contents);
->>>>>>> upstream/master:system/file.ts
     }
 
     for (let i = 0; i < contents.length / File.preloadLimit; i++) {
