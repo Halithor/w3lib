@@ -79,7 +79,6 @@ export class Vec2 {
   public angleTo(other: Vec2): Angle {
     const dir = this.normalizedPointerTo(other);
     return Angle.fromRadians(Atan2(dir.y, dir.x));
-    // return new Angle(0)
   }
 
   // normalizedPointerTo returns a normalized vector in the direction of the
