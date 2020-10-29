@@ -1,6 +1,6 @@
 /** @noSelfInFile */
 
-import {Point} from '../handles';
+import {Point} from '../handles/point';
 import {Angle} from './angle';
 
 /**
