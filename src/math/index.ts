@@ -1,2 +1,1 @@
-export * from './angle'
-export * from './vectors'
+export * from './types';
