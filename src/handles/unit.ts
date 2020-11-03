@@ -1,5 +1,6 @@
 /** @noSelfInFile **/
 
+import {Vec2, vec2} from '../math/index';
 import {Destructable} from './destructable';
 import {Force} from './force';
 import {Group} from './group';
@@ -185,11 +186,11 @@ export class Unit extends Widget {
     return GetUnitMoveSpeed(this.handle);
   }
 
-  get name() {
+  public get name() {
     return GetUnitName(this.handle);
   }
 
-  set name(value: string) {
+  public set name(value: string) {
     BlzSetUnitName(this.handle, value);
   }
 
@@ -217,13 +218,11 @@ export class Unit extends Widget {
     return IsUnitPaused(this.handle);
   }
 
-  public get point() {
-    return Point.fromHandle(GetUnitLoc(this.handle));
+  public get pos() {
+    return vec2(this.x, this.y);
   }
 
-  public set point(whichPoint: Point) {
-    SetUnitPositionLoc(this.handle, whichPoint.handle);
-  }
+  public set pos(value: Vec2) {}
 
   public get pointValue() {
     return GetUnitPointValue(this.handle);
@@ -481,7 +480,6 @@ export class Unit extends Widget {
   public damageTarget(
     target: widget,
     amount: number,
-    radius: number,
     attack: boolean,
     ranged: boolean,
     attackType: attacktype,

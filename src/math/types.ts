@@ -131,8 +131,9 @@ export class Vec2 {
     return new Vec2(px, py);
   }
 
-  // TODO(Halithor): Figure out why this doesn't work!
   public angleTo(other: Vec2): Angle {
+    // Weird implementation note: this method causes map start failures when 
+    // not in the same file in as the Angle class. 
     const dir = this.normalizedPointerTo(other);
     return Angle.fromRadians(Atan2(dir.y, dir.x));
   }
