@@ -2,13 +2,95 @@
 
 import {Handle} from './handle';
 
+// doAfter uses a timer to perform an action after a given duration. Returns a cancelation function,
+// which can be called to cancel the callback.
+export function doAfter(timeout: number, callback: () => void): () => void {
+  const t = Timer.get();
+  t.start(timeout, () => {
+    t.release();
+    callback();
+  });
+  return () => t.release();
+}
+
+// doPeriodically uses a timer to periodically call your callback function, passing the callback a
+// cancelation function, which can be used to stop the periodic timer. Also returns a cancelation
+// callback to the caller, encase the caller wishes to cancel the timer. Upon cancelation, calls the
+// final function.
+export function doPeriodically(
+  interval: number,
+  callback: (cancel: () => void) => void,
+  final?: () => void
+): () => void {
+  const t = Timer.get();
+  const cancel = () => {
+    if (final) {
+      final();
+    }
+    t.release();
+  };
+  t.startPeriodic(interval, () => {
+    callback(cancel);
+  });
+  return cancel;
+}
+
+export function doPeriodicallyCounted(
+  interval: number,
+  count: number,
+  callback: (cancel: () => void, index: number) => void,
+  final?: () => void
+): () => void {
+  const t = Timer.get();
+  const cancel = () => {
+    if (final) {
+      final();
+    }
+    t.release();
+  };
+  let i = 0;
+  t.startPeriodic(interval, () => {
+    i++;
+    if (i > count) {
+      cancel();
+    }
+    callback(cancel, i);
+  });
+  return cancel;
+}
+
 export class Timer extends Handle<timer> {
+  private static freeTimers: Timer[] = [];
+  private static freeTimersCount: number = 0;
+  private freed: boolean;
+
+  public static get(): Timer {
+    if (Timer.freeTimersCount > 0) {
+      Timer.freeTimersCount--;
+      Timer.freeTimers[Timer.freeTimersCount].freed = true;
+      return Timer.freeTimers[Timer.freeTimersCount];
+    } else {
+      return new Timer();
+    }
+  }
+
+  public release() {
+    if (this.freed) {
+      return;
+    }
+    this.freed = true;
+    this.pause();
+    Timer.freeTimers[Timer.freeTimersCount] = this;
+    Timer.freeTimersCount++;
+  }
+
   constructor() {
     if (Handle.initFromHandle()) {
       super();
     } else {
       super(CreateTimer());
     }
+    this.freed = false;
   }
 
   public get elapsed(): number {
@@ -38,8 +120,13 @@ export class Timer extends Handle<timer> {
     return this;
   }
 
-  public start(timeout: number, periodic: boolean, handlerFunc: () => void) {
-    TimerStart(this.handle, timeout, periodic, handlerFunc);
+  public start(timeout: number, handlerFunc: () => void) {
+    TimerStart(this.handle, timeout, false, handlerFunc);
+    return this;
+  }
+
+  public startPeriodic(timeout: number, handlerFunc: () => void) {
+    TimerStart(this.handle, timeout, true, handlerFunc);
     return this;
   }
 
