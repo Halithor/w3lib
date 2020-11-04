@@ -1,6 +1,6 @@
 /** @noSelfInFile **/
 
-import {Vec2, vec2} from '../math/index';
+import {Angle, Vec2, vec2} from '../math/index';
 import {Destructable} from './destructable';
 import {Force} from './force';
 import {Group} from './group';
@@ -17,9 +17,8 @@ export class Unit extends Widget {
   constructor(
     owner: MapPlayer | number,
     unitId: number,
-    x: number,
-    y: number,
-    face: number,
+    pos: Vec2,
+    face: Angle,
     skinId?: number
   ) {
     if (Handle.initFromHandle()) {
@@ -28,8 +27,8 @@ export class Unit extends Widget {
       const p = typeof owner === 'number' ? Player(owner) : owner.handle;
       super(
         skinId
-          ? BlzCreateUnitWithSkin(p, unitId, x, y, face, skinId)
-          : CreateUnit(p, unitId, x, y, face)
+          ? BlzCreateUnitWithSkin(p, unitId, pos.x, pos.y, face.degrees, skinId)
+          : CreateUnit(p, unitId, pos.x, pos.y, face.degrees)
       );
     }
   }
@@ -106,12 +105,12 @@ export class Unit extends Widget {
     SetHeroXP(this.handle, newXpVal, true);
   }
 
-  public set facing(value: number) {
-    SetUnitFacing(this.handle, value);
+  public set facing(value: Angle) {
+    SetUnitFacing(this.handle, value.degrees);
   }
 
-  public get facing() {
-    return GetUnitFacing(this.handle);
+  public get facing(): Angle {
+    return Angle.fromDegrees(GetUnitFacing(this.handle));
   }
 
   public get foodMade() {
@@ -222,7 +221,10 @@ export class Unit extends Widget {
     return vec2(this.x, this.y);
   }
 
-  public set pos(value: Vec2) {}
+  public set pos(value: Vec2) {
+    this.x = value.x;
+    this.y = value.y;
+  }
 
   public get pointValue() {
     return GetUnitPointValue(this.handle);
@@ -1000,8 +1002,8 @@ export class Unit extends Widget {
     SetUnitExploded(this.handle, exploded);
   }
 
-  public setFacingEx(facingAngle: number) {
-    BlzSetUnitFacingEx(this.handle, facingAngle);
+  public setFacingEx(facingAngle: Angle) {
+    BlzSetUnitFacingEx(this.handle, facingAngle.degrees);
   }
 
   public setField(
