@@ -1,7 +1,7 @@
 /** @noSelfInFile */
 
 import {MapPlayer} from '../handles/index';
-import {Timer} from '../handles/timer';
+import {doAfter, Timer} from '../handles/timer';
 import {addScriptHook, W3TS_HOOK} from '../hooks/index';
 import {base64Decode, base64Encode} from './base64';
 import {BinaryReader} from './binaryreader';
@@ -9,7 +9,6 @@ import {BinaryWriter} from './binarywriter';
 import {SyncRequest} from './sync';
 
 const lobbyTimes: number[] = [];
-const checkTimer = new Timer();
 const hostCallbacks: Array<() => void> = [];
 let localJoinTime = 0;
 let localStartTime = 0;
@@ -20,7 +19,7 @@ export function getHost() {
   if (host) {
     return host;
   } else if (!isChecking) {
-    checkTimer.start(0.0, false, findHost);
+    doAfter(0, findHost);
   }
   return;
 }
@@ -89,7 +88,6 @@ function findHost() {
 
       // set the host, cleanup, and execute callbacks
       host = MapPlayer.fromIndex(hostId);
-      checkTimer.destroy();
       for (const cb of hostCallbacks) {
         cb();
       }
@@ -101,7 +99,7 @@ function findHost() {
 }
 
 function onMain() {
-  checkTimer.start(0.0, false, findHost);
+  doAfter(0.0, findHost);
 }
 
 addScriptHook(W3TS_HOOK.MAIN_AFTER, onMain);

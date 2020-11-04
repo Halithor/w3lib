@@ -1,7 +1,7 @@
 /** @noSelfInFile */
 
 import {MapPlayer} from '../handles/player';
-import {Timer} from '../handles/timer';
+import {doAfter, Timer} from '../handles/timer';
 import {Trigger} from '../handles/trigger';
 import {base64Decode, base64Encode} from './base64';
 import {BinaryReader} from './binaryreader';
@@ -149,7 +149,7 @@ export class SyncRequest {
 
     // handle timeout
     if (this.options.timeout > 0) {
-      new Timer().start(this.options.timeout, false, () => {
+      doAfter(this.options.timeout, () => {
         Timer.fromExpired().destroy();
         if (this.onError && this.status === SyncStatus.Syncing) {
           this.onError(
