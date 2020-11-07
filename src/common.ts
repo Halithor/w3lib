@@ -10,6 +10,10 @@ export class UnitId {
   get value(): number {
     return this._value;
   }
+
+  public equals(other: UnitId) {
+    return this.value == other.value;
+  }
 }
 
 // ItemId represents an item type's identifier.
@@ -18,6 +22,10 @@ export class ItemId {
 
   get value(): number {
     return this._value;
+  }
+
+  public equals(other: UnitId) {
+    return this.value == other.value;
   }
 }
 
@@ -28,6 +36,10 @@ export class DestId {
   get value(): number {
     return this._value;
   }
+
+  public equals(other: UnitId) {
+    return this.value == other.value;
+  }
 }
 
 // ItemId represents an destructable type's identifier.
@@ -36,6 +48,10 @@ export class AbilId {
 
   get value(): number {
     return this._value;
+  }
+
+  public equals(other: UnitId) {
+    return this.value == other.value;
   }
 }
 
