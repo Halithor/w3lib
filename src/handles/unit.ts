@@ -1,5 +1,6 @@
 /** @noSelfInFile **/
 
+import {AbilId, ItemId, UnitId} from '../common';
 import {Angle, Vec2, vec2} from '../math/index';
 import {Destructable} from './destructable';
 import {Force} from './force';
@@ -16,7 +17,7 @@ export class Unit extends Widget {
 
   constructor(
     owner: MapPlayer | number,
-    unitId: number,
+    unitId: UnitId,
     pos: Vec2,
     face: Angle,
     skinId?: number
@@ -27,8 +28,15 @@ export class Unit extends Widget {
       const p = typeof owner === 'number' ? Player(owner) : owner.handle;
       super(
         skinId
-          ? BlzCreateUnitWithSkin(p, unitId, pos.x, pos.y, face.degrees, skinId)
-          : CreateUnit(p, unitId, pos.x, pos.y, face.degrees)
+          ? BlzCreateUnitWithSkin(
+              p,
+              unitId.value,
+              pos.x,
+              pos.y,
+              face.degrees,
+              skinId
+            )
+          : CreateUnit(p, unitId.value, pos.x, pos.y, face.degrees)
       );
     }
   }
@@ -247,7 +255,10 @@ export class Unit extends Widget {
   }
 
   public get rallyPoint() {
-    return Point.fromHandle(GetUnitRallyPoint(this.handle));
+    const loc = GetUnitRallyPoint(this.handle);
+    const pos = vec2(GetLocationX(loc), GetLocationY(loc));
+    RemoveLocation(loc);
+    return pos;
   }
 
   public get rallyUnit() {
@@ -320,7 +331,7 @@ export class Unit extends Widget {
   }
 
   public get typeId() {
-    return GetUnitTypeId(this.handle);
+    return new UnitId(GetUnitTypeId(this.handle));
   }
 
   public get userData() {
@@ -359,8 +370,8 @@ export class Unit extends Widget {
     return BlzGetUnitZ(this.handle);
   }
 
-  public addAbility(abilityId: number) {
-    return UnitAddAbility(this.handle, abilityId);
+  public addAbility(abilityId: AbilId) {
+    return UnitAddAbility(this.handle, abilityId.value);
   }
 
   public addAnimationProps(animProperties: string, add: boolean) {
@@ -379,20 +390,20 @@ export class Unit extends Widget {
     return UnitAddItem(this.handle, whichItem.handle);
   }
 
-  public addItemById(itemId: number) {
-    return UnitAddItemById(this.handle, itemId);
+  public addItemById(itemId: ItemId) {
+    return UnitAddItemById(this.handle, itemId.value);
   }
 
-  public addItemToSlotById(itemId: number, itemSlot: number) {
-    return UnitAddItemToSlotById(this.handle, itemId, itemSlot);
+  public addItemToSlotById(itemId: ItemId, itemSlot: number) {
+    return UnitAddItemToSlotById(this.handle, itemId.value, itemSlot);
   }
 
   public addItemToStock(
-    itemId: number,
+    itemId: ItemId,
     currentStock: number,
     stockMax: number
   ) {
-    AddItemToStock(this.handle, itemId, currentStock, stockMax);
+    AddItemToStock(this.handle, itemId.value, currentStock, stockMax);
   }
 
   public addResourceAmount(amount: number) {
@@ -408,11 +419,11 @@ export class Unit extends Widget {
   }
 
   public addUnitToStock(
-    unitId: number,
+    unitId: UnitId,
     currentStock: number,
     stockMax: number
   ) {
-    AddUnitToStock(this.handle, unitId, currentStock, stockMax);
+    AddUnitToStock(this.handle, unitId.value, currentStock, stockMax);
   }
 
   public applyTimedLife(buffId: number, duration: number) {
@@ -500,20 +511,20 @@ export class Unit extends Widget {
     );
   }
 
-  public decAbilityLevel(abilCode: number) {
-    return DecUnitAbilityLevel(this.handle, abilCode);
+  public decAbilityLevel(abilId: AbilId) {
+    return DecUnitAbilityLevel(this.handle, abilId.value);
   }
 
   public destroy() {
     RemoveUnit(this.handle);
   }
 
-  public disableAbility(abilId: number, flag: boolean, hideUI: boolean) {
-    BlzUnitHideAbility(this.handle, abilId, flag);
+  public disableAbility(abilId: AbilId, hideUI: boolean) {
+    BlzUnitHideAbility(this.handle, abilId.value, hideUI);
   }
 
-  public dropItem(whichItem: Item, x: number, y: number) {
-    return UnitDropItemPoint(this.handle, whichItem.handle, x, y);
+  public dropItem(whichItem: Item, pos: Vec2) {
+    return UnitDropItemPoint(this.handle, whichItem.handle, pos.x, pos.y);
   }
 
   public dropItemFromSlot(whichItem: Item, slot: number) {
@@ -527,32 +538,32 @@ export class Unit extends Widget {
     return UnitDropItemTarget(this.handle, whichItem.handle, target.handle);
   }
 
-  public endAbilityCooldown(abilCode: number) {
-    BlzEndUnitAbilityCooldown(this.handle, abilCode);
+  public endAbilityCooldown(abilId: AbilId) {
+    BlzEndUnitAbilityCooldown(this.handle, abilId.value);
   }
 
-  public getAbility(abilId: number) {
-    return BlzGetUnitAbility(this.handle, abilId);
+  public getAbility(abilId: AbilId) {
+    return BlzGetUnitAbility(this.handle, abilId.value);
   }
 
   public getAbilityByIndex(index: number) {
     return BlzGetUnitAbilityByIndex(this.handle, index);
   }
 
-  public getAbilityCooldown(abilId: number, level: number) {
-    return BlzGetUnitAbilityCooldown(this.handle, abilId, level);
+  public getAbilityCooldown(abilId: AbilId, level: number) {
+    return BlzGetUnitAbilityCooldown(this.handle, abilId.value, level);
   }
 
-  public getAbilityCooldownRemaining(abilId: number, level: number) {
-    return BlzGetUnitAbilityCooldownRemaining(this.handle, abilId);
+  public getAbilityCooldownRemaining(abilId: AbilId) {
+    return BlzGetUnitAbilityCooldownRemaining(this.handle, abilId.value);
   }
 
-  public getAbilityLevel(abilCode: number) {
-    return GetUnitAbilityLevel(this.handle, abilCode);
+  public getAbilityLevel(abilId: AbilId) {
+    return GetUnitAbilityLevel(this.handle, abilId.value);
   }
 
-  public getAbilityManaCost(abilId: number, level: number) {
-    return BlzGetUnitAbilityManaCost(this.handle, abilId, level);
+  public getAbilityManaCost(abilId: AbilId, level: number) {
+    return BlzGetUnitAbilityManaCost(this.handle, abilId.value, level);
   }
 
   public getAgility(includeBonuses: boolean) {
@@ -655,12 +666,12 @@ export class Unit extends Widget {
     return UnitHasItem(this.handle, whichItem.handle);
   }
 
-  public hideAbility(abilId: number, flag: boolean) {
-    BlzUnitHideAbility(this.handle, abilId, flag);
+  public hideAbility(abilId: AbilId, flag: boolean) {
+    BlzUnitHideAbility(this.handle, abilId.value, flag);
   }
 
-  public incAbilityLevel(abilCode: number) {
-    return IncUnitAbilityLevel(this.handle, abilCode);
+  public incAbilityLevel(abilId: AbilId) {
+    return IncUnitAbilityLevel(this.handle, abilId.value);
   }
 
   public inForce(whichForce: Force) {
@@ -671,12 +682,8 @@ export class Unit extends Widget {
     return IsUnitInGroup(this.handle, whichGroup.handle);
   }
 
-  public inRange(x: number, y: number, distance: number) {
-    return IsUnitInRangeXY(this.handle, x, y, distance);
-  }
-
-  public inRangeOfPoint(whichPoint: Point, distance: number) {
-    return IsUnitInRangeLoc(this.handle, whichPoint.handle, distance);
+  public inRange(pos: Vec2, distance: number) {
+    return IsUnitInRangeXY(this.handle, pos.x, pos.y, distance);
   }
 
   public inRangeOfUnit(otherUnit: Unit, distance: number) {
@@ -712,7 +719,7 @@ export class Unit extends Widget {
   }
 
   public isHero() {
-    return IsHeroUnitId(this.typeId);
+    return IsHeroUnitId(this.typeId.value);
   }
 
   public isIllusion() {
@@ -731,10 +738,10 @@ export class Unit extends Widget {
     return IsUnitSelected(this.handle, whichPlayer.handle);
   }
 
-  public issueBuildOrder(unit: string | number, x: number, y: number) {
+  public issueBuildOrder(unit: string | UnitId, pos: Vec2) {
     return typeof unit === 'string'
-      ? IssueBuildOrder(this.handle, unit, x, y)
-      : IssueBuildOrderById(this.handle, unit, x, y);
+      ? IssueBuildOrder(this.handle, unit, pos.x, pos.y)
+      : IssueBuildOrderById(this.handle, unit.value, pos.x, pos.y);
   }
 
   public issueImmediateOrder(order: string | number) {
@@ -786,16 +793,10 @@ export class Unit extends Widget {
         );
   }
 
-  public issueOrderAt(order: string | number, x: number, y: number) {
+  public issueOrderAt(order: string | number, pos: Vec2) {
     return typeof order === 'string'
-      ? IssuePointOrder(this.handle, order, x, y)
-      : IssuePointOrderById(this.handle, order, x, y);
-  }
-
-  public issuePointOrder(order: string | number, whichPoint: Point) {
-    return typeof order === 'string'
-      ? IssuePointOrderLoc(this.handle, order, whichPoint.handle)
-      : IssuePointOrderByIdLoc(this.handle, order, whichPoint.handle);
+      ? IssuePointOrder(this.handle, order, pos.x, pos.y)
+      : IssuePointOrderById(this.handle, order, pos.x, pos.y);
   }
 
   public issueTargetOrder(order: string | number, targetWidget: Widget) {
@@ -837,8 +838,8 @@ export class Unit extends Widget {
     );
   }
 
-  public makeAbilityPermanent(permanent: boolean, abilityId: number) {
-    UnitMakeAbilityPermanent(this.handle, permanent, abilityId);
+  public makeAbilityPermanent(permanent: boolean, abilityId: AbilId) {
+    UnitMakeAbilityPermanent(this.handle, permanent, abilityId.value);
   }
 
   public modifySkillPoints(skillPointDelta: number) {
@@ -861,8 +862,8 @@ export class Unit extends Widget {
     RecycleGuardPosition(this.handle);
   }
 
-  public removeAbility(abilityId: number) {
-    return UnitRemoveAbility(this.handle, abilityId);
+  public removeAbility(abilityId: AbilId) {
+    return UnitRemoveAbility(this.handle, abilityId.value);
   }
 
   public removeBuffs(removePositive: boolean, removeNegative: boolean) {
@@ -902,16 +903,16 @@ export class Unit extends Widget {
     return UnitRemoveItemFromSlot(this.handle, itemSlot);
   }
 
-  public removeItemFromStock(itemId: number) {
-    RemoveItemFromStock(this.handle, itemId);
+  public removeItemFromStock(itemId: ItemId) {
+    RemoveItemFromStock(this.handle, itemId.value);
   }
 
   public removeType(whichUnitType: unittype) {
     return UnitAddType(this.handle, whichUnitType);
   }
 
-  public removeUnitFromStock(itemId: number) {
-    RemoveUnitFromStock(this.handle, itemId);
+  public removeUnitFromStock(itemId: ItemId) {
+    RemoveUnitFromStock(this.handle, itemId.value);
   }
 
   public resetCooldown() {
@@ -922,8 +923,8 @@ export class Unit extends Widget {
     ResetUnitLookAt(this.handle);
   }
 
-  public revive(x: number, y: number, doEyecandy: boolean) {
-    return ReviveHero(this.handle, x, y, doEyecandy);
+  public revive(pos: Vec2, doEyecandy: boolean) {
+    return ReviveHero(this.handle, pos.x, pos.y, doEyecandy);
   }
 
   public reviveAtPoint(whichPoint: Point, doEyecandy: boolean) {
@@ -938,16 +939,16 @@ export class Unit extends Widget {
     SelectHeroSkill(this.handle, abilCode);
   }
 
-  public setAbilityCooldown(abilId: number, level: number, cooldown: number) {
-    BlzSetUnitAbilityCooldown(this.handle, abilId, level, cooldown);
+  public setAbilityCooldown(abilId: AbilId, level: number, cooldown: number) {
+    BlzSetUnitAbilityCooldown(this.handle, abilId.value, level, cooldown);
   }
 
-  public setAbilityLevel(abilCode: number, level: number) {
-    return SetUnitAbilityLevel(this.handle, abilCode, level);
+  public setAbilityLevel(abilId: AbilId, level: number) {
+    return SetUnitAbilityLevel(this.handle, abilId.value, level);
   }
 
-  public setAbilityManaCost(abilId: number, level: number, manaCost: number) {
-    BlzSetUnitAbilityManaCost(this.handle, abilId, level, manaCost);
+  public setAbilityManaCost(abilId: AbilId, level: number, manaCost: number) {
+    BlzSetUnitAbilityManaCost(this.handle, abilId.value, level, manaCost);
   }
 
   public setAgility(value: number, permanent: boolean) {
@@ -1065,8 +1066,8 @@ export class Unit extends Widget {
     SetUnitPathing(this.handle, flag);
   }
 
-  public setPosition(x: number, y: number) {
-    SetUnitPosition(this.handle, x, y);
+  public setPosition(pos: Vec2) {
+    SetUnitPosition(this.handle, pos.x, pos.y);
   }
 
   public setRescuable(byWhichPlayer: MapPlayer, flag: boolean) {
@@ -1130,8 +1131,8 @@ export class Unit extends Widget {
     BlzShowUnitTeamGlow(this.handle, show);
   }
 
-  public startAbilityCooldown(abilCode: number, cooldown: number) {
-    BlzStartUnitAbilityCooldown(this.handle, abilCode, cooldown);
+  public startAbilityCooldown(abilId: AbilId, cooldown: number) {
+    BlzStartUnitAbilityCooldown(this.handle, abilId.value, cooldown);
   }
 
   public stripLevels(howManyLevels: number) {
@@ -1150,8 +1151,8 @@ export class Unit extends Widget {
     return UnitUseItem(this.handle, whichItem.handle);
   }
 
-  public useItemAt(whichItem: Item, x: number, y: number) {
-    return UnitUseItemPoint(this.handle, whichItem.handle, x, y);
+  public useItemAt(whichItem: Item, pos: Vec2) {
+    return UnitUseItemPoint(this.handle, whichItem.handle, pos.x, pos.y);
   }
 
   public useItemTarget(whichItem: Item, target: Widget) {
@@ -1162,24 +1163,23 @@ export class Unit extends Widget {
     UnitWakeUp(this.handle);
   }
 
-  public waygateGetDestinationX() {
-    return WaygateGetDestinationX(this.handle);
+  public set waygateDestination(pos: Vec2) {
+    WaygateSetDestination(this.handle, pos.x, pos.y);
   }
 
-  public waygateGetDestinationY() {
-    return WaygateGetDestinationY(this.handle);
+  public get waygateDestination(): Vec2 {
+    return vec2(
+      WaygateGetDestinationX(this.handle),
+      WaygateGetDestinationY(this.handle)
+    );
   }
 
-  public waygateSetDestination(x: number, y: number) {
-    WaygateSetDestination(this.handle, x, y);
+  public static foodMadeByType(unitId: UnitId) {
+    return GetFoodMade(unitId.value);
   }
 
-  public static foodMadeByType(unitId: number) {
-    return GetFoodMade(unitId);
-  }
-
-  public static foodUsedByType(unitId: number) {
-    return GetFoodUsed(unitId);
+  public static foodUsedByType(unitId: UnitId) {
+    return GetFoodUsed(unitId.value);
   }
 
   public static fromEvent() {
@@ -1194,11 +1194,11 @@ export class Unit extends Widget {
     return GetUnitPointValueByType(unitType);
   }
 
-  public static isUnitIdHero(unitId: number) {
-    return IsHeroUnitId(unitId);
+  public static isUnitIdHero(unitId: UnitId) {
+    return IsHeroUnitId(unitId.value);
   }
 
-  public static isUnitIdType(unitId: number, whichUnitType: unittype) {
-    return IsUnitIdType(unitId, whichUnitType);
+  public static isUnitIdType(unitId: UnitId, whichUnitType: unittype) {
+    return IsUnitIdType(unitId.value, whichUnitType);
   }
 }

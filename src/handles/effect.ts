@@ -1,19 +1,20 @@
 /** @noSelfInFile **/
 
+import {Vec2, Vec3, vec3} from '../math';
 import {Handle} from './handle';
 import {MapPlayer} from './player';
 import {Point} from './point';
 import {Widget} from './widget';
 
 export class Effect extends Handle<effect> {
-  constructor(modelName: string, x: number, y: number);
+  constructor(modelName: string, pos: Vec2);
   constructor(modelName: string, targetWidget: Widget, attachPointName: string);
-  constructor(modelName: string, a: number | Widget, b: number | string) {
+  constructor(modelName: string, a: Vec2 | Widget, b?: string) {
     if (Handle.initFromHandle()) {
       super();
-    } else if (typeof a === 'number' && typeof b === 'number') {
-      super(AddSpecialEffect(modelName, a, b));
-    } else if (typeof a !== 'number' && typeof b === 'string') {
+    } else if (a instanceof Vec2) {
+      super(AddSpecialEffect(modelName, a.x, a.y));
+    } else if (a instanceof Widget && b) {
       super(AddSpecialEffectTarget(modelName, a.handle, b));
     }
   }
@@ -27,36 +28,20 @@ export class Effect extends Handle<effect> {
   }
 
   /**
-   * Warning: asynchronous
+   * Warning: Asynchronous. Can cause desyncs
    */
-  public get x() {
-    return BlzGetLocalSpecialEffectX(this.handle);
+  public get pos() {
+    return vec3(
+      BlzGetLocalSpecialEffectX(this.handle),
+      BlzGetLocalSpecialEffectY(this.handle),
+      BlzGetLocalSpecialEffectZ(this.handle)
+    );
   }
 
-  public set x(x: number) {
-    BlzSetSpecialEffectX(this.handle, x);
-  }
-
-  /**
-   * Warning: asynchronous
-   */
-  public get y() {
-    return BlzGetLocalSpecialEffectY(this.handle);
-  }
-
-  public set y(y: number) {
-    BlzSetSpecialEffectY(this.handle, y);
-  }
-
-  /**
-   * Warning: asynchronous
-   */
-  public get z() {
-    return BlzGetLocalSpecialEffectZ(this.handle);
-  }
-
-  public set z(z: number) {
-    BlzSetSpecialEffectZ(this.handle, z);
+  public set pos(val: Vec3) {
+    BlzSetSpecialEffectX(this.handle, val.x);
+    BlzSetSpecialEffectY(this.handle, val.y);
+    BlzSetSpecialEffectZ(this.handle, val.z);
   }
 
   public addSubAnimation(subAnim: subanimtype) {
@@ -113,10 +98,6 @@ export class Effect extends Handle<effect> {
 
   public setPoint(p: Point) {
     BlzSetSpecialEffectPositionLoc(this.handle, p.handle);
-  }
-
-  public setPosition(x: number, y: number, z: number) {
-    BlzSetSpecialEffectPosition(this.handle, x, y, z);
   }
 
   public setRoll(roll: number) {

@@ -1,5 +1,7 @@
 /** @noSelfInFile **/
 
+import {ItemId} from '../common';
+import {vec2, Vec2} from '../math';
 import {Handle} from './handle';
 import {MapPlayer} from './player';
 import {Point} from './point';
@@ -8,14 +10,14 @@ import {Widget} from './widget';
 export class Item extends Widget {
   public readonly handle!: item;
 
-  constructor(itemId: number, x: number, y: number, skinId?: number) {
+  constructor(itemId: ItemId, x: number, y: number, skinId?: number) {
     if (Handle.initFromHandle()) {
       super();
     } else {
       super(
         skinId
-          ? BlzCreateItemWithSkin(itemId, x, y, skinId)
-          : CreateItem(itemId, x, y)
+          ? BlzCreateItemWithSkin(itemId.value, x, y, skinId)
+          : CreateItem(itemId.value, x, y)
       );
     }
   }
@@ -65,7 +67,7 @@ export class Item extends Widget {
   }
 
   public get typeId() {
-    return GetItemTypeId(this.handle);
+    return new ItemId(GetItemTypeId(this.handle));
   }
 
   public get userData() {
@@ -106,6 +108,14 @@ export class Item extends Widget {
 
   public set y(value: number) {
     SetItemPosition(this.handle, this.x, value);
+  }
+
+  public set pos(value: Vec2) {
+    SetItemPosition(this.handle, value.x, value.y);
+  }
+
+  public get pos(): Vec2 {
+    return vec2(this.x, this.y);
   }
 
   public destroy() {
@@ -198,27 +208,19 @@ export class Item extends Widget {
     SetItemPlayer(this.handle, whichPlayer.handle, changeColor);
   }
 
-  public setPoint(whichPoint: Point) {
-    SetItemPosition(this.handle, whichPoint.x, whichPoint.y);
-  }
-
-  public setPosition(x: number, y: number) {
-    SetItemPosition(this.handle, x, y);
-  }
-
   public static fromHandle(handle: item): Item {
     return this.getObject(handle);
   }
 
-  public static isIdPawnable(itemId: number) {
-    return IsItemIdPawnable(itemId);
+  public static isIdPawnable(itemId: ItemId) {
+    return IsItemIdPawnable(itemId.value);
   }
 
-  public static isIdPowerup(itemId: number) {
-    return IsItemIdPowerup(itemId);
+  public static isIdPowerup(itemId: ItemId) {
+    return IsItemIdPowerup(itemId.value);
   }
 
-  public static isIdSellable(itemId: number) {
-    return IsItemIdSellable(itemId);
+  public static isIdSellable(itemId: ItemId) {
+    return IsItemIdSellable(itemId.value);
   }
 }

@@ -132,8 +132,8 @@ export class Vec2 {
   }
 
   public angleTo(other: Vec2): Angle {
-    // Weird implementation note: this method causes map start failures when 
-    // not in the same file in as the Angle class. 
+    // Weird implementation note: this method causes map start failures when
+    // not in the same file in as the Angle class.
     const dir = this.normalizedPointerTo(other);
     return Angle.fromRadians(Atan2(dir.y, dir.x));
   }
@@ -173,10 +173,43 @@ export class Vec2 {
   public toString() {
     return '(' + this.x.toString() + ', ' + this.y.toString() + ')';
   }
+
+  public withZ(z: number) {
+    return new Vec3(this.x, this.y, z);
+  }
+
+  public withTerrainZ() {
+    return new Vec3(this.x, this.y, this.terrainZ);
+  }
+
+  public withZZero() {
+    return new Vec3(this.x, this.y, 0);
+  }
+}
+
+export class Vec3 {
+  constructor(private _x: number, private _y: number, private _z: number) {}
+
+  public get x() {
+    return this._x;
+  }
+
+  public get y() {
+    return this._y;
+  }
+
+  public get z() {
+    return this._z;
+  }
+
+  public withoutZ() {
+    return new Vec2(this.x, this.y);
+  }
 }
 
 // Make a new position.
 export const vec2 = (x: number, y: number) => new Vec2(x, y);
+export const vec3 = (x: number, y: number, z: number) => new Vec3(x, y, z);
 
 export function getRandomPosInRect(rect: rect): Vec2 {
   return new Vec2(

@@ -1,5 +1,5 @@
 import {Destructable, Item, Trigger, Unit} from '../handles/index';
-import {addScriptHook, W3TS_HOOK} from '../hooks';
+import {addScriptHook, W3TS_HOOK} from '../hooks/index';
 import {vec2, Vec2} from '../math/index';
 
 // EventHandler is a generic class that facilitates the definition of well

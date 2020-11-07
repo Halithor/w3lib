@@ -1,5 +1,7 @@
 /** @noSelfInFile **/
 
+import {DestId} from '../common';
+import {Angle, vec2, Vec3} from '../math/index';
 import {Handle} from './handle';
 import {Widget} from './widget';
 
@@ -7,18 +9,26 @@ export class Destructable extends Widget {
   public readonly handle!: destructable;
 
   constructor(
-    objectId: number,
-    x: number,
-    y: number,
-    z: number,
-    face: number,
+    destId: DestId,
+    pos: Vec3,
+    face: Angle,
     scale: number,
     varation: number
   ) {
     if (Handle.initFromHandle()) {
       super();
     } else {
-      super(CreateDestructableZ(objectId, x, y, z, face, scale, varation));
+      super(
+        CreateDestructableZ(
+          destId.value,
+          pos.x,
+          pos.y,
+          pos.z,
+          face.degrees,
+          scale,
+          varation
+        )
+      );
     }
   }
 
@@ -62,20 +72,16 @@ export class Destructable extends Widget {
     return GetDestructableTypeId(this.handle);
   }
 
-  public get x() {
-    return GetDestructableX(this.handle);
-  }
-
-  public get y() {
-    return GetDestructableY(this.handle);
+  public get pos() {
+    return vec2(GetDestructableX(this.handle), GetDestructableY(this.handle));
   }
 
   public destroy() {
     RemoveDestructable(this.handle);
   }
 
-  public heal(life: number, birth: boolean) {
-    DestructableRestoreLife(this.handle, life, birth);
+  public heal(life: number, showBirth: boolean) {
+    DestructableRestoreLife(this.handle, life, showBirth);
   }
 
   public kill() {
