@@ -1,8 +1,8 @@
 /** @noSelfInFile **/
 
+import {Vec2} from '../math/index';
 import {Handle} from './handle';
 import {MapPlayer} from './player';
-import {Point} from './point';
 import {Rectangle} from './rect';
 import {Unit} from './unit';
 import {Widget} from './widget';
@@ -32,54 +32,20 @@ export class Group extends Handle<group> {
     DestroyGroup(this.handle);
   }
 
-  public enumUnitsInRange(
-    x: number,
-    y: number,
-    radius: number,
-    filter: () => boolean
-  ) {
-    GroupEnumUnitsInRange(this.handle, x, y, radius, Filter(filter));
+  public enumUnitsInRange(pos: Vec2, radius: number, filter: () => boolean) {
+    GroupEnumUnitsInRange(this.handle, pos.x, pos.y, radius, Filter(filter));
   }
 
   public enumUnitsInRangeCounted(
-    x: number,
-    y: number,
+    pos: Vec2,
     radius: number,
     filter: () => boolean,
     countLimit: number
   ) {
     GroupEnumUnitsInRangeCounted(
       this.handle,
-      x,
-      y,
-      radius,
-      Filter(filter),
-      countLimit
-    );
-  }
-
-  public enumUnitsInRangeOfPoint(
-    whichPoint: Point,
-    radius: number,
-    filter: () => boolean
-  ) {
-    GroupEnumUnitsInRangeOfLoc(
-      this.handle,
-      whichPoint.handle,
-      radius,
-      Filter(filter)
-    );
-  }
-
-  public enumUnitsInRangeOfPointCounted(
-    whichPoint: Point,
-    radius: number,
-    filter: () => boolean,
-    countLimit: number
-  ) {
-    GroupEnumUnitsInRangeOfLocCounted(
-      this.handle,
-      whichPoint.handle,
+      pos.x,
+      pos.y,
       radius,
       Filter(filter),
       countLimit
@@ -148,11 +114,11 @@ export class Group extends Handle<group> {
     return IsUnitInGroup(whichUnit.handle, this.handle);
   }
 
-  public orderCoords(order: string | number, x: number, y: number) {
+  public orderCoords(order: string | number, pos: Vec2) {
     if (typeof order === 'string') {
-      GroupPointOrder(this.handle, order, x, y);
+      GroupPointOrder(this.handle, order, pos.x, pos.y);
     } else {
-      GroupPointOrderById(this.handle, order, x, y);
+      GroupPointOrderById(this.handle, order, pos.x, pos.y);
     }
   }
 
@@ -161,14 +127,6 @@ export class Group extends Handle<group> {
       GroupImmediateOrder(this.handle, order);
     } else {
       GroupImmediateOrderById(this.handle, order);
-    }
-  }
-
-  public orderPoint(order: string | number, whichPoint: Point) {
-    if (typeof order === 'string') {
-      GroupPointOrderLoc(this.handle, order, whichPoint.handle);
-    } else {
-      GroupPointOrderByIdLoc(this.handle, order, whichPoint.handle);
     }
   }
 

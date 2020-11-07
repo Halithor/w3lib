@@ -1,6 +1,6 @@
 /** @noSelfInFile **/
 
-import {Vec2, Vec3, vec3} from '../math';
+import {Vec2, Vec3, vec3} from '../math/index';
 import {Handle} from './handle';
 import {MapPlayer} from './player';
 import {Point} from './point';

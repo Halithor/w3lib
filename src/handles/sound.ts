@@ -1,6 +1,6 @@
 /** @noSelfInFile **/
 
-import {Vec3} from '../math';
+import {Vec3} from '../math/index';
 import {Handle} from './handle';
 
 export class Sound extends Handle<sound> {

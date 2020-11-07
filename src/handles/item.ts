@@ -1,10 +1,9 @@
 /** @noSelfInFile **/
 
 import {ItemId} from '../common';
-import {vec2, Vec2} from '../math';
+import {vec2, Vec2} from '../math/index';
 import {Handle} from './handle';
 import {MapPlayer} from './player';
-import {Point} from './point';
 import {Widget} from './widget';
 
 export class Item extends Widget {

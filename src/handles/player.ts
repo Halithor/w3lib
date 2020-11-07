@@ -1,9 +1,8 @@
 /** @noSelfInFile **/
 
-import {Vec2} from '../math';
+import {Vec2} from '../math/index';
 import {Force} from './force';
 import {Handle} from './handle';
-import {Point} from './point';
 
 export class MapPlayer extends Handle<player> {
   private constructor(index: number) {

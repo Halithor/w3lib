@@ -1,8 +1,7 @@
 /** @noSelfInFile **/
 
-import {Vec2, Vec3} from '../math';
+import {Vec2} from '../math/index';
 import {Handle} from './handle';
-import {Point} from './point';
 import {Rectangle} from './rect';
 import {Unit} from './unit';
 

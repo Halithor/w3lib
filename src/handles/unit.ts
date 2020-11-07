@@ -8,7 +8,6 @@ import {Group} from './group';
 import {Handle} from './handle';
 import {Item} from './item';
 import {MapPlayer} from './player';
-import {Point} from './point';
 import {Sound} from './sound';
 import {Widget} from './widget';
 
@@ -925,10 +924,6 @@ export class Unit extends Widget {
 
   public revive(pos: Vec2, doEyecandy: boolean) {
     return ReviveHero(this.handle, pos.x, pos.y, doEyecandy);
-  }
-
-  public reviveAtPoint(whichPoint: Point, doEyecandy: boolean) {
-    return ReviveHeroLoc(this.handle, whichPoint.handle, doEyecandy);
   }
 
   public select(flag: boolean) {

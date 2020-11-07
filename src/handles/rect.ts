@@ -1,8 +1,7 @@
 /** @noSelfInFile **/
 
-import {vec2, Vec2} from '../math';
+import {vec2, Vec2} from '../math/index';
 import {Handle} from './handle';
-import {Point} from './point';
 
 export class Rectangle extends Handle<rect> {
   constructor(min: Vec2, max: Vec2) {
