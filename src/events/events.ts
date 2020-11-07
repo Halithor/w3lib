@@ -1,4 +1,5 @@
 import {Destructable, Item, Trigger, Unit} from '../handles/index';
+import {addScriptHook, W3TS_HOOK} from '../hooks';
 import {vec2, Vec2} from '../math/index';
 
 // EventHandler is a generic class that facilitates the definition of well
@@ -36,36 +37,58 @@ class EventHandler<T extends any[]> {
   }
 }
 
-const pua = new EventHandler<[u: Unit, target: Unit]>(
-  new Trigger().registerAnyUnitEvent(EVENT_PLAYER_UNIT_ATTACKED),
-  () => {
-    return [Unit.fromHandle(GetTriggerUnit()), Unit.fromHandle(GetAttacker())];
-  }
-);
+// Declare all the event handlers here, to be initialized in the pre-main.
+let pua: EventHandler<[u: Unit, target: Unit]>;
+let puse: EventHandler<[
+  caster: Unit,
+  abilityId: number,
+  target: Unit | Item | Destructable | Vec2
+]>;
+
+addScriptHook(W3TS_HOOK.MAIN_BEFORE, () => {
+  pua = new EventHandler<[u: Unit, target: Unit]>(
+    new Trigger().registerAnyUnitEvent(EVENT_PLAYER_UNIT_ATTACKED),
+    () => {
+      return [
+        Unit.fromHandle(GetTriggerUnit()),
+        Unit.fromHandle(GetAttacker()),
+      ];
+    }
+  );
+  puse = new EventHandler<
+    [caster: Unit, abilityId: number, target: Unit | Item | Destructable | Vec2]
+  >(new Trigger().registerAnyUnitEvent(EVENT_PLAYER_UNIT_SPELL_EFFECT), () => {
+    const caster = Unit.fromHandle(GetSpellAbilityUnit());
+    const abilityId = GetSpellAbilityId();
+
+    const u = GetSpellTargetUnit();
+    if (u) {
+      return [caster, abilityId, Unit.fromHandle(u)];
+    }
+    const d = GetSpellTargetDestructable();
+    if (d) {
+      return [caster, abilityId, Destructable.fromHandle(d)];
+    }
+    const i = GetSpellTargetItem();
+    if (i) {
+      return [caster, abilityId, Item.fromHandle(i)];
+    }
+    return [caster, abilityId, vec2(GetSpellTargetX(), GetSpellTargetY())];
+  });
+});
+
 export function onAnyUnitAttacked(
   callback: (u: Unit, attacker: Unit) => void
 ): {cancel: () => void} {
   return pua.addHandler(callback);
 }
 
-const puse = new EventHandler<
-  [caster: Unit, abilityId: number, target: Unit | Item | Destructable | Vec2]
->(new Trigger().registerAnyUnitEvent(EVENT_PLAYER_UNIT_SPELL_EFFECT), () => {
-  const caster = Unit.fromHandle(GetSpellAbilityUnit());
-  const abilityId = GetSpellAbilityId();
-
-  const u = GetSpellTargetUnit();
-  if (u) {
-    return [caster, abilityId, Unit.fromHandle(u)];
-  }
-  const d = GetSpellTargetDestructable();
-  if (d) {
-    return [caster, abilityId, Destructable.fromHandle(d)];
-  }
-  const i = GetSpellTargetItem();
-  if (i) {
-    return [caster, abilityId, Item.fromHandle(i)];
-  }
-  return [caster, abilityId, vec2(GetSpellTargetX(), GetSpellTargetY())];
-});
-export const onAnyUnitSpellEffect = puse.addHandler;
+export function onAnyUnitSpellEffect(
+  cb: (
+    caster: Unit,
+    abilityId: number,
+    target: Unit | Item | Destructable | Vec2
+  ) => void
+) {
+  return puse.addHandler(cb);
+}
