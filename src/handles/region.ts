@@ -1,5 +1,6 @@
 /** @noSelfInFile **/
 
+import {Vec2, Vec3} from '../math';
 import {Handle} from './handle';
 import {Point} from './point';
 import {Rectangle} from './rect';
@@ -14,36 +15,24 @@ export class Region extends Handle<region> {
     }
   }
 
-  public addCell(x: number, y: number) {
-    RegionAddCell(this.handle, x, y);
-  }
-
-  public addCellPoint(whichPoint: Point) {
-    RegionAddCellAtLoc(this.handle, whichPoint.handle);
+  public addCell(pos: Vec2) {
+    RegionAddCell(this.handle, pos.x, pos.y);
   }
 
   public addRect(r: Rectangle) {
     RegionAddRect(this.handle, r.handle);
   }
 
-  public clearCell(x: number, y: number) {
-    RegionClearCell(this.handle, x, y);
-  }
-
-  public clearCellPoint(whichPoint: Point) {
-    RegionClearCellAtLoc(this.handle, whichPoint.handle);
+  public clearCell(pos: Vec2) {
+    RegionClearCell(this.handle, pos.x, pos.y);
   }
 
   public clearRect(r: Rectangle) {
     RegionClearRect(this.handle, r.handle);
   }
 
-  public containsCoords(x: number, y: number) {
-    return IsPointInRegion(this.handle, x, y);
-  }
-
-  public containsPoint(whichPoint: Point) {
-    IsLocationInRegion(this.handle, whichPoint.handle);
+  public containsCoords(pos: Vec2) {
+    return IsPointInRegion(this.handle, pos.x, pos.y);
   }
 
   public containsUnit(whichUnit: Unit) {

@@ -1,5 +1,6 @@
 /** @noSelfInFile **/
 
+import {Vec3} from '../math';
 import {Handle} from './handle';
 
 export class Sound extends Handle<sound> {
@@ -121,12 +122,12 @@ export class Sound extends Handle<sound> {
     SetSoundPlayPosition(this.handle, millisecs);
   }
 
-  public setPosition(x: number, y: number, z: number) {
-    SetSoundPosition(this.handle, x, y, z);
+  public setPosition(pos: Vec3) {
+    SetSoundPosition(this.handle, pos.x, pos.y, pos.z);
   }
 
-  public setVelocity(x: number, y: number, z: number) {
-    SetSoundVelocity(this.handle, x, y, z);
+  public setVelocity(vel: Vec3) {
+    SetSoundVelocity(this.handle, vel.x, vel.y, vel.z);
   }
 
   public setVolume(volume: number) {

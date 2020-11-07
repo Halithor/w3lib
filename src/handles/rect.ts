@@ -1,14 +1,15 @@
 /** @noSelfInFile **/
 
+import {vec2, Vec2} from '../math';
 import {Handle} from './handle';
 import {Point} from './point';
 
 export class Rectangle extends Handle<rect> {
-  constructor(minX: number, minY: number, maxX: number, maxY: number) {
+  constructor(min: Vec2, max: Vec2) {
     if (Handle.initFromHandle()) {
       super();
     } else {
-      super(Rect(minX, minY, maxX, maxY));
+      super(Rect(min.x, min.x, max.x, max.y));
     }
   }
 
@@ -36,6 +37,14 @@ export class Rectangle extends Handle<rect> {
     return GetRectMinY(this.handle);
   }
 
+  public get min() {
+    return vec2(this.minX, this.minY);
+  }
+
+  public get max() {
+    return vec2(this.maxX, this.maxY);
+  }
+
   public destroy() {
     RemoveRect(this.handle);
   }
@@ -48,28 +57,16 @@ export class Rectangle extends Handle<rect> {
     EnumItemsInRect(this.handle, Filter(filter), actionFunc);
   }
 
-  public move(newCenterX: number, newCenterY: number) {
-    MoveRectTo(this.handle, newCenterX, newCenterY);
+  public move(newCenter: Vec2) {
+    MoveRectTo(this.handle, newCenter.x, newCenter.y);
   }
 
-  public movePoint(newCenterPoint: Point) {
-    MoveRectToLoc(this.handle, newCenterPoint.handle);
-  }
-
-  public setRect(minX: number, minY: number, maxX: number, maxY: number) {
-    SetRect(this.handle, minX, minY, maxX, maxY);
-  }
-
-  public setRectFromPoint(min: Point, max: Point) {
-    SetRectFromLoc(this.handle, min.handle, max.handle);
+  public setRect(min: Vec2, max: Vec2) {
+    SetRect(this.handle, min.x, min.y, max.x, max.y);
   }
 
   public static fromHandle(handle: rect): Rectangle {
     return this.getObject(handle);
-  }
-
-  public static fromPoint(min: Point, max: Point) {
-    return this.fromHandle(RectFromLoc(min.handle, max.handle));
   }
 
   // Returns full map bounds, including unplayable borders, in world coordinates

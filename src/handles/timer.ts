@@ -4,13 +4,16 @@ import {Handle} from './handle';
 
 // doAfter uses a timer to perform an action after a given duration. Returns a cancelation function,
 // which can be called to cancel the callback.
-export function doAfter(timeout: number, callback: () => void): () => void {
+export function doAfter(timeout: number, callback: () => void) {
   const t = Timer.get();
   t.start(timeout, () => {
     t.release();
     callback();
   });
-  return () => t.release();
+  return {
+    cancel: () => t.release(),
+    timer: t,
+  };
 }
 
 // doPeriodically uses a timer to periodically call your callback function, passing the callback a
@@ -21,7 +24,7 @@ export function doPeriodically(
   interval: number,
   callback: (cancel: () => void) => void,
   final?: () => void
-): () => void {
+) {
   const t = Timer.get();
   const cancel = () => {
     if (final) {
@@ -32,7 +35,10 @@ export function doPeriodically(
   t.startPeriodic(interval, () => {
     callback(cancel);
   });
-  return cancel;
+  return {
+    cancel,
+    timer: t,
+  };
 }
 
 export function doPeriodicallyCounted(
@@ -40,7 +46,7 @@ export function doPeriodicallyCounted(
   count: number,
   callback: (cancel: () => void, index: number) => void,
   final?: () => void
-): () => void {
+) {
   const t = Timer.get();
   const cancel = () => {
     if (final) {
@@ -56,7 +62,10 @@ export function doPeriodicallyCounted(
     }
     callback(cancel, i);
   });
-  return cancel;
+  return {
+    cancel,
+    timer: t,
+  };
 }
 
 export class Timer extends Handle<timer> {

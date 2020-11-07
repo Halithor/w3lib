@@ -1,5 +1,6 @@
 /** @noSelfInFile **/
 
+import {Vec2} from '../math';
 import {Force} from './force';
 import {Handle} from './handle';
 import {Point} from './point';
@@ -110,16 +111,16 @@ export class MapPlayer extends Handle<player> {
     );
   }
 
-  public coordsFogged(x: number, y: number) {
-    return IsFoggedToPlayer(x, y, this.handle);
+  public isFogged(pos: Vec2) {
+    return IsFoggedToPlayer(pos.x, pos.y, this.handle);
   }
 
-  public coordsMasked(x: number, y: number) {
-    return IsMaskedToPlayer(x, y, this.handle);
+  public isMasked(pos: Vec2) {
+    return IsMaskedToPlayer(pos.x, pos.y, this.handle);
   }
 
-  public coordsVisible(x: number, y: number) {
-    return IsVisibleToPlayer(x, y, this.handle);
+  public isVisible(pos: Vec2) {
+    return IsVisibleToPlayer(pos.x, pos.y, this.handle);
   }
 
   public cripple(toWhichPlayers: Force, flag: boolean) {
@@ -193,18 +194,6 @@ export class MapPlayer extends Handle<player> {
 
   public isSelectable() {
     return GetPlayerSelectable(this.handle);
-  }
-
-  public pointFogged(whichPoint: Point) {
-    return IsLocationFoggedToPlayer(whichPoint.handle, this.handle);
-  }
-
-  public pointMasked(whichPoint: Point) {
-    return IsLocationMaskedToPlayer(whichPoint.handle, this.handle);
-  }
-
-  public pointVisible(whichPoint: Point) {
-    return IsLocationVisibleToPlayer(whichPoint.handle, this.handle);
   }
 
   public remove(gameResult: playergameresult) {

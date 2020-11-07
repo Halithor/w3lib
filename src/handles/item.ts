@@ -10,14 +10,14 @@ import {Widget} from './widget';
 export class Item extends Widget {
   public readonly handle!: item;
 
-  constructor(itemId: ItemId, x: number, y: number, skinId?: number) {
+  constructor(itemId: ItemId, pos: Vec2, skinId?: number) {
     if (Handle.initFromHandle()) {
       super();
     } else {
       super(
         skinId
-          ? BlzCreateItemWithSkin(itemId.value, x, y, skinId)
-          : CreateItem(itemId.value, x, y)
+          ? BlzCreateItemWithSkin(itemId.value, pos.x, pos.y, skinId)
+          : CreateItem(itemId.value, pos.x, pos.y)
       );
     }
   }
