@@ -1,5 +1,5 @@
-import {Destructable, Item, Trigger, Unit, Widget} from '../handles';
-import {vec2, Vec2} from '../math';
+import {Destructable, Item, Trigger, Unit} from '../handles/index';
+import {vec2, Vec2} from '../math/index';
 
 // EventHandler is a generic class that facilitates the definition of well
 // typed event handlers and allows their cancelation. It uses a object to
@@ -42,7 +42,7 @@ const pua = new EventHandler<[u: Unit, target: Unit]>(
     return [Unit.fromHandle(GetTriggerUnit()), Unit.fromHandle(GetAttacker())];
   }
 );
-export function onPlayerUnitAttacked(
+export function onAnyUnitAttacked(
   callback: (u: Unit, attacker: Unit) => void
 ): {cancel: () => void} {
   return pua.addHandler(callback);
