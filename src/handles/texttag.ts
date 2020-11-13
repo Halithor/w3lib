@@ -1,4 +1,5 @@
-import {vec2, Vec2, vec3, Vec3} from '../math';
+import {color, Color} from '../helper/index';
+import {vec2, Vec2, vec3, Vec3} from '../math/index';
 import {Handle} from './handle';
 import {MapPlayer} from './player';
 import {Unit} from './unit';
@@ -7,16 +8,8 @@ export class TextTag extends Handle<texttag> {
   // properties needed to be able to update one aspect at a time.
   private _text: string;
   private _size: number;
-  private _color: Vec3;
-  private _alpha: number;
 
-  constructor(
-    message: string,
-    pos: Vec3,
-    size: number,
-    color: Vec3,
-    transparency: number
-  ) {
+  constructor(message: string, pos: Vec3, size: number, color: Color) {
     if (Handle.initFromHandle()) {
       super();
     } else {
@@ -24,19 +17,29 @@ export class TextTag extends Handle<texttag> {
     }
     this._size = size;
     this._text = message;
-    this._color = color;
-    this._alpha = transparency;
     SetTextTagText(this.handle, message, size);
     SetTextTagPos(this.handle, pos.x, pos.y, pos.z);
-    SetTextTagColor(this.handle, color.x, color.y, color.z, transparency);
+    SetTextTagColor(
+      this.handle,
+      color.red,
+      color.green,
+      color.blue,
+      color.alpha
+    );
   }
 
   set age(value: number) {
     SetTextTagAge(this.handle, value);
   }
 
-  set color(value: Vec3) {
-    SetTextTagColor(this.handle, value.x, value.y, value.z, this._alpha);
+  set color(value: Color) {
+    SetTextTagColor(
+      this.handle,
+      value.red,
+      value.green,
+      value.blue,
+      value.alpha
+    );
   }
 
   set fadepoint(value: number) {
@@ -69,17 +72,6 @@ export class TextTag extends Handle<texttag> {
     SetTextTagText(this.handle, message, this._size);
   }
 
-  set transparency(value: number) {
-    this._alpha = value;
-    SetTextTagColor(
-      this.handle,
-      this._color.x,
-      this._color.y,
-      this._color.z,
-      value
-    );
-  }
-
   set velocity(value: Vec2) {
     SetTextTagVelocity(this.handle, value.x, value.y);
   }
@@ -103,13 +95,7 @@ const fontSize = 0.024 / 0.0023;
 const offset = vec2(16, 0);
 
 export function standardTextTag(pos: Vec2, text: string): TextTag {
-  const tt = new TextTag(
-    text,
-    pos.withZZero(),
-    fontSize,
-    vec3(255, 255, 255),
-    255
-  );
+  const tt = new TextTag(text, pos.withZZero(), fontSize, color(255, 255, 255));
   tt.fadepoint = 2.0;
   tt.lifespan = 3.0;
   tt.velocity = vec2(0, 0.03);
@@ -121,7 +107,7 @@ export function standardTextTag(pos: Vec2, text: string): TextTag {
 export function createCriticalStrikeTextTag(u: Unit, damage: number): TextTag {
   const msg = damage.toString() + '!';
   const tt = standardTextTag(u.pos, msg);
-  tt.color = vec3(255, 0, 0);
+  tt.color = color(255, 0, 0);
   tt.velocity = vec2(0, 0.04);
   tt.lifespan = 5.0;
   return tt;
@@ -135,7 +121,7 @@ export function createGoldBountyTextTag(
   const msg = '+' + bounty.toString();
   const offsetPos = pos.sub(offset);
   const tt = standardTextTag(offsetPos, msg);
-  tt.color = vec3(255, 220, 0);
+  tt.color = color(255, 220, 0);
   if (receiver) {
     tt.setVisibleForPlayer(receiver, true);
   }
@@ -150,7 +136,7 @@ export function createLumberBountyTextTag(
   const msg = '+' + bounty.toString();
   const offsetPos = pos.sub(offset);
   const tt = standardTextTag(offsetPos, msg);
-  tt.color = vec3(0, 200, 80);
+  tt.color = color(0, 200, 80);
   if (receiver) {
     tt.setVisibleForPlayer(receiver, true);
   }
@@ -161,7 +147,7 @@ export function createManaBurnTextTag(pos: Vec2, damage: number) {
   const msg = '-' + damage.toString();
   const offsetPos = pos.sub(offset);
   const tt = standardTextTag(offsetPos, msg);
-  tt.color = vec3(82, 82, 255);
+  tt.color = color(82, 82, 255);
   tt.velocity = vec2(0, 0.04);
   tt.lifespan = 5;
 }
@@ -174,7 +160,7 @@ export function createMissTextTag(origin: Unit | Vec2): TextTag {
     pos = origin;
   }
   const tt = standardTextTag(pos, 'miss');
-  tt.color = vec3(255, 0, 0);
+  tt.color = color(255, 0, 0);
   tt.fadepoint = 1;
   return tt;
 }
