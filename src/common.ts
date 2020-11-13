@@ -11,7 +11,7 @@ export class UnitId {
     return this._value;
   }
 
-  public equals(other: UnitId) {
+  equals(other: UnitId) {
     return this.value == other.value;
   }
 }
@@ -24,7 +24,7 @@ export class ItemId {
     return this._value;
   }
 
-  public equals(other: UnitId) {
+  equals(other: UnitId) {
     return this.value == other.value;
   }
 }
@@ -37,7 +37,7 @@ export class DestId {
     return this._value;
   }
 
-  public equals(other: UnitId) {
+  equals(other: UnitId) {
     return this.value == other.value;
   }
 }
@@ -50,7 +50,7 @@ export class AbilId {
     return this._value;
   }
 
-  public equals(other: UnitId) {
+  equals(other: UnitId) {
     return this.value == other.value;
   }
 }

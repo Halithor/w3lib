@@ -1,3 +1,4 @@
+import {AbilId} from '../common';
 import {Destructable, Item, Trigger, Unit} from '../handles/index';
 import {addScriptHook, W3TS_HOOK} from '../hooks/index';
 import {vec2, Vec2} from '../math/index';
@@ -41,7 +42,7 @@ class EventHandler<T extends any[]> {
 let pua: EventHandler<[u: Unit, target: Unit]>;
 let puse: EventHandler<[
   caster: Unit,
-  abilityId: number,
+  abilityId: AbilId,
   target: Unit | Item | Destructable | Vec2
 ]>;
 
@@ -56,10 +57,10 @@ addScriptHook(W3TS_HOOK.MAIN_BEFORE, () => {
     }
   );
   puse = new EventHandler<
-    [caster: Unit, abilityId: number, target: Unit | Item | Destructable | Vec2]
+    [caster: Unit, abilityId: AbilId, target: Unit | Item | Destructable | Vec2]
   >(new Trigger().registerAnyUnitEvent(EVENT_PLAYER_UNIT_SPELL_EFFECT), () => {
     const caster = Unit.fromHandle(GetSpellAbilityUnit());
-    const abilityId = GetSpellAbilityId();
+    const abilityId = new AbilId(GetSpellAbilityId());
 
     const u = GetSpellTargetUnit();
     if (u) {
@@ -86,7 +87,7 @@ export function onAnyUnitAttacked(
 export function onAnyUnitSpellEffect(
   cb: (
     caster: Unit,
-    abilityId: number,
+    abilityId: AbilId,
     target: Unit | Item | Destructable | Vec2
   ) => void
 ) {
