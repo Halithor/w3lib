@@ -4,6 +4,9 @@ import {Vec2} from '../math/index';
 import {Force} from './force';
 import {Handle} from './handle';
 
+export const Players: MapPlayer[] = [];
+const localPlayer = GetLocalPlayer();
+
 export class MapPlayer extends Handle<player> {
   private constructor(index: number) {
     if (Handle.initFromHandle()) {
@@ -43,6 +46,10 @@ export class MapPlayer extends Handle<player> {
 
   public get id() {
     return GetPlayerId(this.handle);
+  }
+
+  get isLocalPlayer(): boolean {
+    return localPlayer == this.handle;
   }
 
   public get name() {
@@ -271,4 +278,8 @@ export class MapPlayer extends Handle<player> {
   public static fromLocal() {
     return this.fromHandle(GetLocalPlayer());
   }
+}
+
+for (let i = 0; i < bj_MAX_PLAYER_SLOTS; i++) {
+  Players[i] = MapPlayer.fromHandle(Player(i));
 }
