@@ -20,6 +20,10 @@ export class Rectangle extends Handle<rect> {
     return GetRectCenterY(this.handle);
   }
 
+  public get center(): Vec2 {
+    return vec2(this.centerX, this.centerY);
+  }
+
   public get maxX() {
     return GetRectMaxX(this.handle);
   }
