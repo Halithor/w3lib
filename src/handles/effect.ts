@@ -1,6 +1,6 @@
 /** @noSelfInFile **/
 
-import {Vec2, Vec3, vec3} from '../math/index';
+import {Angle, Vec2, Vec3, vec3} from '../math/index';
 import {Handle} from './handle';
 import {MapPlayer} from './player';
 import {Point} from './point';
@@ -123,4 +123,20 @@ export class Effect extends Handle<effect> {
   public static fromHandle(handle: effect): Effect {
     return this.getObject(handle);
   }
+}
+
+export function flashEffect(
+  path: string,
+  pos: Vec2,
+  scale?: number,
+  angle?: Angle
+) {
+  let e = AddSpecialEffect(path, pos.x, pos.y);
+  if (scale) {
+    BlzSetSpecialEffectScale(e, scale);
+  }
+  if (angle) {
+    BlzSetSpecialEffectYaw(e, angle.radians);
+  }
+  DestroyEffect(e);
 }

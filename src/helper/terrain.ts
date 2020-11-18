@@ -17,6 +17,10 @@ export function setTerrainType(
   SetTerrainType(pos.x, pos.y, terrainType, variation, area, shape);
 }
 
+export function getTerrainType(pos: Vec2): TerrainType {
+  return GetTerrainType(pos.x, pos.y);
+}
+
 export class TerrainTypes {
   // Lordaeron Summer
   public static lordaeronSummerDirt: TerrainType = FourCC('Ldrt');
