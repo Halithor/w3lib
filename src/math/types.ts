@@ -23,7 +23,7 @@ export class Angle {
   }
 
   public static random(): Angle {
-    return new Angle(GetRandomReal(0, Math.PI * 2));
+    return new Angle(GetRandomReal(0, math.pi * 2));
   }
 
   public get degrees() {
