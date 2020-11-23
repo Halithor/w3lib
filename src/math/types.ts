@@ -122,6 +122,8 @@ export class Vec2 {
     return new Vec2(this.x, this.y);
   }
 
+  // rotate this vector around the Z axis (up from the ground). This is 
+  // clockwise along the ground.
   public rotate(angle: Angle): Vec2 {
     const cos = angle.cos;
     const sin = angle.sin;
@@ -204,6 +206,42 @@ export class Vec3 {
 
   public withoutZ() {
     return new Vec2(this.x, this.y);
+  }
+
+  public add(other: Vec3): Vec3 {
+    return new Vec3(this.x + other.x, this.y + other.y, this.z + other.z);
+  }
+
+  public sub(other: Vec3): Vec3 {
+    return new Vec3(this.x - other.x, this.y - other.y, this.z - other.z);
+  }
+
+  public scale(factor: number): Vec3 {
+    return new Vec3(this.x * factor, this.y * factor, this.z * factor);
+  }
+
+  public mul(other: Vec3): Vec3 {
+    return new Vec3(this.x * other.x, this.y * other.y, this.z * other.z);
+  }
+
+  public dot(other: Vec3): number {
+    return this.x * other.x + this.y * other.y + this.z * other.z;
+  }
+
+  public get length(): number {
+    return SquareRoot(this.x * this.x + this.y * this.y + this.z * this.z);
+  }
+
+  public get lengthSq(): number {
+    return this.x * this.x + this.y * this.y + this.z * this.z;
+  }
+  
+  public get norm(): Vec3 {
+    const len = this.length;
+    if (len > 0) {
+      return new Vec3(this.x / len, this.y / len, this.z / len);
+    }
+    return new Vec3(this.x, this.y, this.z);
   }
 }
 
