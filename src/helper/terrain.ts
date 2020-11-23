@@ -27,7 +27,7 @@ export function getTerrainType(pos: Vec2): TerrainType {
 let walkableItem: Item;
 let walkableRect: Rectangle;
 const maxRangeSq = 100;
-function isTerrainWalkable(pos: Vec2): boolean {
+export function isTerrainWalkable(pos: Vec2): boolean {
   // First hide items in the way
   const itemsInWay: Item[] = [];
   walkableRect.move(pos);
