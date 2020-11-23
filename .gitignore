@@ -1,6 +1,7 @@
 package-lock.json
 
 src/**/*.js
+src/**/*.d.ts
 
 # Logs
 logs
