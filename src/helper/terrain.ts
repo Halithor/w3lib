@@ -1,6 +1,6 @@
 import {itemId} from '../common';
-import {Item, Rectangle} from '../handles';
-import {addScriptHook, W3TS_HOOK} from '../hooks';
+import {Item, Rectangle} from '../handles/index';
+import {addScriptHook, W3TS_HOOK} from '../hooks/index';
 import {vec2, Vec2} from '../math/index';
 
 export type TerrainType = number;
