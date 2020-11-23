@@ -23,7 +23,7 @@ export class Angle {
   }
 
   public static random(): Angle {
-    return new Angle(GetRandomReal(0, math.pi * 2));
+    return new Angle(GetRandomReal(0, Math.PI * 2));
   }
 
   public get degrees() {
@@ -122,7 +122,7 @@ export class Vec2 {
     return new Vec2(this.x, this.y);
   }
 
-  // rotate this vector around the Z axis (up from the ground). This is 
+  // rotate this vector around the Z axis (up from the ground). This is
   // clockwise along the ground.
   public rotate(angle: Angle): Vec2 {
     const cos = angle.cos;
@@ -235,7 +235,7 @@ export class Vec3 {
   public get lengthSq(): number {
     return this.x * this.x + this.y * this.y + this.z * this.z;
   }
-  
+
   public get norm(): Vec3 {
     const len = this.length;
     if (len > 0) {
