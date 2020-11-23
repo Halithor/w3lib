@@ -1,9 +1,7 @@
 /** @noSelfInFile **/
 
 import {vec2, Vec2} from '../math/index';
-import {Destructable} from './destructable';
 import {Handle} from './handle';
-import {Item} from './item';
 
 export class Rectangle extends Handle<rect> {
   constructor(min: Vec2, max: Vec2) {
@@ -54,18 +52,12 @@ export class Rectangle extends Handle<rect> {
     RemoveRect(this.handle);
   }
 
-  public enumDestructables(callback: (d: Destructable) => void) {
-    EnumDestructablesInRect(this.handle, null, () => {
-      const d = Destructable.fromHandle(GetEnumDestructable());
-      callback(d);
-    });
+  public enumDestructables(filter: () => boolean, actionFunc: () => void) {
+    EnumDestructablesInRect(this.handle, Filter(filter), actionFunc);
   }
 
-  public enumItems(callback: (i: Item) => void) {
-    EnumItemsInRect(this.handle, null, () => {
-      const i = Item.fromHandle(GetEnumItem());
-      callback(i);
-    });
+  public enumItems(filter: () => boolean, actionFunc: () => void) {
+    EnumItemsInRect(this.handle, Filter(filter), actionFunc);
   }
 
   public move(newCenter: Vec2) {
