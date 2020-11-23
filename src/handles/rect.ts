@@ -52,12 +52,18 @@ export class Rectangle extends Handle<rect> {
     RemoveRect(this.handle);
   }
 
-  public enumDestructables(filter: () => boolean, actionFunc: () => void) {
-    EnumDestructablesInRect(this.handle, Filter(filter), actionFunc);
+  public enumDestructables(
+    filter: boolexpr | (() => boolean) | null,
+    actionFunc: () => void
+  ) {
+    EnumDestructablesInRect(this.handle, filter, actionFunc);
   }
 
-  public enumItems(filter: () => boolean, actionFunc: () => void) {
-    EnumItemsInRect(this.handle, Filter(filter), actionFunc);
+  public enumItems(
+    filter: boolexpr | (() => boolean) | null,
+    actionFunc: () => void
+  ) {
+    EnumItemsInRect(this.handle, filter, actionFunc);
   }
 
   public move(newCenter: Vec2) {

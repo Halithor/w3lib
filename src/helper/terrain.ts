@@ -1,4 +1,7 @@
-import {Vec2} from '../math/index';
+import {itemId} from '../common';
+import {Item, Rectangle} from '../handles';
+import {addScriptHook, W3TS_HOOK} from '../hooks';
+import {vec2, Vec2} from '../math/index';
 
 export type TerrainType = number;
 
@@ -20,6 +23,38 @@ export function setTerrainType(
 export function getTerrainType(pos: Vec2): TerrainType {
   return GetTerrainType(pos.x, pos.y);
 }
+
+let walkableItem: Item;
+let walkableRect: Rectangle;
+const maxRangeSq = 100;
+function isTerrainWalkable(pos: Vec2): boolean {
+  // First hide items in the way
+  const itemsInWay: Item[] = [];
+  walkableRect.move(pos);
+  walkableRect.enumItems(null, () => {
+    const i = Item.fromHandle(GetEnumItem());
+    i.visible = false;
+    itemsInWay.push(i);
+  });
+
+  walkableItem.pos = pos; // unhides the item
+  const newPos = walkableItem.pos;
+  walkableItem.visible = false; // hide it again
+  // unhide the items in the way
+  itemsInWay.forEach(i => {
+    i.visible = true;
+  });
+  return (
+    newPos.distanceToSq(pos) < maxRangeSq &&
+    !IsTerrainPathable(pos.x, pos.y, PATHING_TYPE_WALKABILITY)
+  );
+}
+
+addScriptHook(W3TS_HOOK.MAIN_BEFORE, () => {
+  walkableItem = new Item(itemId('wolg'), vec2(0, 0));
+  walkableItem.visible = false;
+  walkableRect = new Rectangle(vec2(0, 0), vec2(128, 128));
+});
 
 export class TerrainTypes {
   // Lordaeron Summer
