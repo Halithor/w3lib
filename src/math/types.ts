@@ -189,19 +189,7 @@ export class Vec2 {
 }
 
 export class Vec3 {
-  constructor(private _x: number, private _y: number, private _z: number) {}
-
-  public get x() {
-    return this._x;
-  }
-
-  public get y() {
-    return this._y;
-  }
-
-  public get z() {
-    return this._z;
-  }
+  constructor(readonly x: number, readonly y: number, readonly z: number) {}
 
   public withoutZ() {
     return new Vec2(this.x, this.y);
@@ -280,6 +268,20 @@ export class Vec3 {
 
   public moveTowards(other: Vec3, dist: number) {
     return this.add(this.normalizedPointerTo(other).scale(dist));
+  }
+
+  public project(other: Vec3) {
+    const l = other.lengthSq;
+    if (l == 0) {
+      return new Vec3(0, 0, 0);
+    }
+    const f = this.dot(other) / l;
+    return new Vec3(other.x / f, other.y / f, other.z / f);
+  }
+
+  public angleTo(other: Vec3): Angle {
+    const v = this.dot(other) / (this.length * other.length);
+    return radians(Acos(v));
   }
 
   public toString() {
