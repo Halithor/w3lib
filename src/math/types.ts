@@ -227,6 +227,14 @@ export class Vec3 {
     return this.x * other.x + this.y * other.y + this.z * other.z;
   }
 
+  public cross(other: Vec3) {
+    return new Vec3(
+      this.y * other.z - this.z * other.y,
+      this.z * other.x - this.x * other.z,
+      this.x * other.y - this.y * other.x
+    );
+  }
+
   public get length(): number {
     return SquareRoot(this.x * this.x + this.y * this.y + this.z * this.z);
   }
@@ -241,6 +249,49 @@ export class Vec3 {
       return new Vec3(this.x / len, this.y / len, this.z / len);
     }
     return new Vec3(this.x, this.y, this.z);
+  }
+
+  // returns a normalized vector in the direction of the
+  // target. When the target and origin vector are equal, returns the x-axis
+  // unit vector.
+  public normalizedPointerTo(other: Vec3) {
+    const v = other.sub(this).norm;
+    if (v.length == 0) {
+      return new Vec3(1, 0, 0);
+    }
+    return v;
+  }
+
+  public distanceTo(other: Vec3) {
+    return other.sub(this).length;
+  }
+
+  public distanceToSq(other: Vec3) {
+    return other.sub(this).lengthSq;
+  }
+
+  public polarProject(dist: number, angleGround: Angle, angleAir: Angle) {
+    return new Vec3(
+      this.x + dist * angleGround.cos * angleAir.sin,
+      this.y + dist * angleGround.sin * angleAir.sin,
+      this.z + dist * angleAir.cos
+    );
+  }
+
+  public moveTowards(other: Vec3, dist: number) {
+    return this.add(this.normalizedPointerTo(other).scale(dist));
+  }
+
+  public toString() {
+    return (
+      '(' +
+      this.x.toString() +
+      ', ' +
+      this.y.toString() +
+      ',' +
+      this.z.toString() +
+      ')'
+    );
   }
 }
 
