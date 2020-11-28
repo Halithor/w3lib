@@ -1,5 +1,5 @@
 import {AbilId} from '../common';
-import {Destructable, Item, Trigger, Unit} from '../handles/index';
+import {Destructable, Item, Region, Trigger, Unit} from '../handles/index';
 import {addScriptHook, W3TS_HOOK} from '../hooks/index';
 import {vec2, Vec2} from '../math/index';
 
@@ -40,11 +40,9 @@ class EventHandler<T extends any[]> {
 
 // Declare all the event handlers here, to be initialized in the pre-main.
 let pua: EventHandler<[u: Unit, target: Unit]>;
-let puse: EventHandler<[
-  caster: Unit,
-  abilityId: AbilId,
-  target: Unit | Item | Destructable | Vec2
-]>;
+let puse: EventHandler<
+  [caster: Unit, abilityId: AbilId, target: Unit | Item | Destructable | Vec2]
+>;
 
 addScriptHook(W3TS_HOOK.MAIN_BEFORE, () => {
   pua = new EventHandler<[u: Unit, target: Unit]>(
@@ -92,4 +90,16 @@ export function onAnyUnitSpellEffect(
   ) => void
 ) {
   return puse.addHandler(cb);
+}
+
+export function onAnyUnitEntersRegion(
+  region: Region,
+  callback: (u: Unit) => void
+) {
+  // TODO cleanup after cancelation; reuse for the same region
+  const trg = new Trigger().registerEnterRegion(region.handle, null);
+  const handler = new EventHandler<[entered: Unit]>(trg, () => {
+    return [Unit.fromHandle(GetEnteringUnit())];
+  });
+  return handler.addHandler(callback);
 }
