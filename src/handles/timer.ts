@@ -53,12 +53,14 @@ export function doPeriodicallyCounted(
       final();
     }
     t.release();
+    print('release')
   };
   let i = 0;
   t.startPeriodic(interval, () => {
     i++;
     if (i > count) {
       cancel();
+      return
     }
     callback(cancel, i);
   });
@@ -76,7 +78,7 @@ export class Timer extends Handle<timer> {
   public static get(): Timer {
     if (Timer.freeTimersCount > 0) {
       Timer.freeTimersCount--;
-      Timer.freeTimers[Timer.freeTimersCount].freed = true;
+      Timer.freeTimers[Timer.freeTimersCount].freed = false;
       return Timer.freeTimers[Timer.freeTimersCount];
     } else {
       return new Timer();

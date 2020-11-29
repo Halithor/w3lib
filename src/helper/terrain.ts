@@ -1,6 +1,4 @@
-import {itemId} from '../common';
 import {Item, Rectangle} from '../handles/index';
-import {addScriptHook, W3TS_HOOK} from '../hooks/index';
 import {vec2, Vec2} from '../math/index';
 
 export type TerrainType = number;
@@ -24,37 +22,75 @@ export function getTerrainType(pos: Vec2): TerrainType {
   return GetTerrainType(pos.x, pos.y);
 }
 
-let walkableItem: Item;
-let walkableRect: Rectangle;
-const maxRangeSq = 100;
 export function isTerrainWalkable(pos: Vec2): boolean {
-  // First hide items in the way
-  const itemsInWay: Item[] = [];
-  walkableRect.move(pos);
-  walkableRect.enumItems(null, () => {
-    const i = Item.fromHandle(GetEnumItem());
-    i.visible = false;
-    itemsInWay.push(i);
-  });
+  const maxRangeSq = 100;
+  // const dummyItem = new Item(itemId('wolg'), vec2(0, 0));
+  // dummyItem.visible = false;
+  // const itemSearchRect = new Rectangle(vec2(0, 0), vec2(128, 128));
 
-  walkableItem.pos = pos; // unhides the item
-  const newPos = walkableItem.pos;
-  walkableItem.visible = false; // hide it again
-  // unhide the items in the way
+  // First hide items in the way.
+  const itemsInWay: Item[] = [];
+  // itemSearchRect.move(pos);
+  // itemSearchRect.enumItems(null, () => {
+  //   const i = Item.fromHandle(GetEnumItem());
+  //   i.visible = false;
+  //   itemsInWay.push(i);
+  // });
+  // dummyItem.pos = pos; // Unhides the item
+  // const newPos = dummyItem.pos;
+  const newPos = pos;
+  // dummyItem.visible = false; // hide it again
+  // dummyItem.destroy();
+
+  // Unhide items in the way
   itemsInWay.forEach(i => {
     i.visible = true;
   });
+
   return (
     newPos.distanceToSq(pos) < maxRangeSq &&
     !IsTerrainPathable(pos.x, pos.y, PATHING_TYPE_WALKABILITY)
   );
 }
 
-addScriptHook(W3TS_HOOK.MAIN_BEFORE, () => {
-  walkableItem = new Item(itemId('wolg'), vec2(0, 0));
-  walkableItem.visible = false;
-  walkableRect = new Rectangle(vec2(0, 0), vec2(128, 128));
-});
+// let walkableItem: Item;
+// let walkableRect: Rectangle;
+// const maxRangeSq = 100;
+// export function isTerrainWalkable(pos: Vec2): boolean {
+//   // if (!walkableItem) {
+//   //   walkableItem = new Item(itemId('wolf'), vec2(0, 0));
+//   //   walkableItem.visible = false;
+//   // }
+//   // if (!walkableRect) {
+//   //   walkableRect = new Rectangle(vec2(0, 0), vec2(128, 128));
+//   // }
+//   // First hide items in the way
+//   const itemsInWay: Item[] = [];
+//   walkableRect.move(pos);
+//   walkableRect.enumItems(null, () => {
+//     const i = Item.fromHandle(GetEnumItem());
+//     i.visible = false;
+//     itemsInWay.push(i);
+//   });
+
+//   walkableItem.pos = pos; // unhides the item
+//   const newPos = walkableItem.pos;
+//   walkableItem.visible = false; // hide it again
+//   // unhide the items in the way
+//   itemsInWay.forEach(i => {
+//     i.visible = true;
+//   });
+//   return (
+//     newPos.distanceToSq(pos) < maxRangeSq &&
+//     !IsTerrainPathable(pos.x, pos.y, PATHING_TYPE_WALKABILITY)
+//   );
+// }
+
+// addScriptHook(W3TS_HOOK.MAIN_AFTER, () => {
+//   const walkableItem = new Item(itemId('wolg'), vec2(0, 0));
+//   walkableItem.visible = false;
+//   const walkableRect = new Rectangle(vec2(0, 0), vec2(128, 128));
+// });
 
 export class TerrainTypes {
   // Lordaeron Summer

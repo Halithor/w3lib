@@ -32,66 +32,115 @@ export class Group extends Handle<group> {
     DestroyGroup(this.handle);
   }
 
-  public enumUnitsInRange(pos: Vec2, radius: number, filter: () => boolean) {
-    GroupEnumUnitsInRange(this.handle, pos.x, pos.y, radius, Filter(filter));
+  public enumUnitsInRange(
+    pos: Vec2,
+    radius: number,
+    filter: (() => boolean) | null
+  ) {
+    if (filter != null) {
+      GroupEnumUnitsInRange(this.handle, pos.x, pos.y, radius, Filter(filter));
+    } else {
+      GroupEnumUnitsInRange(this.handle, pos.x, pos.y, radius, null);
+    }
   }
 
   public enumUnitsInRangeCounted(
     pos: Vec2,
     radius: number,
-    filter: () => boolean,
+    filter: (() => boolean) | null,
     countLimit: number
   ) {
-    GroupEnumUnitsInRangeCounted(
-      this.handle,
-      pos.x,
-      pos.y,
-      radius,
-      Filter(filter),
-      countLimit
-    );
+    if (filter != null) {
+      GroupEnumUnitsInRangeCounted(
+        this.handle,
+        pos.x,
+        pos.y,
+        radius,
+        Filter(filter),
+        countLimit
+      );
+    } else {
+      GroupEnumUnitsInRangeCounted(
+        this.handle,
+        pos.x,
+        pos.y,
+        radius,
+        null,
+        countLimit
+      );
+    }
   }
 
-  public enumUnitsInRect(r: Rectangle, filter: () => boolean) {
-    GroupEnumUnitsInRect(this.handle, r.handle, Filter(filter));
+  public enumUnitsInRect(r: Rectangle, filter: (() => boolean) | null) {
+    if (filter != null) {
+      GroupEnumUnitsInRect(this.handle, r.handle, Filter(filter));
+    } else {
+      GroupEnumUnitsInRect(this.handle, r.handle, null);
+    }
   }
 
   public enumUnitsInRectCounted(
     r: Rectangle,
-    filter: () => boolean,
+    filter: (() => boolean) | null,
     countLimit: number
   ) {
-    GroupEnumUnitsInRectCounted(
-      this.handle,
-      r.handle,
-      Filter(filter),
-      countLimit
-    );
+    if (filter != null) {
+      GroupEnumUnitsInRectCounted(
+        this.handle,
+        r.handle,
+        Filter(filter),
+        countLimit
+      );
+    } else {
+      GroupEnumUnitsInRectCounted(this.handle, r.handle, null, countLimit);
+    }
   }
 
-  public enumUnitsOfPlayer(whichPlayer: MapPlayer, filter: () => boolean) {
-    GroupEnumUnitsOfPlayer(this.handle, whichPlayer.handle, Filter(filter));
+  public enumUnitsOfPlayer(
+    whichPlayer: MapPlayer,
+    filter: (() => boolean) | null
+  ) {
+    if (filter != null) {
+      GroupEnumUnitsOfPlayer(this.handle, whichPlayer.handle, Filter(filter));
+    } else {
+      GroupEnumUnitsOfPlayer(this.handle, whichPlayer.handle, null);
+    }
   }
 
-  public enumUnitsOfType(unitName: string, filter: () => boolean) {
-    GroupEnumUnitsOfType(this.handle, unitName, Filter(filter));
+  public enumUnitsOfType(unitName: string, filter: (() => boolean) | null) {
+    if (filter != null) {
+      GroupEnumUnitsOfType(this.handle, unitName, Filter(filter));
+    } else {
+      GroupEnumUnitsOfType(this.handle, unitName, null);
+    }
   }
 
   public enumUnitsOfTypeCounted(
     unitName: string,
-    filter: () => boolean,
+    filter: (() => boolean) | null,
     countLimit: number
   ) {
-    GroupEnumUnitsOfTypeCounted(
-      this.handle,
-      unitName,
-      Filter(filter),
-      countLimit
-    );
+    if (filter != null) {
+      GroupEnumUnitsOfTypeCounted(
+        this.handle,
+        unitName,
+        Filter(filter),
+        countLimit
+      );
+    } else {
+      GroupEnumUnitsOfTypeCounted(this.handle, unitName, null, countLimit);
+    }
   }
 
-  public enumUnitsSelected(whichPlayer: MapPlayer, filter: () => boolean) {
-    GroupEnumUnitsSelected(this.handle, whichPlayer.handle, Filter(filter));
+  public enumUnitsSelected(
+    whichPlayer: MapPlayer,
+    filter: (() => boolean) | null
+  ) {
+    if (filter != null) {
+      GroupEnumUnitsSelected(this.handle, whichPlayer.handle, Filter(filter));
+    } else {
+      GroupEnumUnitsSelected(this.handle, whichPlayer.handle, null);
+    }
   }
 
   public for(callback: () => void) {
@@ -157,4 +206,99 @@ export class Group extends Handle<group> {
   public static getFilterUnit(): Unit {
     return Unit.fromHandle(GetFilterUnit());
   }
+}
+
+const maxCollisionSize = 200.0;
+
+function getUnitsInRange(
+  pos: Vec2,
+  radius: number,
+  filter: ((u: Unit) => boolean) | null,
+  collisionSizeFiltering: boolean = false
+): Group {
+  const enumGroup = new Group();
+  if (collisionSizeFiltering) {
+    enumGroup.enumUnitsInRange(pos, radius + maxCollisionSize, () => {
+      const u = Unit.fromHandle(GetFilterUnit());
+      return u.inRange(pos, radius) && (filter != null ? filter(u) : true);
+    });
+  } else {
+    if (filter != null) {
+      enumGroup.enumUnitsInRange(pos, radius, () =>
+        filter(Unit.fromHandle(GetFilterUnit()))
+      );
+    } else {
+      enumGroup.enumUnitsInRange(pos, radius, null);
+    }
+  }
+  return enumGroup;
+}
+
+// Iterate over all units in range calling the callback
+export function forUnitsInRange(
+  pos: Vec2,
+  radius: number,
+  callback: (u: Unit) => void,
+  collisionSizeFiltering: boolean = false
+) {
+  const enumGroup = getUnitsInRange(pos, radius, null, collisionSizeFiltering);
+  enumGroup.for(() => {
+    callback(Unit.fromHandle(GetEnumUnit()));
+  });
+  enumGroup.destroy();
+}
+
+// Get a random unit in range, matching the provided filter.
+export function getRandomUnitInRange(
+  pos: Vec2,
+  radius: number,
+  filter: (u: Unit) => boolean,
+  collisionSizeFiltering: boolean = false
+): Unit {
+  const enumGroup = getUnitsInRange(
+    pos,
+    radius,
+    filter,
+    collisionSizeFiltering
+  );
+  const u = enumGroup.getUnitAt(GetRandomInt(0, enumGroup.size - 1));
+  enumGroup.destroy();
+  return u;
+}
+
+// Executes a callback on the nearest unit
+export function findNearestUnit(
+  pos: Vec2,
+  range: number,
+  filter: ((u: Unit) => boolean) | null
+): Unit {
+  const enumGroup = new Group();
+  let filterUnit = null;
+  if (filter != null) {
+    filterUnit = () => {
+      const u = Unit.fromHandle(GetFilterUnit());
+      return filter(u);
+    };
+  }
+  enumGroup.enumUnitsInRange(pos, range, filterUnit);
+  let nearest: Unit = enumGroup.first;
+  let bestDist = 2147483647; // max int32
+  enumGroup.for(() => {
+    const u = Unit.fromHandle(GetEnumUnit());
+    const distSq = pos.distanceTo(u.pos);
+    if (distSq < bestDist) {
+      bestDist = distSq;
+      nearest = u;
+    }
+  });
+  enumGroup.destroy();
+  return nearest;
+}
+
+export function forUnitsInRect(rct: Rectangle, callback: (u: Unit) => void) {
+  const enumGroup = new Group();
+  enumGroup.enumUnitsInRect(rct, null);
+  enumGroup.for(() => {
+    callback(Unit.fromHandle(GetEnumUnit()));
+  });
 }
