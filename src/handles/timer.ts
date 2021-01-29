@@ -53,14 +53,13 @@ export function doPeriodicallyCounted(
       final();
     }
     t.release();
-    print('release')
   };
   let i = 0;
   t.startPeriodic(interval, () => {
     i++;
     if (i > count) {
       cancel();
-      return
+      return;
     }
     callback(cancel, i);
   });

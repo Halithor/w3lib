@@ -45,4 +45,10 @@ export class Region extends Handle<region> {
   public static fromHandle(handle: region): Region {
     return this.getObject(handle);
   }
+
+  public static fromRect(rect: rect): Region {
+    const reg = new Region();
+    reg.addRect(Rectangle.fromHandle(rect));
+    return reg;
+  }
 }

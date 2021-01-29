@@ -41,12 +41,28 @@ export class Item extends Widget {
     return GetItemLevel(this.handle);
   }
 
+  set iconPath(value: string) {
+    BlzSetItemIconPath(this.handle, value);
+  }
+
   get name() {
     return GetItemName(this.handle);
   }
 
   set name(value: string) {
     BlzSetItemName(this.handle, value);
+  }
+
+  set tooltip(value: string) {
+    BlzSetItemTooltip(this.handle, value);
+  }
+
+  set tooltipExtended(value: string) {
+    BlzSetItemExtendedTooltip(this.handle, value);
+  }
+
+  set description(value: string) {
+    BlzSetItemDescription(this.handle, value);
   }
 
   public get pawnable() {

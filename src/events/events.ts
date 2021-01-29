@@ -1,62 +1,105 @@
+/** @noSelfInFile **/
 import {AbilId} from '../common';
-import {Destructable, Item, Region, Trigger, Unit} from '../handles/index';
+import {
+  Destructable,
+  Item,
+  Rectangle,
+  Region,
+  Trigger,
+  Unit,
+  Widget,
+} from '../handles/index';
 import {addScriptHook, W3TS_HOOK} from '../hooks/index';
 import {vec2, Vec2} from '../math/index';
 
-// EventHandler is a generic class that facilitates the definition of well
-// typed event handlers and allows their cancelation. It uses a object to
-// store the handlers, instead of an array, to facilitate easy removal of
-// registered handlers.
-export class EventHandler<T extends any[]> {
+// Event is a class that represents an event. The event is fired using the
+// `fire` method, which will notify all of the listeners of the event.
+export class Event<T extends any[]> {
   handlers: {[key: number]: (...input: T) => void} = {};
   count: number = 0;
 
-  constructor(readonly extractor: () => T) {}
-
-  handle() {
-    const extracted = this.extractor();
+  fire(...input: T) {
     for (let key in this.handlers) {
-      this.handlers[key](...extracted);
+      this.handlers[key](...input);
     }
   }
 
-  addHandler(handler: (...input: T) => void) {
+  listen(handler: (...input: T) => void) {
     this.count++;
     const index = this.count;
     this.handlers[index] = handler;
     return {
-      cancel: () => {
+      stop: () => {
         this.removeHandler(index);
       },
     };
   }
 
-  removeHandler(index: number) {
+  private removeHandler(index: number) {
     delete this.handlers[index];
+  }
+}
+
+// Global Event is an event that can extract all of the information it needs to
+// fire.
+export class GlobalEvent<T extends any[]> {
+  private event: Event<T> = new Event<T>();
+  constructor(readonly extractor: () => T) {}
+
+  fire() {
+    const extracted = this.extractor();
+    this.event.fire(...extracted);
+  }
+
+  listen(handler: (...input: T) => void) {
+    return this.event.listen(handler);
   }
 }
 
 // teh AKA TriggerEventHandler creates an event handler and registers it for a
 // provided trigger
 function teh<T extends any[]>(trg: Trigger, extractor: () => T) {
-  const handler = new EventHandler(extractor);
-  trg.addAction(() => handler.handle());
-  return handler;
+  const ge = new GlobalEvent<T>(extractor);
+  trg.addAction(() => ge.fire());
+  return ge;
+}
+
+function triggerPUEvent<T extends any[]>(
+  event: playerunitevent,
+  handler: GlobalEvent<T>
+) {
+  const trg = new Trigger().registerAnyUnitEvent(event);
+  trg.addAction(() => handler.fire());
 }
 
 // Declare all the event handlers here, to be initialized in the pre-main.
-let pua: EventHandler<[u: Unit, target: Unit]>;
-let puse: EventHandler<
+let pua: GlobalEvent<[u: Unit, target: Unit]>;
+let puse: GlobalEvent<
   [caster: Unit, abilityId: AbilId, target: Unit | Item | Destructable | Vec2]
 >;
+let eventUnitUsesItem: GlobalEvent<[u: Unit, i: Item]>;
+let eventUnitConstructionStart: GlobalEvent<[constructing: Unit]>;
+let eventUnitConstructionCancel: GlobalEvent<[canceled: Unit]>;
+let eventUnitConstructionFinish: GlobalEvent<[constructed: Unit]>;
+let eventUnitTrainingFinish: GlobalEvent<[trained: Unit, trainer: Unit]>;
 
 export type DamageInfo = {
   damage: number;
   attackType: attacktype;
   damageType: damagetype;
   weaponType: weapontype;
+  isSpell: boolean;
+  isMeleeAttack: boolean;
+  isRangedAttack: boolean;
 };
-let pudamaged: EventHandler<[target: Unit, attacker: Unit, info: DamageInfo]>;
+export let eventAnyUnitDamaged: GlobalEvent<
+  [target: Unit, attacker: Unit, info: DamageInfo]
+>;
+
+export const eventAnyUnitDies = new GlobalEvent<[dying: Unit]>(() => {
+  const dying = Unit.fromHandle(GetDyingUnit());
+  return [dying];
+});
 
 addScriptHook(W3TS_HOOK.MAIN_BEFORE, () => {
   pua = teh<[u: Unit, target: Unit]>(
@@ -89,7 +132,46 @@ addScriptHook(W3TS_HOOK.MAIN_BEFORE, () => {
     return [caster, abilityId, vec2(GetSpellTargetX(), GetSpellTargetY())];
   });
 
-  pudamaged = teh<[target: Unit, attacker: Unit, info: DamageInfo]>(
+  eventUnitUsesItem = teh<[u: Unit, i: Item]>(
+    new Trigger().registerAnyUnitEvent(EVENT_PLAYER_UNIT_USE_ITEM),
+    () => {
+      const u = Unit.fromHandle(GetManipulatingUnit());
+      const i = Item.fromHandle(GetManipulatedItem());
+      return [u, i];
+    }
+  );
+
+  eventUnitConstructionStart = teh<[constructing: Unit]>(
+    new Trigger().registerAnyUnitEvent(EVENT_PLAYER_UNIT_CONSTRUCT_START),
+    () => {
+      const constructing = Unit.fromHandle(GetConstructingStructure());
+      return [constructing];
+    }
+  );
+  eventUnitConstructionCancel = teh<[canceled: Unit]>(
+    new Trigger().registerAnyUnitEvent(EVENT_PLAYER_UNIT_CONSTRUCT_CANCEL),
+    () => {
+      const canceled = Unit.fromHandle(GetCancelledStructure());
+      return [canceled];
+    }
+  );
+  eventUnitConstructionFinish = teh<[constructed: Unit]>(
+    new Trigger().registerAnyUnitEvent(EVENT_PLAYER_UNIT_CONSTRUCT_FINISH),
+    () => {
+      const constructed = Unit.fromHandle(GetConstructedStructure());
+      return [constructed];
+    }
+  );
+  eventUnitTrainingFinish = teh<[trained: Unit, trainer: Unit]>(
+    new Trigger().registerAnyUnitEvent(EVENT_PLAYER_UNIT_TRAIN_FINISH),
+    () => {
+      const trained = Unit.fromHandle(GetTrainedUnit());
+      const trainer = Unit.fromHandle(GetTriggerUnit());
+      return [trained, trainer];
+    }
+  );
+
+  eventAnyUnitDamaged = teh<[target: Unit, attacker: Unit, info: DamageInfo]>(
     new Trigger().registerAnyUnitEvent(EVENT_PLAYER_UNIT_DAMAGED),
     () => {
       const damage = GetEventDamage();
@@ -98,16 +180,42 @@ addScriptHook(W3TS_HOOK.MAIN_BEFORE, () => {
       const damageType = BlzGetEventDamageType();
       const attackType = BlzGetEventAttackType();
       const weaponType = BlzGetEventWeaponType();
-
-      return [target, attacker, {damage, damageType, attackType, weaponType}];
+      let isSpell = attackType == ATTACK_TYPE_NORMAL;
+      let isMeleeAttack = false;
+      let isRangedAttack = false;
+      // Need to use the damage type and attacker unit types to determine the
+      // characteristics of the damage.
+      if (damageType == DAMAGE_TYPE_NORMAL && !isSpell) {
+        isMeleeAttack = attacker.isUnitType(UNIT_TYPE_MELEE_ATTACKER);
+        isRangedAttack = attacker.isUnitType(UNIT_TYPE_RANGED_ATTACKER);
+        if (isMeleeAttack && isRangedAttack) {
+          isMeleeAttack = weaponType != WEAPON_TYPE_WHOKNOWS;
+          isRangedAttack = !isMeleeAttack;
+        }
+      }
+      return [
+        target,
+        attacker,
+        {
+          damage,
+          damageType,
+          attackType,
+          weaponType,
+          isMeleeAttack,
+          isSpell,
+          isRangedAttack,
+        },
+      ];
     }
   );
+
+  triggerPUEvent(EVENT_PLAYER_UNIT_DEATH, eventAnyUnitDies);
 });
 
 export function onAnyUnitAttacked(
   callback: (u: Unit, attacker: Unit) => void
-): {cancel: () => void} {
-  return pua.addHandler(callback);
+): {stop: () => void} {
+  return pua.listen(callback);
 }
 
 export function onAnyUnitSpellEffect(
@@ -117,7 +225,7 @@ export function onAnyUnitSpellEffect(
     target: Unit | Item | Destructable | Vec2
   ) => void
 ) {
-  return puse.addHandler(cb);
+  return puse.listen(cb);
 }
 
 export function onAnyUnitEntersRegion(
@@ -129,7 +237,18 @@ export function onAnyUnitEntersRegion(
   const handler = teh<[entered: Unit]>(trg, () => {
     return [Unit.fromHandle(GetEnteringUnit())];
   });
-  return handler.addHandler(callback);
+  return handler.listen(callback);
+}
+
+export function onAnyUnitLeavesRegion(
+  region: Region,
+  callback: (u: Unit) => void
+) {
+  const trg = new Trigger().registerLeaveRegion(region.handle, null);
+  const handler = teh<[leaving: Unit]>(trg, () => {
+    return [Unit.fromHandle(GetLeavingUnit())];
+  });
+  return handler.listen(callback);
 }
 
 // onAnyUnitDamage registers a callback for whenever a unit recieves damage.
@@ -142,7 +261,7 @@ export function onAnyUnitDamaged(
     DamageInfo: DamageInfo
   ) => DamageInfo | void
 ) {
-  pudamaged.addHandler((target, attacker, info) => {
+  eventAnyUnitDamaged.listen((target, attacker, info) => {
     const updated = cb(target, attacker, info);
     if (updated) {
       BlzSetEventDamage(updated.damage);
@@ -151,4 +270,34 @@ export function onAnyUnitDamaged(
       BlzSetEventWeaponType(updated.weaponType);
     }
   });
+}
+
+export function onAnyUnitUseItem(cb: (user: Unit, item: Item) => void) {
+  return eventUnitUsesItem.listen(cb);
+}
+
+export function onAnyUnitConstructionStart(cb: (constructing: Unit) => void) {
+  return eventUnitConstructionStart.listen(cb);
+}
+
+export function onAnyUnitConstructionCancel(cb: (canceled: Unit) => void) {
+  return eventUnitConstructionCancel.listen(cb);
+}
+
+export function onAnyUnitConstructionFinish(cb: (constructed: Unit) => void) {
+  return eventUnitConstructionFinish.listen(cb);
+}
+
+export function onAnyUnitTrainingFinish(
+  cb: (trained: Unit, trainer: Unit) => void
+) {
+  return eventUnitTrainingFinish.listen(cb);
+}
+
+export function onDeath(d: Widget, cb: () => void) {
+  const trg = new Trigger().registerDeathEvent(d);
+  const handler = teh<[]>(trg, () => {
+    return [];
+  });
+  return handler.listen(cb);
 }

@@ -52,6 +52,24 @@ export class Angle {
   public add(other: Angle): Angle {
     return new Angle(this.radians + other.radians);
   }
+
+  public sub(other: Angle): Angle {
+    return new Angle(this.radians - other.radians);
+  }
+
+  // angularDistance calculates the difference between two angles, with a max
+  // of half a rotation.
+  public angularDistance(other: Angle): Angle {
+    const n1 = this.degrees % 360;
+    const n2 = other.degrees % 360;
+    const diff = (n1 - n2) % 360;
+    const rotDist = 360 - diff;
+    if (diff < rotDist) {
+      return degrees(diff);
+    } else {
+      return degrees(rotDist);
+    }
+  }
 }
 
 // Helper methods that make it easy to construct Angles
@@ -119,6 +137,12 @@ export class Vec2 {
       return new Vec2(this.x / len, this.y / len);
     }
     return new Vec2(this.x, this.y);
+  }
+
+  // asAngle converts this vector into the angle on the ground.
+  public get asAngle(): Angle {
+    const norm = this.norm;
+    return Angle.fromRadians(Atan2(norm.y, norm.x));
   }
 
   // rotate this vector around the Z axis (up from the ground). This is

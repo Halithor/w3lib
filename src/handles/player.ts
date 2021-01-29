@@ -1,11 +1,25 @@
 /** @noSelfInFile **/
 
+import {Group} from './group';
+import {Unit} from './unit';
 import {Vec2} from '../math/index';
 import {Force} from './force';
 import {Handle} from './handle';
+import {AbilId} from '../common';
 
 export const Players: MapPlayer[] = [];
 const localPlayer = GetLocalPlayer();
+
+export enum AllianceState {
+  Unallied,
+  UnalliedVision,
+  Allied,
+  AlliedVision,
+  AlliedUnits,
+  AlliedAdvUnits,
+  Neutral,
+  NeutralVision,
+}
 
 export class MapPlayer extends Handle<player> {
   private constructor(index: number) {
@@ -92,6 +106,22 @@ export class MapPlayer extends Handle<player> {
     return BlzGetPlayerTownHallCount(this.handle);
   }
 
+  public get gold(): number {
+    return this.getState(PLAYER_STATE_RESOURCE_GOLD);
+  }
+
+  public set gold(value: number) {
+    this.setState(PLAYER_STATE_RESOURCE_GOLD, value);
+  }
+
+  public get lumber(): number {
+    return this.getState(PLAYER_STATE_RESOURCE_LUMBER);
+  }
+
+  public set lumber(value: number) {
+    this.setState(PLAYER_STATE_RESOURCE_LUMBER, value);
+  }
+
   public addTechResearched(techId: number, levels: number) {
     AddPlayerTechResearched(this.handle, techId, levels);
   }
@@ -114,6 +144,13 @@ export class MapPlayer extends Handle<player> {
       this.handle,
       otherPlayer.handle,
       whichAllianceSetting
+    );
+  }
+
+  isIngame(): boolean {
+    return (
+      this.slotState == PLAYER_SLOT_STATE_PLAYING &&
+      this.controller == MAP_CONTROL_USER
     );
   }
 
@@ -210,8 +247,8 @@ export class MapPlayer extends Handle<player> {
     RemoveAllGuardPositions(this.handle);
   }
 
-  public setAbilityAvailable(abilId: number, avail: boolean) {
-    SetPlayerAbilityAvailable(this.handle, abilId, avail);
+  public setAbilityAvailable(abilId: AbilId, avail: boolean) {
+    SetPlayerAbilityAvailable(this.handle, abilId.value, avail);
   }
 
   public setAlliance(
@@ -227,6 +264,95 @@ export class MapPlayer extends Handle<player> {
     );
   }
 
+  setAllianceState(otherPlayer: MapPlayer, state: AllianceState) {
+    switch (state) {
+      case AllianceState.Unallied:
+        this.setAlliance(otherPlayer, ALLIANCE_PASSIVE, false);
+        this.setAlliance(otherPlayer, ALLIANCE_HELP_REQUEST, false);
+        this.setAlliance(otherPlayer, ALLIANCE_HELP_RESPONSE, false);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_XP, false);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_SPELLS, false);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_VISION, false);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_CONTROL, false);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_ADVANCED_CONTROL, false);
+        break;
+      case AllianceState.UnalliedVision:
+        this.setAlliance(otherPlayer, ALLIANCE_PASSIVE, false);
+        this.setAlliance(otherPlayer, ALLIANCE_HELP_REQUEST, false);
+        this.setAlliance(otherPlayer, ALLIANCE_HELP_RESPONSE, false);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_XP, false);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_SPELLS, false);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_VISION, true);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_CONTROL, false);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_ADVANCED_CONTROL, false);
+        break;
+      case AllianceState.Allied:
+        this.setAlliance(otherPlayer, ALLIANCE_PASSIVE, true);
+        this.setAlliance(otherPlayer, ALLIANCE_HELP_REQUEST, true);
+        this.setAlliance(otherPlayer, ALLIANCE_HELP_RESPONSE, true);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_XP, true);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_SPELLS, true);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_VISION, false);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_CONTROL, false);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_ADVANCED_CONTROL, false);
+        break;
+      case AllianceState.AlliedVision:
+        this.setAlliance(otherPlayer, ALLIANCE_PASSIVE, true);
+        this.setAlliance(otherPlayer, ALLIANCE_HELP_REQUEST, true);
+        this.setAlliance(otherPlayer, ALLIANCE_HELP_RESPONSE, true);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_XP, true);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_SPELLS, true);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_VISION, true);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_CONTROL, false);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_ADVANCED_CONTROL, false);
+        break;
+      case AllianceState.AlliedUnits:
+        this.setAlliance(otherPlayer, ALLIANCE_PASSIVE, true);
+        this.setAlliance(otherPlayer, ALLIANCE_HELP_REQUEST, true);
+        this.setAlliance(otherPlayer, ALLIANCE_HELP_RESPONSE, true);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_XP, true);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_SPELLS, true);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_VISION, true);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_CONTROL, true);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_ADVANCED_CONTROL, false);
+        break;
+      case AllianceState.AlliedAdvUnits:
+        this.setAlliance(otherPlayer, ALLIANCE_PASSIVE, true);
+        this.setAlliance(otherPlayer, ALLIANCE_HELP_REQUEST, true);
+        this.setAlliance(otherPlayer, ALLIANCE_HELP_RESPONSE, true);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_XP, true);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_SPELLS, true);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_VISION, true);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_CONTROL, true);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_ADVANCED_CONTROL, true);
+        break;
+      case AllianceState.Neutral:
+        this.setAlliance(otherPlayer, ALLIANCE_PASSIVE, false);
+        this.setAlliance(otherPlayer, ALLIANCE_HELP_REQUEST, false);
+        this.setAlliance(otherPlayer, ALLIANCE_HELP_RESPONSE, false);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_XP, false);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_SPELLS, false);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_VISION, false);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_CONTROL, false);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_ADVANCED_CONTROL, false);
+        this.setAlliance(otherPlayer, ALLIANCE_PASSIVE, true);
+        break;
+      case AllianceState.NeutralVision:
+        this.setAlliance(otherPlayer, ALLIANCE_PASSIVE, false);
+        this.setAlliance(otherPlayer, ALLIANCE_HELP_REQUEST, false);
+        this.setAlliance(otherPlayer, ALLIANCE_HELP_RESPONSE, false);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_XP, false);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_SPELLS, false);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_VISION, true);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_CONTROL, false);
+        this.setAlliance(otherPlayer, ALLIANCE_SHARED_ADVANCED_CONTROL, false);
+        this.setAlliance(otherPlayer, ALLIANCE_PASSIVE, true);
+        break;
+      default:
+        const _checkExhaustive: never = state;
+        throw new Error('should not happen');
+    }
+  }
   public setOnScoreScreen(flag: boolean) {
     SetPlayerOnScoreScreen(this.handle, flag);
   }
@@ -253,6 +379,29 @@ export class MapPlayer extends Handle<player> {
 
   public setUnitsOwner(newOwner: number) {
     SetPlayerUnitsOwner(this.handle, newOwner);
+  }
+
+  public selectUnitSingle(unit: Unit) {
+    SelectUnitForPlayerSingle(unit.handle, this.handle);
+  }
+
+  public selectUnitAdd(unit: Unit) {
+    SelectUnitAddForPlayer(unit.handle, this.handle);
+  }
+
+  public selectUnitRemove(unit: Unit) {
+    SelectUnitRemoveForPlayer(unit.handle, this.handle);
+  }
+
+  public selectUnitClear() {
+    ClearSelectionForPlayer(this.handle);
+  }
+
+  public selectUnitGroup(group: Group) {
+    this.selectUnitClear();
+    group.for(() => {
+      SelectUnitAddForPlayer(GetEnumUnit(), this.handle);
+    });
   }
 
   public static fromEnum() {

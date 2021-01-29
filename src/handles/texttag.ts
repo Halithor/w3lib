@@ -17,7 +17,7 @@ export class TextTag extends Handle<texttag> {
     }
     this._size = size;
     this._text = message;
-    SetTextTagText(this.handle, message, size);
+    SetTextTagText(this.handle, message, size * 0.0023);
     SetTextTagPos(this.handle, pos.x, pos.y, pos.z);
     SetTextTagColor(
       this.handle,
@@ -59,7 +59,7 @@ export class TextTag extends Handle<texttag> {
   }
 
   set size(value: number) {
-    this._size = value;
+    this._size = value * 0.0023;
     SetTextTagText(this.handle, this._text, this._size);
   }
 
@@ -91,11 +91,11 @@ export class TextTag extends Handle<texttag> {
   }
 }
 
-const fontSize = 0.024 / 0.0023;
+const fontSize = 10.434;
 const offset = vec2(16, 0);
 
 export function standardTextTag(pos: Vec2, text: string): TextTag {
-  const tt = new TextTag(text, pos.withZZero(), fontSize, color(255, 255, 255));
+  const tt = new TextTag(text, pos.withZ(0), fontSize, color(255, 255, 255));
   tt.fadepoint = 2.0;
   tt.lifespan = 3.0;
   tt.velocity = vec2(0, 0.03);
@@ -105,7 +105,7 @@ export function standardTextTag(pos: Vec2, text: string): TextTag {
 }
 
 export function createCriticalStrikeTextTag(u: Unit, damage: number): TextTag {
-  const msg = damage.toString() + '!';
+  const msg = Math.round(damage).toString() + '!';
   const tt = standardTextTag(u.pos, msg);
   tt.color = color(255, 0, 0);
   tt.velocity = vec2(0, 0.04);

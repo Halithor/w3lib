@@ -389,8 +389,8 @@ export class Unit extends Widget {
     return UnitAddItem(this.handle, whichItem.handle);
   }
 
-  public addItemById(itemId: ItemId) {
-    return UnitAddItemById(this.handle, itemId.value);
+  public addItemById(itemId: ItemId): Item {
+    return Item.fromHandle(UnitAddItemById(this.handle, itemId.value));
   }
 
   public addItemToSlotById(itemId: ItemId, itemSlot: number) {
@@ -628,8 +628,12 @@ export class Unit extends Widget {
     return GetHeroInt(this.handle, includeBonuses);
   }
 
-  public getItemInSlot(slot: number) {
-    return UnitItemInSlot(this.handle, slot);
+  public getItemInSlot(slot: number): Item | undefined {
+    const i = UnitItemInSlot(this.handle, slot);
+    if (i) {
+      return Item.fromHandle(i);
+    }
+    return undefined;
   }
 
   public getState(whichUnitState: unitstate) {
@@ -663,6 +667,20 @@ export class Unit extends Widget {
 
   public hasItem(whichItem: Item) {
     return UnitHasItem(this.handle, whichItem.handle);
+  }
+
+  public getInventorySlotOfItemType(whichItemType: ItemId) {
+    for (let i = 0; i < bj_MAX_INVENTORY; i++) {
+      const slot = this.getItemInSlot(i);
+      if (slot?.typeId.equals(whichItemType)) {
+        return i;
+      }
+    }
+    return 0;
+  }
+
+  public hasItemOfType(whichItemType: ItemId) {
+    return this.getInventorySlotOfItemType(whichItemType) > 0;
   }
 
   public hideAbility(abilId: AbilId, flag: boolean) {
@@ -1030,6 +1048,59 @@ export class Unit extends Widget {
       return BlzSetUnitStringField(
         this.handle,
         field as unitstringfield,
+        value
+      );
+    }
+
+    return false;
+  }
+
+  public setWeaponField(
+    field:
+      | unitweaponbooleanfield
+      | unitweaponintegerfield
+      | unitweaponrealfield
+      | unitweaponstringfield,
+    index: number,
+    value: boolean | number | string
+  ) {
+    const fieldType = field.toString().substr(0, field.toString().indexOf(':'));
+
+    if (fieldType === 'unitweaponbooleanfield' && typeof value === 'boolean') {
+      return BlzSetUnitWeaponBooleanField(
+        this.handle,
+        field as unitweaponbooleanfield,
+        index,
+        value
+      );
+    } else if (
+      fieldType === 'unitweaponintegerfield' &&
+      typeof value === 'number'
+    ) {
+      return BlzSetUnitWeaponIntegerField(
+        this.handle,
+        field as unitweaponintegerfield,
+        index,
+        value
+      );
+    } else if (
+      fieldType === 'unitweaponrealfield' &&
+      typeof value === 'number'
+    ) {
+      return BlzSetUnitWeaponRealField(
+        this.handle,
+        field as unitweaponrealfield,
+        index,
+        value
+      );
+    } else if (
+      fieldType === 'unitweaponstringfield' &&
+      typeof value === 'string'
+    ) {
+      return BlzSetUnitWeaponStringField(
+        this.handle,
+        field as unitweaponstringfield,
+        index,
         value
       );
     }

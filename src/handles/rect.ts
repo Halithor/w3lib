@@ -8,7 +8,7 @@ export class Rectangle extends Handle<rect> {
     if (Handle.initFromHandle()) {
       super();
     } else {
-      super(Rect(min.x, min.x, max.x, max.y));
+      super(Rect(min.x, min.y, max.x, max.y));
     }
   }
 
@@ -52,6 +52,10 @@ export class Rectangle extends Handle<rect> {
     RemoveRect(this.handle);
   }
 
+  public contains(pos: Vec2) {
+    return RectContainsCoords(this.handle, pos.x, pos.y);
+  }
+
   public enumDestructables(
     filter: boolexpr | (() => boolean) | null,
     actionFunc: () => void
@@ -72,6 +76,12 @@ export class Rectangle extends Handle<rect> {
 
   public setRect(min: Vec2, max: Vec2) {
     SetRect(this.handle, min.x, min.y, max.x, max.y);
+  }
+
+  public randomPos() {
+    const x = math.random(this.minX, this.maxX);
+    const y = math.random(this.minY, this.maxY);
+    return vec2(x, y);
   }
 
   public static fromHandle(handle: rect): Rectangle {

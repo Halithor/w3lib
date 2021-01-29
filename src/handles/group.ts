@@ -302,3 +302,11 @@ export function forUnitsInRect(rct: Rectangle, callback: (u: Unit) => void) {
     callback(Unit.fromHandle(GetEnumUnit()));
   });
 }
+
+export function countUnitsInRect(rct: Rectangle) {
+  let count = 0;
+  forUnitsInRect(rct, u => {
+    count++;
+  });
+  return count;
+}

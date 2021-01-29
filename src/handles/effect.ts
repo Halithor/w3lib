@@ -1,5 +1,6 @@
 /** @noSelfInFile **/
 
+import {doAfter} from '../handles/timer';
 import {Angle, Vec2, Vec3, vec3} from '../math/index';
 import {Handle} from './handle';
 import {MapPlayer} from './player';
@@ -139,4 +140,21 @@ export function flashEffect(
     BlzSetSpecialEffectYaw(e, angle.radians);
   }
   DestroyEffect(e);
+}
+
+export function flashEffectDuration(
+  path: string,
+  pos: Vec2,
+  duration: number,
+  scale?: number,
+  angle?: Angle
+) {
+  let e = AddSpecialEffect(path, pos.x, pos.y);
+  if (scale) {
+    BlzSetSpecialEffectScale(e, scale);
+  }
+  if (angle) {
+    BlzSetSpecialEffectYaw(e, angle.radians);
+  }
+  doAfter(duration, () => DestroyEffect(e));
 }
