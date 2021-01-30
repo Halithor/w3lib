@@ -81,6 +81,10 @@ let eventUnitUsesItem: GlobalEvent<[u: Unit, i: Item]>;
 let eventUnitConstructionStart: GlobalEvent<[constructing: Unit]>;
 let eventUnitConstructionCancel: GlobalEvent<[canceled: Unit]>;
 let eventUnitConstructionFinish: GlobalEvent<[constructed: Unit]>;
+let eventUnitUpgradeStart: GlobalEvent<[upgrading: Unit]>;
+let eventUnitUpgradeCancel: GlobalEvent<[upgrading: Unit]>;
+let eventUnitUpgradeFinish: GlobalEvent<[upgrading: Unit]>;
+
 let eventUnitTrainingFinish: GlobalEvent<[trained: Unit, trainer: Unit]>;
 
 export type DamageInfo = {
@@ -162,6 +166,29 @@ addScriptHook(W3TS_HOOK.MAIN_BEFORE, () => {
       return [constructed];
     }
   );
+
+  eventUnitUpgradeStart = teh<[upgrading: Unit]>(
+    new Trigger().registerAnyUnitEvent(EVENT_PLAYER_UNIT_UPGRADE_START),
+    () => {
+      const upgrading = Unit.fromHandle(GetTriggerUnit());
+      return [upgrading];
+    }
+  );
+  eventUnitUpgradeCancel = teh<[upgrading: Unit]>(
+    new Trigger().registerAnyUnitEvent(EVENT_PLAYER_UNIT_UPGRADE_CANCEL),
+    () => {
+      const upgrading = Unit.fromHandle(GetTriggerUnit());
+      return [upgrading];
+    }
+  );
+  eventUnitUpgradeFinish = teh<[upgrading: Unit]>(
+    new Trigger().registerAnyUnitEvent(EVENT_PLAYER_UNIT_UPGRADE_FINISH),
+    () => {
+      const upgrading = Unit.fromHandle(GetTriggerUnit());
+      return [upgrading];
+    }
+  );
+
   eventUnitTrainingFinish = teh<[trained: Unit, trainer: Unit]>(
     new Trigger().registerAnyUnitEvent(EVENT_PLAYER_UNIT_TRAIN_FINISH),
     () => {
@@ -286,6 +313,18 @@ export function onAnyUnitConstructionCancel(cb: (canceled: Unit) => void) {
 
 export function onAnyUnitConstructionFinish(cb: (constructed: Unit) => void) {
   return eventUnitConstructionFinish.listen(cb);
+}
+
+export function onAnyUnitUpgradeStart(cb: (upgrading: Unit) => void) {
+  return eventUnitUpgradeStart.listen(cb);
+}
+
+export function onAnyUnitUpgradeCancel(cb: (upgrading: Unit) => void) {
+  return eventUnitUpgradeCancel.listen(cb);
+}
+
+export function onAnyUnitUpgradeFinish(cb: (upgrading: Unit) => void) {
+  return eventUnitUpgradeFinish.listen(cb);
 }
 
 export function onAnyUnitTrainingFinish(
