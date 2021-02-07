@@ -73,8 +73,9 @@ function triggerPUEvent<T extends any[]>(
 }
 
 // Declare all the event handlers here, to be initialized in the pre-main.
-let pua: GlobalEvent<[u: Unit, target: Unit]>;
-let puse: GlobalEvent<
+let eventUnitAttacked: GlobalEvent<[u: Unit, target: Unit]>;
+let eventUnitDeath: GlobalEvent<[dying: Unit, kiler: Unit]>;
+let eventUnitSpellEffect: GlobalEvent<
   [caster: Unit, abilityId: AbilId, target: Unit | Item | Destructable | Vec2]
 >;
 let eventUnitUsesItem: GlobalEvent<[u: Unit, i: Item]>;
@@ -99,6 +100,9 @@ export type DamageInfo = {
 export let eventAnyUnitDamaged: GlobalEvent<
   [target: Unit, attacker: Unit, info: DamageInfo]
 >;
+export let eventAnyUnitDamaging: GlobalEvent<
+  [target: Unit, attacker: Unit, info: DamageInfo]
+>;
 
 export const eventAnyUnitDies = new GlobalEvent<[dying: Unit]>(() => {
   const dying = Unit.fromHandle(GetDyingUnit());
@@ -106,7 +110,7 @@ export const eventAnyUnitDies = new GlobalEvent<[dying: Unit]>(() => {
 });
 
 addScriptHook(W3TS_HOOK.MAIN_BEFORE, () => {
-  pua = teh<[u: Unit, target: Unit]>(
+  eventUnitAttacked = teh<[u: Unit, target: Unit]>(
     new Trigger().registerAnyUnitEvent(EVENT_PLAYER_UNIT_ATTACKED),
     () => {
       return [
@@ -115,7 +119,7 @@ addScriptHook(W3TS_HOOK.MAIN_BEFORE, () => {
       ];
     }
   );
-  puse = teh<
+  eventUnitSpellEffect = teh<
     [caster: Unit, abilityId: AbilId, target: Unit | Item | Destructable | Vec2]
   >(new Trigger().registerAnyUnitEvent(EVENT_PLAYER_UNIT_SPELL_EFFECT), () => {
     const caster = Unit.fromHandle(GetSpellAbilityUnit());
@@ -235,6 +239,43 @@ addScriptHook(W3TS_HOOK.MAIN_BEFORE, () => {
       ];
     }
   );
+  eventAnyUnitDamaging = teh<[target: Unit, attacker: Unit, info: DamageInfo]>(
+    new Trigger().registerAnyUnitEvent(EVENT_PLAYER_UNIT_DAMAGING),
+    () => {
+      const damage = GetEventDamage();
+      const target = Unit.fromHandle(BlzGetEventDamageTarget());
+      const attacker = Unit.fromHandle(GetEventDamageSource());
+      const damageType = BlzGetEventDamageType();
+      const attackType = BlzGetEventAttackType();
+      const weaponType = BlzGetEventWeaponType();
+      let isSpell = attackType == ATTACK_TYPE_NORMAL;
+      let isMeleeAttack = false;
+      let isRangedAttack = false;
+      // Need to use the damage type and attacker unit types to determine the
+      // characteristics of the damage.
+      if (damageType == DAMAGE_TYPE_NORMAL && !isSpell) {
+        isMeleeAttack = attacker.isUnitType(UNIT_TYPE_MELEE_ATTACKER);
+        isRangedAttack = attacker.isUnitType(UNIT_TYPE_RANGED_ATTACKER);
+        if (isMeleeAttack && isRangedAttack) {
+          isMeleeAttack = weaponType != WEAPON_TYPE_WHOKNOWS;
+          isRangedAttack = !isMeleeAttack;
+        }
+      }
+      return [
+        target,
+        attacker,
+        {
+          damage,
+          damageType,
+          attackType,
+          weaponType,
+          isMeleeAttack,
+          isSpell,
+          isRangedAttack,
+        },
+      ];
+    }
+  );
 
   triggerPUEvent(EVENT_PLAYER_UNIT_DEATH, eventAnyUnitDies);
 });
@@ -242,7 +283,7 @@ addScriptHook(W3TS_HOOK.MAIN_BEFORE, () => {
 export function onAnyUnitAttacked(
   callback: (u: Unit, attacker: Unit) => void
 ): {stop: () => void} {
-  return pua.listen(callback);
+  return eventUnitAttacked.listen(callback);
 }
 
 export function onAnyUnitSpellEffect(
@@ -252,7 +293,7 @@ export function onAnyUnitSpellEffect(
     target: Unit | Item | Destructable | Vec2
   ) => void
 ) {
-  return puse.listen(cb);
+  return eventUnitSpellEffect.listen(cb);
 }
 
 export function onAnyUnitEntersRegion(
@@ -289,6 +330,24 @@ export function onAnyUnitDamaged(
   ) => DamageInfo | void
 ) {
   eventAnyUnitDamaged.listen((target, attacker, info) => {
+    const updated = cb(target, attacker, info);
+    if (updated) {
+      BlzSetEventDamage(updated.damage);
+      BlzSetEventAttackType(updated.attackType);
+      BlzSetEventDamageType(updated.damageType);
+      BlzSetEventWeaponType(updated.weaponType);
+    }
+  });
+}
+
+export function onAnyUnitDamaging(
+  cb: (
+    target: Unit,
+    attacker: Unit,
+    DamageInfo: DamageInfo
+  ) => DamageInfo | void
+) {
+  eventAnyUnitDamaging.listen((target, attacker, info) => {
     const updated = cb(target, attacker, info);
     if (updated) {
       BlzSetEventDamage(updated.damage);

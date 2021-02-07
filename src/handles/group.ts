@@ -271,9 +271,9 @@ export function findNearestUnit(
   pos: Vec2,
   range: number,
   filter: ((u: Unit) => boolean) | null
-): Unit {
+): Unit | null {
   const enumGroup = new Group();
-  let filterUnit = null;
+  let filterUnit: (() => boolean) | null = null;
   if (filter != null) {
     filterUnit = () => {
       const u = Unit.fromHandle(GetFilterUnit());
@@ -281,6 +281,9 @@ export function findNearestUnit(
     };
   }
   enumGroup.enumUnitsInRange(pos, range, filterUnit);
+  if (enumGroup.size == 0) {
+    return null;
+  }
   let nearest: Unit = enumGroup.first;
   let bestDist = 2147483647; // max int32
   enumGroup.for(() => {
