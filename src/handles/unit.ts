@@ -612,6 +612,22 @@ export class Unit extends Widget {
     }
   }
 
+  public getWeaponRealField(field: unitweaponrealfield, index: number) {
+    return BlzGetUnitWeaponRealField(this.handle, field, index);
+  }
+
+  public getWeaponIntegerField(field: unitweaponintegerfield, index: number) {
+    return BlzGetUnitWeaponIntegerField(this.handle, field, index);
+  }
+
+  public getWeaponBoolField(field: unitweaponbooleanfield, index: number) {
+    return BlzGetUnitWeaponBooleanField(this.handle, field, index);
+  }
+
+  public getWeaponStringField(field: unitweaponstringfield, index: number) {
+    return BlzGetUnitWeaponStringField(this.handle, field, index);
+  }
+
   public getflyHeight() {
     return GetUnitFlyHeight(this.handle);
   }
