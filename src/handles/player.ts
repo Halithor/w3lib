@@ -122,6 +122,22 @@ export class MapPlayer extends Handle<player> {
     this.setState(PLAYER_STATE_RESOURCE_LUMBER, value);
   }
 
+  public get foodCap(): number {
+    return this.getState(PLAYER_STATE_RESOURCE_FOOD_CAP);
+  }
+
+  public set foodCap(val: number) {
+    this.setState(PLAYER_STATE_RESOURCE_FOOD_CAP, val);
+  }
+
+  public get foodUsed(): number {
+    return this.getState(PLAYER_STATE_RESOURCE_FOOD_USED);
+  }
+
+  public set foodUsed(val: number) {
+    this.setState(PLAYER_STATE_RESOURCE_FOOD_USED, val);
+  }
+
   public addTechResearched(techId: number, levels: number) {
     AddPlayerTechResearched(this.handle, techId, levels);
   }
