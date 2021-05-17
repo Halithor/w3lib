@@ -14,6 +14,18 @@ export class Color {
       this.alpha = 255;
     }
   }
+
+  get code(): string {
+    return `|c${toHex(this.alpha)}${toHex(this.red)}${toHex(this.green)}${toHex(this.blue)}`
+  }
+}
+
+function toHex(num: ColorValue): string {
+  let hex = num.toString(16)
+  if (hex.length < 2) {
+    hex = '0' + hex;
+  }
+  return hex;
 }
 
 export const color = (

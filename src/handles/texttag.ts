@@ -15,9 +15,9 @@ export class TextTag extends Handle<texttag> {
     } else {
       super(CreateTextTag());
     }
-    this._size = size;
+    this._size = size * 0.0023;
     this._text = message;
-    SetTextTagText(this.handle, message, size * 0.0023);
+    SetTextTagText(this.handle, this._text, this._size);
     SetTextTagPos(this.handle, pos.x, pos.y, pos.z);
     SetTextTagColor(
       this.handle,
@@ -83,7 +83,9 @@ export class TextTag extends Handle<texttag> {
   // setVisibleForPlayer makes this text tag visible only for the given player.
   // Use the visible setter for all players.
   setVisibleForPlayer(p: MapPlayer, value: boolean) {
-    this.visible = p.isLocalPlayer;
+    if (p.isLocalPlayer) {
+      this.visible = value;
+    }
   }
 
   destroy() {

@@ -585,6 +585,10 @@ export class Unit extends Widget {
     return BlzGetUnitDiceSides(this.handle, weaponIndex);
   }
 
+  public getIntegerField(field: unitintegerfield): number {
+    return BlzGetUnitIntegerField(this.handle, field);
+  }
+
   public getField(
     field: unitbooleanfield | unitintegerfield | unitrealfield | unitstringfield
   ) {
@@ -679,6 +683,17 @@ export class Unit extends Widget {
       aura,
       autoDispel
     );
+  }
+
+  public get items(): Item[] {
+    let items: Item[] = [];
+    for (let i = 0; i < bj_MAX_INVENTORY; i++) {
+      const inSlot = this.getItemInSlot(i);
+      if (inSlot) {
+        items.push(inSlot);
+      }
+    }
+    return items;
   }
 
   public hasItem(whichItem: Item) {
@@ -944,7 +959,7 @@ export class Unit extends Widget {
     return UnitAddType(this.handle, whichUnitType);
   }
 
-  public removeUnitFromStock(itemId: ItemId) {
+  public removeUnitFromStock(itemId: UnitId) {
     RemoveUnitFromStock(this.handle, itemId.value);
   }
 

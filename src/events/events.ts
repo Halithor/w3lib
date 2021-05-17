@@ -1,8 +1,11 @@
 /** @noSelfInFile **/
-import {AbilId} from '../common';
+import {AbilId, ItemId} from '../common';
 import {
   Destructable,
+  doAfter,
   Item,
+  MapPlayer,
+  Players,
   Rectangle,
   Region,
   Trigger,
@@ -12,24 +15,58 @@ import {
 import {addScriptHook, W3TS_HOOK} from '../hooks/index';
 import {vec2, Vec2} from '../math/index';
 
-// Event is a class that represents an event. The event is fired using the
+export interface Subscription {
+  unsubscribe(): void;
+}
+
+export abstract class Event<T extends any[]> {
+  abstract subscribe(handler: (...input: T) => void): Subscription;
+
+  delay(seconds: number): Event<T> {
+    const subject = new Subject<T>();
+    this.subscribe((...input) => {
+      doAfter(seconds, () => subject.emit(...input));
+    });
+    return subject;
+  }
+
+  filter(check: (...input: T) => boolean): Event<T> {
+    const subject = new Subject<T>();
+    this.subscribe((...input) => {
+      if (check(...input)) {
+        subject.emit(...input);
+      }
+    });
+    return subject;
+  }
+
+  map<V extends any[]>(transformation: (...input: T) => V): Event<V> {
+    const subject = new Subject<V>();
+    this.subscribe((...input) => {
+      subject.emit(...transformation(...input));
+    });
+    return subject;
+  }
+}
+
+// Subject is a class that represents an event. The event is fired using the
 // `fire` method, which will notify all of the listeners of the event.
-export class Event<T extends any[]> {
+export class Subject<T extends any[]> extends Event<T> {
   handlers: {[key: number]: (...input: T) => void} = {};
   count: number = 0;
 
-  fire(...input: T) {
+  emit(...input: T) {
     for (let key in this.handlers) {
       this.handlers[key](...input);
     }
   }
 
-  listen(handler: (...input: T) => void) {
+  subscribe(handler: (...input: T) => void): Subscription {
     this.count++;
     const index = this.count;
     this.handlers[index] = handler;
     return {
-      stop: () => {
+      unsubscribe: () => {
         this.removeHandler(index);
       },
     };
@@ -40,53 +77,131 @@ export class Event<T extends any[]> {
   }
 }
 
-// Global Event is an event that can extract all of the information it needs to
+// GlobalSubject is a subject that can extract all of the information it needs to
 // fire.
-export class GlobalEvent<T extends any[]> {
-  private event: Event<T> = new Event<T>();
-  constructor(readonly extractor: () => T) {}
-
-  fire() {
-    const extracted = this.extractor();
-    this.event.fire(...extracted);
+export class GlobalSubject<T extends any[]> extends Event<T> {
+  private event: Subject<T> = new Subject<T>();
+  constructor(readonly extractor: () => T) {
+    super();
   }
 
-  listen(handler: (...input: T) => void) {
-    return this.event.listen(handler);
+  emit() {
+    const extracted = this.extractor();
+    this.event.emit(...extracted);
+  }
+
+  subscribe(handler: (...input: T) => void): Subscription {
+    return this.event.subscribe(handler);
   }
 }
 
 // teh AKA TriggerEventHandler creates an event handler and registers it for a
 // provided trigger
 function teh<T extends any[]>(trg: Trigger, extractor: () => T) {
-  const ge = new GlobalEvent<T>(extractor);
-  trg.addAction(() => ge.fire());
+  const ge = new GlobalSubject<T>(extractor);
+  trg.addAction(() => ge.emit());
   return ge;
 }
 
-function triggerPUEvent<T extends any[]>(
+function setupAnyUnitSubject<T extends any[]>(
   event: playerunitevent,
-  handler: GlobalEvent<T>
+  handler: GlobalSubject<T>
 ) {
   const trg = new Trigger().registerAnyUnitEvent(event);
-  trg.addAction(() => handler.fire());
+  trg.addAction(() => handler.emit());
 }
 
 // Declare all the event handlers here, to be initialized in the pre-main.
-let eventUnitAttacked: GlobalEvent<[u: Unit, target: Unit]>;
-let eventUnitDeath: GlobalEvent<[dying: Unit, kiler: Unit]>;
-let eventUnitSpellEffect: GlobalEvent<
+const subjectUnitAttacked = new GlobalSubject<[target: Unit, attacker: Unit]>(
+  () => {
+    return [Unit.fromHandle(GetTriggerUnit()), Unit.fromHandle(GetAttacker())];
+  }
+);
+export const eventUnitAttacked: Event<
+  [target: Unit, attacker: Unit]
+> = subjectUnitAttacked;
+let eventUnitDeath: GlobalSubject<[dying: Unit, kiler: Unit]>;
+let eventUnitSpellEffect: GlobalSubject<
   [caster: Unit, abilityId: AbilId, target: Unit | Item | Destructable | Vec2]
 >;
-let eventUnitUsesItem: GlobalEvent<[u: Unit, i: Item]>;
-let eventUnitConstructionStart: GlobalEvent<[constructing: Unit]>;
-let eventUnitConstructionCancel: GlobalEvent<[canceled: Unit]>;
-let eventUnitConstructionFinish: GlobalEvent<[constructed: Unit]>;
-let eventUnitUpgradeStart: GlobalEvent<[upgrading: Unit]>;
-let eventUnitUpgradeCancel: GlobalEvent<[upgrading: Unit]>;
-let eventUnitUpgradeFinish: GlobalEvent<[upgrading: Unit]>;
 
-let eventUnitTrainingFinish: GlobalEvent<[trained: Unit, trainer: Unit]>;
+// Items
+const subjectUnitUsesItem = new GlobalSubject<[u: Unit, i: Item]>(() => {
+  const u = Unit.fromHandle(GetManipulatingUnit());
+  const i = Item.fromHandle(GetManipulatedItem());
+  return [u, i];
+});
+export const eventUnitUsesItem: Event<[u: Unit, i: Item]> = subjectUnitUsesItem;
+
+const subjectUnitAcquiresItem = new GlobalSubject<[u: Unit, i: Item]>(() => {
+  return [
+    Unit.fromHandle(GetManipulatingUnit()),
+    Item.fromHandle(GetManipulatedItem()),
+  ];
+});
+export const eventUnitAcquiresItem: Event<
+  [u: Unit, i: Item]
+> = subjectUnitAcquiresItem;
+
+const subjectUnitLosesItem = new GlobalSubject<[u: Unit, i: Item]>(() => {
+  return [
+    Unit.fromHandle(GetManipulatingUnit()),
+    Item.fromHandle(GetManipulatedItem()),
+  ];
+});
+export const eventUnitLosesItem: Event<
+  [u: Unit, i: Item]
+> = subjectUnitLosesItem;
+
+const subjectUnitPawnsItemToShop = new GlobalSubject<
+  [seller: Unit, shop: Unit, item: Item]
+>(() => {
+  return [
+    Unit.fromHandle(GetSellingUnit()),
+    Unit.fromHandle(GetBuyingUnit()),
+    Item.fromHandle(GetSoldItem()),
+  ];
+});
+export const eventUnitPawnsItemToShop: Event<
+  [seller: Unit, shop: Unit, item: Item]
+> = subjectUnitPawnsItemToShop;
+
+const subjectUnitSellsItemFromShop = new GlobalSubject<
+  [shop: Unit, purchaser: Unit, item: Item]
+>(() => {
+  return [
+    Unit.fromHandle(GetSellingUnit()),
+    Unit.fromHandle(GetBuyingUnit()),
+    Item.fromHandle(GetSoldItem()),
+  ];
+});
+export const eventUnitSellsItemFromShop: Event<
+  [shop: Unit, purchaser: Unit, item: Item]
+> = subjectUnitSellsItemFromShop;
+
+const subjectUnitItemStacks = new GlobalSubject<
+  [u: Unit, source: Item, target: Item, targetPreviousCharges: number]
+>(() => {
+  return [
+    Unit.fromHandle(GetTriggerUnit()),
+    Item.fromHandle(BlzGetStackingItemSource()),
+    Item.fromHandle(BlzGetStackingItemTarget()),
+    BlzGetStackingItemTargetPreviousCharges(),
+  ];
+});
+export const eventUnitItemStacks: Event<
+  [u: Unit, source: Item, target: Item, targetPreviousCharges: number]
+> = subjectUnitItemStacks;
+
+// Construction
+let eventUnitConstructionStart: GlobalSubject<[constructing: Unit]>;
+let eventUnitConstructionCancel: GlobalSubject<[canceled: Unit]>;
+let eventUnitConstructionFinish: GlobalSubject<[constructed: Unit]>;
+let eventUnitUpgradeStart: GlobalSubject<[upgrading: Unit]>;
+let eventUnitUpgradeCancel: GlobalSubject<[upgrading: Unit]>;
+let eventUnitUpgradeFinish: GlobalSubject<[upgrading: Unit]>;
+
+let eventUnitTrainingFinish: GlobalSubject<[trained: Unit, trainer: Unit]>;
 
 export type DamageInfo = {
   damage: number;
@@ -97,28 +212,123 @@ export type DamageInfo = {
   isMeleeAttack: boolean;
   isRangedAttack: boolean;
 };
-export let eventAnyUnitDamaged: GlobalEvent<
-  [target: Unit, attacker: Unit, info: DamageInfo]
->;
-export let eventAnyUnitDamaging: GlobalEvent<
-  [target: Unit, attacker: Unit, info: DamageInfo]
->;
 
-export const eventAnyUnitDies = new GlobalEvent<[dying: Unit]>(() => {
+const subjectAnyUnitDamaged = new GlobalSubject<
+  [target: Unit, attacker: Unit, info: DamageInfo]
+>(() => {
+  const damage = GetEventDamage();
+  const target = Unit.fromHandle(BlzGetEventDamageTarget());
+  const attacker = Unit.fromHandle(GetEventDamageSource());
+  const damageType = BlzGetEventDamageType();
+  const attackType = BlzGetEventAttackType();
+  const weaponType = BlzGetEventWeaponType();
+  let isSpell = attackType == ATTACK_TYPE_NORMAL;
+  let isMeleeAttack = false;
+  let isRangedAttack = false;
+  // Need to use the damage type and attacker unit types to determine the
+  // characteristics of the damage.
+  if (damageType == DAMAGE_TYPE_NORMAL && !isSpell) {
+    isMeleeAttack = attacker.isUnitType(UNIT_TYPE_MELEE_ATTACKER);
+    isRangedAttack = attacker.isUnitType(UNIT_TYPE_RANGED_ATTACKER);
+    if (isMeleeAttack && isRangedAttack) {
+      isMeleeAttack = weaponType != WEAPON_TYPE_WHOKNOWS;
+      isRangedAttack = !isMeleeAttack;
+    }
+  }
+  return [
+    target,
+    attacker,
+    {
+      damage,
+      damageType,
+      attackType,
+      weaponType,
+      isMeleeAttack,
+      isSpell,
+      isRangedAttack,
+    },
+  ];
+});
+export const eventAnyUnitDamaged: Event<
+  [target: Unit, attacker: Unit, info: DamageInfo]
+> = subjectAnyUnitDamaged;
+
+const subjectAnyUnitDamaging = new GlobalSubject<
+  [target: Unit, attacker: Unit, info: DamageInfo]
+>(() => {
+  const damage = GetEventDamage();
+  const target = Unit.fromHandle(BlzGetEventDamageTarget());
+  const attacker = Unit.fromHandle(GetEventDamageSource());
+  const damageType = BlzGetEventDamageType();
+  const attackType = BlzGetEventAttackType();
+  const weaponType = BlzGetEventWeaponType();
+  let isSpell = attackType == ATTACK_TYPE_NORMAL;
+  let isMeleeAttack = false;
+  let isRangedAttack = false;
+  // Need to use the damage type and attacker unit types to determine the
+  // characteristics of the damage.
+  if (damageType == DAMAGE_TYPE_NORMAL && !isSpell) {
+    isMeleeAttack = attacker.isUnitType(UNIT_TYPE_MELEE_ATTACKER);
+    isRangedAttack = attacker.isUnitType(UNIT_TYPE_RANGED_ATTACKER);
+    if (isMeleeAttack && isRangedAttack) {
+      isMeleeAttack = weaponType != WEAPON_TYPE_WHOKNOWS;
+      isRangedAttack = !isMeleeAttack;
+    }
+  }
+  return [
+    target,
+    attacker,
+    {
+      damage,
+      damageType,
+      attackType,
+      weaponType,
+      isMeleeAttack,
+      isSpell,
+      isRangedAttack,
+    },
+  ];
+});
+export const eventAnyUnitDamaging: Event<
+  [target: Unit, attacker: Unit, info: DamageInfo]
+> = subjectAnyUnitDamaging;
+
+export const eventAnyUnitDeath = new GlobalSubject<
+  [dying: Unit, killer: Unit | undefined]
+>(() => {
   const dying = Unit.fromHandle(GetDyingUnit());
-  return [dying];
+  GetKillingUnit();
+  const killer = GetKillingUnit()
+    ? Unit.fromHandle(GetKillingUnit())
+    : undefined;
+  return [dying, killer];
 });
 
+const eventAnyUnitDecay = new GlobalSubject<[decaying: Unit]>(() => {
+  const decaying = Unit.fromHandle(GetDecayingUnit());
+  return [decaying];
+});
+
+const eventAnyUnitSold = new GlobalSubject<[sold: Unit, seller: Unit]>(() => {
+  const sold = Unit.fromHandle(GetSoldUnit());
+  const seller = Unit.fromHandle(GetSellingUnit());
+  return [sold, seller];
+});
+
+// PLAYER EVENTS
+let eventAnyPlayerLeaves = new Subject<[p: MapPlayer]>();
+const subjectAnyPlayerChat = new GlobalSubject<
+  [player: MapPlayer, message: string]
+>(() => {
+  return [MapPlayer.fromHandle(GetTriggerPlayer()), GetEventPlayerChatString()];
+});
+export const eventAnyPlayerChat: Event<
+  [player: MapPlayer, message: string]
+> = subjectAnyPlayerChat;
+
 addScriptHook(W3TS_HOOK.MAIN_BEFORE, () => {
-  eventUnitAttacked = teh<[u: Unit, target: Unit]>(
-    new Trigger().registerAnyUnitEvent(EVENT_PLAYER_UNIT_ATTACKED),
-    () => {
-      return [
-        Unit.fromHandle(GetTriggerUnit()),
-        Unit.fromHandle(GetAttacker()),
-      ];
-    }
-  );
+  setupAnyUnitSubject(EVENT_PLAYER_UNIT_ATTACKED, subjectUnitAttacked);
+
   eventUnitSpellEffect = teh<
     [caster: Unit, abilityId: AbilId, target: Unit | Item | Destructable | Vec2]
   >(new Trigger().registerAnyUnitEvent(EVENT_PLAYER_UNIT_SPELL_EFFECT), () => {
@@ -140,14 +350,16 @@ addScriptHook(W3TS_HOOK.MAIN_BEFORE, () => {
     return [caster, abilityId, vec2(GetSpellTargetX(), GetSpellTargetY())];
   });
 
-  eventUnitUsesItem = teh<[u: Unit, i: Item]>(
-    new Trigger().registerAnyUnitEvent(EVENT_PLAYER_UNIT_USE_ITEM),
-    () => {
-      const u = Unit.fromHandle(GetManipulatingUnit());
-      const i = Item.fromHandle(GetManipulatedItem());
-      return [u, i];
-    }
+  // Item events
+  setupAnyUnitSubject(EVENT_PLAYER_UNIT_USE_ITEM, subjectUnitUsesItem);
+  setupAnyUnitSubject(EVENT_PLAYER_UNIT_DROP_ITEM, subjectUnitLosesItem);
+  setupAnyUnitSubject(EVENT_PLAYER_UNIT_PICKUP_ITEM, subjectUnitAcquiresItem);
+  setupAnyUnitSubject(EVENT_PLAYER_UNIT_PAWN_ITEM, subjectUnitPawnsItemToShop);
+  setupAnyUnitSubject(
+    EVENT_PLAYER_UNIT_SELL_ITEM,
+    subjectUnitSellsItemFromShop
   );
+  setupAnyUnitSubject(EVENT_PLAYER_UNIT_STACK_ITEM, subjectUnitItemStacks);
 
   eventUnitConstructionStart = teh<[constructing: Unit]>(
     new Trigger().registerAnyUnitEvent(EVENT_PLAYER_UNIT_CONSTRUCT_START),
@@ -202,88 +414,29 @@ addScriptHook(W3TS_HOOK.MAIN_BEFORE, () => {
     }
   );
 
-  eventAnyUnitDamaged = teh<[target: Unit, attacker: Unit, info: DamageInfo]>(
-    new Trigger().registerAnyUnitEvent(EVENT_PLAYER_UNIT_DAMAGED),
-    () => {
-      const damage = GetEventDamage();
-      const target = Unit.fromHandle(BlzGetEventDamageTarget());
-      const attacker = Unit.fromHandle(GetEventDamageSource());
-      const damageType = BlzGetEventDamageType();
-      const attackType = BlzGetEventAttackType();
-      const weaponType = BlzGetEventWeaponType();
-      let isSpell = attackType == ATTACK_TYPE_NORMAL;
-      let isMeleeAttack = false;
-      let isRangedAttack = false;
-      // Need to use the damage type and attacker unit types to determine the
-      // characteristics of the damage.
-      if (damageType == DAMAGE_TYPE_NORMAL && !isSpell) {
-        isMeleeAttack = attacker.isUnitType(UNIT_TYPE_MELEE_ATTACKER);
-        isRangedAttack = attacker.isUnitType(UNIT_TYPE_RANGED_ATTACKER);
-        if (isMeleeAttack && isRangedAttack) {
-          isMeleeAttack = weaponType != WEAPON_TYPE_WHOKNOWS;
-          isRangedAttack = !isMeleeAttack;
-        }
-      }
-      return [
-        target,
-        attacker,
-        {
-          damage,
-          damageType,
-          attackType,
-          weaponType,
-          isMeleeAttack,
-          isSpell,
-          isRangedAttack,
-        },
-      ];
-    }
-  );
-  eventAnyUnitDamaging = teh<[target: Unit, attacker: Unit, info: DamageInfo]>(
-    new Trigger().registerAnyUnitEvent(EVENT_PLAYER_UNIT_DAMAGING),
-    () => {
-      const damage = GetEventDamage();
-      const target = Unit.fromHandle(BlzGetEventDamageTarget());
-      const attacker = Unit.fromHandle(GetEventDamageSource());
-      const damageType = BlzGetEventDamageType();
-      const attackType = BlzGetEventAttackType();
-      const weaponType = BlzGetEventWeaponType();
-      let isSpell = attackType == ATTACK_TYPE_NORMAL;
-      let isMeleeAttack = false;
-      let isRangedAttack = false;
-      // Need to use the damage type and attacker unit types to determine the
-      // characteristics of the damage.
-      if (damageType == DAMAGE_TYPE_NORMAL && !isSpell) {
-        isMeleeAttack = attacker.isUnitType(UNIT_TYPE_MELEE_ATTACKER);
-        isRangedAttack = attacker.isUnitType(UNIT_TYPE_RANGED_ATTACKER);
-        if (isMeleeAttack && isRangedAttack) {
-          isMeleeAttack = weaponType != WEAPON_TYPE_WHOKNOWS;
-          isRangedAttack = !isMeleeAttack;
-        }
-      }
-      return [
-        target,
-        attacker,
-        {
-          damage,
-          damageType,
-          attackType,
-          weaponType,
-          isMeleeAttack,
-          isSpell,
-          isRangedAttack,
-        },
-      ];
-    }
-  );
+  setupAnyUnitSubject(EVENT_PLAYER_UNIT_DAMAGED, subjectAnyUnitDamaged);
+  setupAnyUnitSubject(EVENT_PLAYER_UNIT_DAMAGING, subjectAnyUnitDamaging);
 
-  triggerPUEvent(EVENT_PLAYER_UNIT_DEATH, eventAnyUnitDies);
+  setupAnyUnitSubject(EVENT_PLAYER_UNIT_DEATH, eventAnyUnitDeath);
+  setupAnyUnitSubject(EVENT_PLAYER_UNIT_DECAY, eventAnyUnitDecay);
+  setupAnyUnitSubject(EVENT_PLAYER_UNIT_SELL, eventAnyUnitSold);
+
+  for (let i = 0; i < bj_MAX_PLAYERS; i++) {
+    const p = Players[i];
+    const leave = new Trigger();
+    leave.registerPlayerEvent(p, EVENT_PLAYER_LEAVE);
+    leave.addAction(() => eventAnyPlayerLeaves.emit(p));
+
+    const chat = new Trigger();
+    chat.registerPlayerChatEvent(p, '', false);
+    chat.addAction(() => subjectAnyPlayerChat.emit());
+  }
 });
 
 export function onAnyUnitAttacked(
-  callback: (u: Unit, attacker: Unit) => void
-): {stop: () => void} {
-  return eventUnitAttacked.listen(callback);
+  callback: (target: Unit, attacker: Unit) => void
+): Subscription {
+  return eventUnitAttacked.subscribe(callback);
 }
 
 export function onAnyUnitSpellEffect(
@@ -293,7 +446,7 @@ export function onAnyUnitSpellEffect(
     target: Unit | Item | Destructable | Vec2
   ) => void
 ) {
-  return eventUnitSpellEffect.listen(cb);
+  return eventUnitSpellEffect.subscribe(cb);
 }
 
 export function onAnyUnitEntersRegion(
@@ -305,7 +458,7 @@ export function onAnyUnitEntersRegion(
   const handler = teh<[entered: Unit]>(trg, () => {
     return [Unit.fromHandle(GetEnteringUnit())];
   });
-  return handler.listen(callback);
+  return handler.subscribe(callback);
 }
 
 export function onAnyUnitLeavesRegion(
@@ -316,7 +469,7 @@ export function onAnyUnitLeavesRegion(
   const handler = teh<[leaving: Unit]>(trg, () => {
     return [Unit.fromHandle(GetLeavingUnit())];
   });
-  return handler.listen(callback);
+  return handler.subscribe(callback);
 }
 
 // onAnyUnitDamage registers a callback for whenever a unit recieves damage.
@@ -329,7 +482,7 @@ export function onAnyUnitDamaged(
     DamageInfo: DamageInfo
   ) => DamageInfo | void
 ) {
-  eventAnyUnitDamaged.listen((target, attacker, info) => {
+  eventAnyUnitDamaged.subscribe((target, attacker, info) => {
     const updated = cb(target, attacker, info);
     if (updated) {
       BlzSetEventDamage(updated.damage);
@@ -347,7 +500,7 @@ export function onAnyUnitDamaging(
     DamageInfo: DamageInfo
   ) => DamageInfo | void
 ) {
-  eventAnyUnitDamaging.listen((target, attacker, info) => {
+  eventAnyUnitDamaging.subscribe((target, attacker, info) => {
     const updated = cb(target, attacker, info);
     if (updated) {
       BlzSetEventDamage(updated.damage);
@@ -359,37 +512,45 @@ export function onAnyUnitDamaging(
 }
 
 export function onAnyUnitUseItem(cb: (user: Unit, item: Item) => void) {
-  return eventUnitUsesItem.listen(cb);
+  return eventUnitUsesItem.subscribe(cb);
 }
 
 export function onAnyUnitConstructionStart(cb: (constructing: Unit) => void) {
-  return eventUnitConstructionStart.listen(cb);
+  return eventUnitConstructionStart.subscribe(cb);
 }
 
 export function onAnyUnitConstructionCancel(cb: (canceled: Unit) => void) {
-  return eventUnitConstructionCancel.listen(cb);
+  return eventUnitConstructionCancel.subscribe(cb);
 }
 
 export function onAnyUnitConstructionFinish(cb: (constructed: Unit) => void) {
-  return eventUnitConstructionFinish.listen(cb);
+  return eventUnitConstructionFinish.subscribe(cb);
 }
 
 export function onAnyUnitUpgradeStart(cb: (upgrading: Unit) => void) {
-  return eventUnitUpgradeStart.listen(cb);
+  return eventUnitUpgradeStart.subscribe(cb);
 }
 
 export function onAnyUnitUpgradeCancel(cb: (upgrading: Unit) => void) {
-  return eventUnitUpgradeCancel.listen(cb);
+  return eventUnitUpgradeCancel.subscribe(cb);
 }
 
 export function onAnyUnitUpgradeFinish(cb: (upgrading: Unit) => void) {
-  return eventUnitUpgradeFinish.listen(cb);
+  return eventUnitUpgradeFinish.subscribe(cb);
 }
 
 export function onAnyUnitTrainingFinish(
   cb: (trained: Unit, trainer: Unit) => void
 ) {
-  return eventUnitTrainingFinish.listen(cb);
+  return eventUnitTrainingFinish.subscribe(cb);
+}
+
+export function onAnyUnitDeath(cb: (dying: Unit) => void) {
+  return eventAnyUnitDeath.subscribe(cb);
+}
+
+export function onAnyUnitDecay(cb: (decaying: Unit) => void) {
+  return eventAnyUnitDecay.subscribe(cb);
 }
 
 export function onDeath(d: Widget, cb: () => void) {
@@ -397,5 +558,13 @@ export function onDeath(d: Widget, cb: () => void) {
   const handler = teh<[]>(trg, () => {
     return [];
   });
-  return handler.listen(cb);
+  return handler.subscribe(cb);
+}
+
+export function onAnyUnitSellUnit(cb: (sold: Unit, seller: Unit) => void) {
+  return eventAnyUnitSold.subscribe(cb);
+}
+
+export function onAnyPlayerLeaves(cb: (leaving: MapPlayer) => void) {
+  return eventAnyPlayerLeaves.subscribe(cb);
 }
