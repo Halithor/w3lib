@@ -313,3 +313,13 @@ export function countUnitsInRect(rct: Rectangle) {
   });
   return count;
 }
+
+export function countUnitsInRange(
+  pos: Vec2,
+  radius: number,
+  collisionSizeFiltering: boolean = false
+): number {
+  let count = 0;
+  forUnitsInRange(pos, radius, () => count++, collisionSizeFiltering);
+  return count;
+}

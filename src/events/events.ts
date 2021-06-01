@@ -120,7 +120,7 @@ const subjectUnitAttacked = new GlobalSubject<[target: Unit, attacker: Unit]>(
 export const eventUnitAttacked: Event<
   [target: Unit, attacker: Unit]
 > = subjectUnitAttacked;
-let eventUnitDeath: GlobalSubject<[dying: Unit, kiler: Unit]>;
+
 let eventUnitSpellEffect: GlobalSubject<
   [caster: Unit, abilityId: AbilId, target: Unit | Item | Destructable | Vec2]
 >;
@@ -194,9 +194,30 @@ export const eventUnitItemStacks: Event<
 > = subjectUnitItemStacks;
 
 // Construction
-let eventUnitConstructionStart: GlobalSubject<[constructing: Unit]>;
-let eventUnitConstructionCancel: GlobalSubject<[canceled: Unit]>;
-let eventUnitConstructionFinish: GlobalSubject<[constructed: Unit]>;
+const subjectUnitConstructionStart = new GlobalSubject<[constructing: Unit]>(
+  () => {
+    return [Unit.fromHandle(GetConstructingStructure())];
+  }
+);
+export const eventUnitConstructionStart: Event<
+  [constructing: Unit]
+> = subjectUnitConstructionStart;
+const subjectUnitConstructionCanceled = new GlobalSubject<[canceled: Unit]>(
+  () => {
+    return [Unit.fromHandle(GetCancelledStructure())];
+  }
+);
+export const eventUnitConstructionCancel: Event<
+  [canceled: Unit]
+> = subjectUnitConstructionCanceled;
+const subjectUnitConstructionFinish = new GlobalSubject<[constructed: Unit]>(
+  () => {
+    return [Unit.fromHandle(GetConstructedStructure())];
+  }
+);
+export const eventUnitConstructionFinish: Event<
+  [constructed: Unit]
+> = subjectUnitConstructionFinish;
 let eventUnitUpgradeStart: GlobalSubject<[upgrading: Unit]>;
 let eventUnitUpgradeCancel: GlobalSubject<[upgrading: Unit]>;
 let eventUnitUpgradeFinish: GlobalSubject<[upgrading: Unit]>;
@@ -361,26 +382,18 @@ addScriptHook(W3TS_HOOK.MAIN_BEFORE, () => {
   );
   setupAnyUnitSubject(EVENT_PLAYER_UNIT_STACK_ITEM, subjectUnitItemStacks);
 
-  eventUnitConstructionStart = teh<[constructing: Unit]>(
-    new Trigger().registerAnyUnitEvent(EVENT_PLAYER_UNIT_CONSTRUCT_START),
-    () => {
-      const constructing = Unit.fromHandle(GetConstructingStructure());
-      return [constructing];
-    }
+  // Construction
+  setupAnyUnitSubject(
+    EVENT_PLAYER_UNIT_CONSTRUCT_START,
+    subjectUnitConstructionStart
   );
-  eventUnitConstructionCancel = teh<[canceled: Unit]>(
-    new Trigger().registerAnyUnitEvent(EVENT_PLAYER_UNIT_CONSTRUCT_CANCEL),
-    () => {
-      const canceled = Unit.fromHandle(GetCancelledStructure());
-      return [canceled];
-    }
+  setupAnyUnitSubject(
+    EVENT_PLAYER_UNIT_CONSTRUCT_CANCEL,
+    subjectUnitConstructionCanceled
   );
-  eventUnitConstructionFinish = teh<[constructed: Unit]>(
-    new Trigger().registerAnyUnitEvent(EVENT_PLAYER_UNIT_CONSTRUCT_FINISH),
-    () => {
-      const constructed = Unit.fromHandle(GetConstructedStructure());
-      return [constructed];
-    }
+  setupAnyUnitSubject(
+    EVENT_PLAYER_UNIT_CONSTRUCT_FINISH,
+    subjectUnitConstructionFinish
   );
 
   eventUnitUpgradeStart = teh<[upgrading: Unit]>(

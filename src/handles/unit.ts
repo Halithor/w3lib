@@ -687,7 +687,7 @@ export class Unit extends Widget {
 
   public get items(): Item[] {
     let items: Item[] = [];
-    for (let i = 0; i < bj_MAX_INVENTORY; i++) {
+    for (let i = 0; i < this.inventorySize; i++) {
       const inSlot = this.getItemInSlot(i);
       if (inSlot) {
         items.push(inSlot);
@@ -701,17 +701,17 @@ export class Unit extends Widget {
   }
 
   public getInventorySlotOfItemType(whichItemType: ItemId) {
-    for (let i = 0; i < bj_MAX_INVENTORY; i++) {
+    for (let i = 0; i < this.inventorySize; i++) {
       const slot = this.getItemInSlot(i);
-      if (slot?.typeId.equals(whichItemType)) {
+      if (slot && slot.typeId.equals(whichItemType)) {
         return i;
       }
     }
-    return 0;
+    return -1;
   }
 
   public hasItemOfType(whichItemType: ItemId) {
-    return this.getInventorySlotOfItemType(whichItemType) > 0;
+    return this.getInventorySlotOfItemType(whichItemType) >= 0;
   }
 
   public hideAbility(abilId: AbilId, flag: boolean) {
