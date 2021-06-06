@@ -443,6 +443,14 @@ export class MapPlayer extends Handle<player> {
   public static fromLocal() {
     return this.fromHandle(GetLocalPlayer());
   }
+
+  static get eventTriggering(): MapPlayer {
+    return this.fromHandle(GetTriggerPlayer());
+  }
+
+  static get eventPreviousOwner(): MapPlayer {
+    return MapPlayer.fromHandle(GetChangingUnitPrevOwner());
+  }
 }
 
 for (let i = 0; i < bj_MAX_PLAYER_SLOTS; i++) {

@@ -155,6 +155,10 @@ export class Group extends Handle<group> {
     return BlzGroupGetSize(this.handle);
   }
 
+  public random(): Unit {
+    return this.getUnitAt(Math.floor(Math.random() * this.size))
+  }
+
   public getUnitAt(index: number): Unit {
     return Unit.fromHandle(BlzGroupUnitAt(this.handle, index));
   }
@@ -210,7 +214,7 @@ export class Group extends Handle<group> {
 
 const maxCollisionSize = 200.0;
 
-function getUnitsInRange(
+export function getUnitsInRange(
   pos: Vec2,
   radius: number,
   filter: ((u: Unit) => boolean) | null,

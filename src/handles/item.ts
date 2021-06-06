@@ -238,4 +238,20 @@ export class Item extends Widget {
   public static isIdSellable(itemId: ItemId) {
     return IsItemIdSellable(itemId.value);
   }
+
+  static get eventManipulated(): Item {
+    return this.fromHandle(GetManipulatedItem());
+  }
+
+  static get eventSold(): Item {
+    return this.fromHandle(GetSoldItem());
+  }
+
+  static get eventStackingTarget(): Item {
+    return this.fromHandle(BlzGetStackingItemTarget());
+  }
+
+  static get eventStackingSource(): Item {
+    return this.fromHandle(BlzGetStackingItemSource());
+  }
 }

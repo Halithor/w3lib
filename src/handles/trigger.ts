@@ -282,14 +282,14 @@ export class Trigger extends Handle<trigger> {
     return this;
   }
 
-  public registerUnitInRage(
-    whichUnit: unit,
+  public registerUnitInRange(
+    whichUnit: Unit,
     range: number,
     filter: (() => boolean) | null
   ): Trigger {
     TriggerRegisterUnitInRange(
       this.handle,
-      whichUnit,
+      whichUnit.handle,
       range,
       filter ? Filter(filter) : null
     );

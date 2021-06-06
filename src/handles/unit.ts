@@ -330,7 +330,7 @@ export class Unit extends Widget {
   }
 
   public get typeId() {
-    return new UnitId(GetUnitTypeId(this.handle));
+    return UnitId.of(GetUnitTypeId(this.handle));
   }
 
   public get userData() {
@@ -1297,5 +1297,117 @@ export class Unit extends Widget {
 
   public static isUnitIdType(unitId: UnitId, whichUnitType: unittype) {
     return IsUnitIdType(unitId.value, whichUnitType);
+  }
+
+  static get eventTriggering(): Unit {
+    return this.fromHandle(GetTriggerUnit());
+  }
+
+  static get eventAttacker(): Unit {
+    return this.fromHandle(GetAttacker());
+  }
+
+  static get eventRescuer(): Unit {
+    return this.fromHandle(GetRescuer());
+  }
+
+  static get eventDying(): Unit {
+    return this.fromHandle(GetDyingUnit());
+  }
+
+  static get eventKilling(): Unit | undefined {
+    return GetKillingUnit() ? Unit.fromHandle(GetKillingUnit()) : undefined;
+  }
+
+  static get eventDecaying(): Unit {
+    return this.fromHandle(GetDecayingUnit());
+  }
+
+  static get eventDetected(): Unit {
+    return this.fromHandle(GetDetectedUnit());
+  }
+
+  static get eventConstructingStructure(): Unit {
+    return Unit.fromHandle(GetConstructingStructure());
+  }
+
+  static get eventCanceledStructure(): Unit {
+    return Unit.fromHandle(GetCancelledStructure());
+  }
+
+  static get eventConstructedStructure(): Unit {
+    return Unit.fromHandle(GetConstructedStructure());
+  }
+
+  static get eventTrained(): Unit {
+    return this.fromHandle(GetTrainedUnit());
+  }
+
+  static get eventResearcher(): Unit {
+    return this.fromHandle(GetResearchingUnit());
+  }
+
+  static get eventOrdered(): Unit {
+    return this.fromHandle(GetOrderedUnit());
+  }
+
+  static get eventOrderTarget(): Unit {
+    return this.fromHandle(GetOrderTargetUnit());
+  }
+
+  static get eventHeroLeveling(): Unit {
+    return this.fromHandle(GetLevelingUnit());
+  }
+
+  static get eventHeroLearning(): Unit {
+    return this.fromHandle(GetLearningUnit());
+  }
+
+  static get eventHeroRevivable(): Unit {
+    return this.fromHandle(GetRevivableUnit());
+  }
+
+  static get eventHeroReviving(): Unit {
+    return this.fromHandle(GetRevivingUnit());
+  }
+
+  static get eventSummoner(): Unit {
+    return this.fromHandle(GetSummoningUnit());
+  }
+
+  static get eventSummoned(): Unit {
+    return this.fromHandle(GetSummonedUnit());
+  }
+
+  static get eventManipulating(): Unit {
+    return this.fromHandle(GetManipulatingUnit());
+  }
+
+  static get eventLoaded(): Unit {
+    return this.fromHandle(GetLoadedUnit());
+  }
+
+  static get eventTransport(): Unit {
+    return this.fromHandle(GetTransportUnit());
+  }
+
+  static get eventSold(): Unit {
+    return this.fromHandle(GetSoldUnit());
+  }
+
+  static get eventSeller(): Unit {
+    return this.fromHandle(GetSellingUnit());
+  }
+
+  static get eventOwnershipChanging(): Unit {
+    return this.fromHandle(GetChangingUnit());
+  }
+
+  static get eventBuyer(): Unit {
+    return this.fromHandle(GetBuyingUnit());
+  }
+
+  static get eventCaster(): Unit {
+    return this.fromHandle(GetSpellAbilityUnit());
   }
 }

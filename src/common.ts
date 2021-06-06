@@ -5,7 +5,7 @@
 
 // UnitID represents a unit type's identifier.
 export class UnitId {
-  constructor(private readonly _value: number) {}
+  private constructor(private readonly _value: number) {}
 
   get value(): number {
     return this._value;
@@ -13,6 +13,10 @@ export class UnitId {
 
   equals(other: UnitId) {
     return this.value == other.value;
+  }
+
+  static of(val: number): UnitId {
+    return new UnitId(val);
   }
 }
 
@@ -44,7 +48,7 @@ export class DestId {
 
 // ItemId represents an destructable type's identifier.
 export class AbilId {
-  constructor(private readonly _value: number) {}
+  private constructor(private readonly _value: number) {}
 
   get value(): number {
     return this._value;
@@ -53,9 +57,13 @@ export class AbilId {
   equals(other: AbilId) {
     return this.value == other.value;
   }
+
+  static of(val: number): AbilId {
+    return new AbilId(val);
+  }
 }
 
-export const unitId = (val: string) => new UnitId(FourCC(val));
+export const unitId = (val: string) => UnitId.of(FourCC(val));
 export const itemId = (val: string) => new ItemId(FourCC(val));
 export const destId = (val: string) => new DestId(FourCC(val));
-export const abilId = (val: string) => new AbilId(FourCC(val));
+export const abilId = (val: string) => AbilId.of(FourCC(val));
