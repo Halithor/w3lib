@@ -285,7 +285,7 @@ export class Trigger extends Handle<trigger> {
   public registerUnitInRange(
     whichUnit: Unit,
     range: number,
-    filter: (() => boolean) | null
+    filter?: () => boolean
   ): Trigger {
     TriggerRegisterUnitInRange(
       this.handle,

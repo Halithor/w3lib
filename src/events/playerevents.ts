@@ -12,6 +12,7 @@ function playerEvent<T>(
       const p = Players[i];
       register(trg, p);
     }
+    return () => trg.destroy();
   });
 }
 

@@ -1,6 +1,46 @@
+import {doAfter} from '../handles';
 
-export interface Subscription {
+interface Unsubscribable {
   unsubscribe(): void;
+}
+
+type TeardownLogic = (() => void) | void;
+
+interface Observer<T> {
+  next: (value: T) => void;
+}
+
+export class Subscriber<T> implements Observer<T> {
+  next(value: T): void {}
+}
+
+class FunctionSubscriber<T> extends Subscriber<T> {
+  constructor(private readonly funct: (value: T) => void) {
+    super();
+  }
+  next(value: T): void {
+    this.funct(value);
+  }
+}
+
+export class Subscription implements Unsubscribable {
+  private _closed = false;
+
+  get closed(): boolean {
+    return this._closed;
+  }
+
+  constructor(private teardown?: () => void) {}
+
+  unsubscribe(): void {
+    if (this.closed) {
+      return;
+    }
+    this._closed = true;
+    if (this.teardown) {
+      this.teardown();
+    }
+  }
 }
 
 /* Event is a simple subscribable event. Construct an event by providing it
@@ -14,54 +54,101 @@ export interface Subscription {
  */
 export class Event<T> {
   private initialized = false;
-  private handlers: {[key: number]: (value: T) => void} = {};
-  private idx = 0;
+  private readonly subbers: Subscriber<T>[] = [];
 
-  constructor(private readonly emitter: (emit: (value: T) => void) => void) {}
+  private teardown: TeardownLogic | undefined;
 
-  subscribe(subscriber: (value: T) => void): Subscription {
+  constructor(
+    private readonly setup: (emit: (value: T) => void) => TeardownLogic
+  ) {}
+
+  subscribe(
+    subscriberOrNext: Subscriber<T> | ((value: T) => void)
+  ): Subscription {
+    const subscriber: Subscriber<T> =
+      typeof subscriberOrNext == 'function'
+        ? new FunctionSubscriber(subscriberOrNext)
+        : subscriberOrNext;
+
     if (!this.initialized) {
       this.initialize();
     }
 
-    const idx = this.idx;
-    this.handlers[idx] = subscriber;
-    this.idx++;
-    return {
-      unsubscribe: () => delete this.handlers[idx],
-    };
+    this.subbers.push(subscriber);
+    return new Subscription(() => this.removeSubscription(subscriber));
   }
 
   protected initialize() {
-    this.emitter((val: T) => {
-      this._emit(val);
-    });
+    this.teardown = this.setup((val: T) => this._emit(val));
     this.initialized = true;
   }
 
   protected _emit(value: T) {
-    for (let key in this.handlers) {
-      this.handlers[key](value);
+    this.subbers.forEach(sub => sub.next(value));
+  }
+
+  protected removeSubscription(subscription: Subscriber<T>) {
+    arrRemove(this.subbers, subscription);
+    if (this.subbers.length == 0) {
+      if (this.teardown) {
+        this.teardown();
+        this.initialized = false;
+      }
     }
   }
 
   map<V>(transformation: (value: T) => V): Event<V> {
     return new Event(emit => {
-      this.subscribe(val => {
+      const sub = this.subscribe(val => {
         emit(transformation(val));
       });
+      return () => sub.unsubscribe();
     });
   }
 
   filter(check: (value: T) => boolean): Event<T> {
     return new Event(emit => {
-      this.subscribe(val => {
+      const sub = this.subscribe(val => {
         if (check(val)) {
           emit(val);
         }
       });
+      return () => sub.unsubscribe();
     });
   }
+
+  // Takes the first [count] items emitted before closing the subscription.
+  // take(count: number): Event<T> {
+  //   let seen = 0;
+  //   return new Event(emit => {
+  //     const sub = this.subscribe(val => {
+  //       if (seen < count) {
+  //         emit(val);
+  //         seen++;
+  //       }
+  //       if (seen >= count) {
+  //         sub.unsubscribe();
+  //       }
+  //     });
+
+  //     return () => sub.unsubscribe();
+  //   });
+  // }
+
+  // takeUntil(other: Event<unknown>): Event<T> {
+  //   return new Event(emit => {
+  //     const sub = this.subscribe(val => {
+  //       emit(val);
+  //     });
+  //     const interSub = other.take(1).subscribe(() => {
+  //       sub.unsubscribe();
+  //     });
+  //     return () => {
+  //       sub.unsubscribe();
+  //       interSub.unsubscribe();
+  //     };
+  //   });
+  // }
 }
 
 export class Subject<T> extends Event<T> {
@@ -71,5 +158,12 @@ export class Subject<T> extends Event<T> {
 
   emit(value: T) {
     this._emit(value);
+  }
+}
+
+function arrRemove<T>(arr: T[], item: T) {
+  const idx = arr.indexOf(item);
+  if (idx >= 0) {
+    arr.splice(idx, 1);
   }
 }
