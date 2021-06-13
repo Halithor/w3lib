@@ -5,7 +5,7 @@ import {Unit} from './unit';
 import {Vec2} from '../math/index';
 import {Force} from './force';
 import {Handle} from './handle';
-import {AbilId} from '../common';
+import {AbilId, UnitId} from '../common';
 
 export const Players: MapPlayer[] = [];
 const localPlayer = GetLocalPlayer();
@@ -418,6 +418,10 @@ export class MapPlayer extends Handle<player> {
     group.for(() => {
       SelectUnitAddForPlayer(GetEnumUnit(), this.handle);
     });
+  }
+
+  setUnitMaxAllowed(unitId: UnitId, count: number) {
+    SetPlayerTechMaxAllowed(this.handle, unitId.value, count);
   }
 
   public static fromEnum() {

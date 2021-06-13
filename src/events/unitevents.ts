@@ -1,4 +1,4 @@
-import {Trigger, Unit} from '../handles';
+import {Trigger, Unit} from '../handles/index';
 import {Event} from './event';
 
 export function whenUnitComesInRange(

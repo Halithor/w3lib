@@ -17,7 +17,6 @@ function unitEvent<T>(event: playerunitevent, extractor: () => T): Event<T> {
     trg.addAction(() => emit(extractor()));
     return () => {
       trg.destroy();
-      print('cleanup');
     };
   });
 }

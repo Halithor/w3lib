@@ -369,6 +369,14 @@ export class Unit extends Widget {
     return BlzGetUnitZ(this.handle);
   }
 
+  get mineGold(): number {
+    return GetResourceAmount(this.handle);
+  }
+
+  set mineGold(value: number) {
+    SetResourceAmount(this.handle, value);
+  }
+
   public addAbility(abilityId: AbilId) {
     return UnitAddAbility(this.handle, abilityId.value);
   }
@@ -703,7 +711,7 @@ export class Unit extends Widget {
   public getInventorySlotOfItemType(whichItemType: ItemId) {
     for (let i = 0; i < this.inventorySize; i++) {
       const slot = this.getItemInSlot(i);
-      if (slot && slot.typeId.equals(whichItemType)) {
+      if (slot && slot.typeId == whichItemType) {
         return i;
       }
     }

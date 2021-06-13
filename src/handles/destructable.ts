@@ -70,7 +70,7 @@ export class Destructable extends Widget {
   }
 
   public get typeId(): DestId {
-    return new DestId(GetDestructableTypeId(this.handle));
+    return DestId.of(GetDestructableTypeId(this.handle));
   }
 
   public get pos() {

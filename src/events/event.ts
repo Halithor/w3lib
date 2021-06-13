@@ -1,5 +1,3 @@
-import {doAfter} from '../handles';
-
 interface Unsubscribable {
   unsubscribe(): void;
 }

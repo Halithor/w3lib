@@ -84,7 +84,7 @@ export class TextTag extends Handle<texttag> {
   // Use the visible setter for all players.
   setVisibleForPlayer(p: MapPlayer, value: boolean) {
     if (p.isLocalPlayer) {
-      this.visible = value;
+      SetTextTagVisibility(this.handle, value);
     }
   }
 
@@ -95,6 +95,21 @@ export class TextTag extends Handle<texttag> {
 
 const fontSize = 10.434;
 const offset = vec2(16, 0);
+
+export function standardTextTagForPlayer(pos: Vec2, text: string, player: MapPlayer): TextTag {
+  const tt = new TextTag(
+    text,
+    pos.withZ(0),
+    fontSize,
+    color(255, 255, 255)
+  );
+  tt.fadepoint = 2.0;
+  tt.lifespan = 3.0;
+  tt.velocity = vec2(0, 0.03);
+  tt.permanent = false;
+  tt.setVisibleForPlayer(player, true);
+  return tt
+}
 
 export function standardTextTag(pos: Vec2, text: string): TextTag {
   const tt = new TextTag(text, pos.withZ(0), fontSize, color(255, 255, 255));

@@ -82,7 +82,7 @@ export class Item extends Widget {
   }
 
   public get typeId() {
-    return new ItemId(GetItemTypeId(this.handle));
+    return ItemId.of(GetItemTypeId(this.handle));
   }
 
   public get userData() {
