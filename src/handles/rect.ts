@@ -92,4 +92,8 @@ export class Rectangle extends Handle<rect> {
   public static getWorldBounds() {
     return Rectangle.fromHandle(GetWorldBounds());
   }
+
+  public static getPlayableArea() {
+    return Rectangle.fromHandle(GetPlayableMapRect());
+  }
 }

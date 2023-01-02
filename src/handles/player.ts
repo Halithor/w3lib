@@ -5,7 +5,8 @@ import {Unit} from './unit';
 import {Vec2} from '../math/index';
 import {Force} from './force';
 import {Handle} from './handle';
-import {AbilId, UnitId} from '../common';
+import {AbilId, TechId, UnitId} from '../common';
+import {playerColors} from '../helper/index';
 
 export const Players: MapPlayer[] = [];
 const localPlayer = GetLocalPlayer();
@@ -63,7 +64,7 @@ export class MapPlayer extends Handle<player> {
   }
 
   get isLocalPlayer(): boolean {
-    return localPlayer == this.handle;
+    return GetLocalPlayer() == this.handle;
   }
 
   public get name() {
@@ -72,6 +73,19 @@ export class MapPlayer extends Handle<player> {
 
   public set name(value: string) {
     SetPlayerName(this.handle, value);
+  }
+
+  public get nameShort() {
+    const idx = this.name.indexOf('#');
+    return this.name.substring(0, idx > 0 ? idx : this.name.length);
+  }
+
+  public get nameColored() {
+    return playerColors[this.id].code + this.name + '|r';
+  }
+
+  public get nameShortColored() {
+    return playerColors[this.id].code + this.nameShort + '|r';
   }
 
   public get race() {
@@ -138,14 +152,6 @@ export class MapPlayer extends Handle<player> {
     this.setState(PLAYER_STATE_RESOURCE_FOOD_USED, val);
   }
 
-  public addTechResearched(techId: number, levels: number) {
-    AddPlayerTechResearched(this.handle, techId, levels);
-  }
-
-  public decTechResearched(techId: number, levels: number) {
-    BlzDecPlayerTechResearched(this.handle, techId, levels);
-  }
-
   // Used to store hero level data for the scorescreen
   // before units are moved to neutral passive in melee games
   public cacheHeroData() {
@@ -202,16 +208,32 @@ export class MapPlayer extends Handle<player> {
     return GetPlayerTaxRate(this.handle, otherPlayer, whichResource);
   }
 
-  public getTechCount(techId: number, specificonly: boolean) {
-    return GetPlayerTechCount(this.handle, techId, specificonly);
+  public getTechCount(techId: TechId) {
+    return GetPlayerTechCount(this.handle, techId.value, true);
   }
 
-  public getTechMaxAllowed(techId: number) {
-    return GetPlayerTechMaxAllowed(this.handle, techId);
+  public getTechMaxAllowed(techId: TechId) {
+    return GetPlayerTechMaxAllowed(this.handle, techId.value);
   }
 
-  public getTechResearched(techId: number, specificonly: boolean) {
-    return GetPlayerTechResearched(this.handle, techId, specificonly);
+  public getTechResearched(techId: TechId) {
+    return GetPlayerTechResearched(this.handle, techId.value, true);
+  }
+
+  public addTechResearched(techId: TechId, levels: number) {
+    AddPlayerTechResearched(this.handle, techId.value, levels);
+  }
+
+  public decTechResearched(techId: TechId, levels: number) {
+    BlzDecPlayerTechResearched(this.handle, techId.value, levels);
+  }
+
+  public setTechMaxAllowed(techId: TechId, maximum: number) {
+    SetPlayerTechMaxAllowed(this.handle, techId.value, maximum);
+  }
+
+  public setTechResearched(techId: TechId, setToLevel: number) {
+    SetPlayerTechResearched(this.handle, techId.value, setToLevel);
   }
 
   public getUnitCount(includeIncomplete: boolean) {
@@ -385,14 +407,6 @@ export class MapPlayer extends Handle<player> {
     SetPlayerTaxRate(this.handle, otherPlayer.handle, whichResource, rate);
   }
 
-  public setTechMaxAllowed(techId: number, maximum: number) {
-    SetPlayerTechMaxAllowed(this.handle, techId, maximum);
-  }
-
-  public setTechResearched(techId: number, setToLevel: number) {
-    SetPlayerTechResearched(this.handle, techId, setToLevel);
-  }
-
   public setUnitsOwner(newOwner: number) {
     SetPlayerUnitsOwner(this.handle, newOwner);
   }
@@ -420,8 +434,22 @@ export class MapPlayer extends Handle<player> {
     });
   }
 
+  // get selectedUnits(): Group {
+  //   const g = new Group()
+  //   g.enumUnitsSelected(this, null)
+  //   return g
+  // }
+
   setUnitMaxAllowed(unitId: UnitId, count: number) {
     SetPlayerTechMaxAllowed(this.handle, unitId.value, count);
+  }
+
+  displayText(message: string, xPos = 0, yPos = 0) {
+    DisplayTextToPlayer(this.handle, xPos, yPos, message);
+  }
+
+  displayTextTimed(seconds: number, message: string, xPos = 0, yPos = 0) {
+    DisplayTimedTextToPlayer(this.handle, xPos, yPos, seconds, message);
   }
 
   public static fromEnum() {
@@ -454,6 +482,14 @@ export class MapPlayer extends Handle<player> {
 
   static get eventPreviousOwner(): MapPlayer {
     return MapPlayer.fromHandle(GetChangingUnitPrevOwner());
+  }
+
+  static get neutralHostile(): MapPlayer {
+    return Players[PLAYER_NEUTRAL_AGGRESSIVE];
+  }
+
+  static get neutralPassive(): MapPlayer {
+    return Players[PLAYER_NEUTRAL_PASSIVE];
   }
 }
 

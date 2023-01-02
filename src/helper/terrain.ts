@@ -29,7 +29,7 @@ export function isTerrainWalkable(pos: Vec2): boolean {
   // const itemSearchRect = new Rectangle(vec2(0, 0), vec2(128, 128));
 
   // First hide items in the way.
-  const itemsInWay: Item[] = [];
+  // const itemsInWay: Item[] = [];
   // itemSearchRect.move(pos);
   // itemSearchRect.enumItems(null, () => {
   //   const i = Item.fromHandle(GetEnumItem());
@@ -43,9 +43,9 @@ export function isTerrainWalkable(pos: Vec2): boolean {
   // dummyItem.destroy();
 
   // Unhide items in the way
-  itemsInWay.forEach(i => {
-    i.visible = true;
-  });
+  // itemsInWay.forEach(i => {
+  //   i.visible = true;
+  // });
 
   return (
     newPos.distanceToSq(pos) < maxRangeSq &&

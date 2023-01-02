@@ -55,4 +55,8 @@ export class Force extends Handle<force> {
   public static fromHandle(handle: force): Force {
     return this.getObject(handle);
   }
+
+  static get allPlayers(): Force {
+    return Force.fromHandle(bj_FORCE_ALL_PLAYERS);
+  }
 }

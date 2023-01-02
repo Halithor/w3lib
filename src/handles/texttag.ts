@@ -72,6 +72,10 @@ export class TextTag extends Handle<texttag> {
     SetTextTagText(this.handle, message, this._size);
   }
 
+  get text(): string {
+    return this._text;
+  }
+
   set velocity(value: Vec2) {
     SetTextTagVelocity(this.handle, value.x, value.y);
   }
@@ -96,19 +100,18 @@ export class TextTag extends Handle<texttag> {
 const fontSize = 10.434;
 const offset = vec2(16, 0);
 
-export function standardTextTagForPlayer(pos: Vec2, text: string, player: MapPlayer): TextTag {
-  const tt = new TextTag(
-    text,
-    pos.withZ(0),
-    fontSize,
-    color(255, 255, 255)
-  );
+export function standardTextTagForPlayer(
+  pos: Vec2,
+  text: string,
+  player: MapPlayer
+): TextTag {
+  const tt = new TextTag(text, pos.withZ(0), fontSize, color(255, 255, 255));
   tt.fadepoint = 2.0;
   tt.lifespan = 3.0;
   tt.velocity = vec2(0, 0.03);
   tt.permanent = false;
   tt.setVisibleForPlayer(player, true);
-  return tt
+  return tt;
 }
 
 export function standardTextTag(pos: Vec2, text: string): TextTag {
@@ -139,7 +142,8 @@ export function createGoldBountyTextTag(
   const offsetPos = pos.sub(offset);
   const tt = standardTextTag(offsetPos, msg);
   tt.color = color(255, 220, 0);
-  if (receiver) {
+  if (receiver != undefined) {
+    tt.visible = false;
     tt.setVisibleForPlayer(receiver, true);
   }
   return tt;
@@ -154,7 +158,8 @@ export function createLumberBountyTextTag(
   const offsetPos = pos.sub(offset);
   const tt = standardTextTag(offsetPos, msg);
   tt.color = color(0, 200, 80);
-  if (receiver) {
+  if (receiver != undefined) {
+    tt.visible = false;
     tt.setVisibleForPlayer(receiver, true);
   }
   return tt;
@@ -162,6 +167,15 @@ export function createLumberBountyTextTag(
 
 export function createManaBurnTextTag(pos: Vec2, damage: number) {
   const msg = '-' + damage.toString();
+  const offsetPos = pos.sub(offset);
+  const tt = standardTextTag(offsetPos, msg);
+  tt.color = color(82, 82, 255);
+  tt.velocity = vec2(0, 0.04);
+  tt.lifespan = 5;
+}
+
+export function createManaGainTextTag(pos: Vec2, damage: number) {
+  const msg = '+' + damage.toString();
   const offsetPos = pos.sub(offset);
   const tt = standardTextTag(offsetPos, msg);
   tt.color = color(82, 82, 255);

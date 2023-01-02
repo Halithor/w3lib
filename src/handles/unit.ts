@@ -1,7 +1,14 @@
 /** @noSelfInFile **/
 
-import {AbilId, ItemId, UnitId} from '../common';
-import {Angle, Vec2, vec2} from '../math/index';
+import {
+  AbilId,
+  AttackType,
+  DamageType,
+  ItemId,
+  UnitId,
+  WeaponSound,
+} from '../common';
+import {Angle, randomAngle, Vec2, vec2} from '../math/index';
 import {Destructable} from './destructable';
 import {Force} from './force';
 import {Group} from './group';
@@ -18,7 +25,7 @@ export class Unit extends Widget {
     owner: MapPlayer | number,
     unitId: UnitId,
     pos: Vec2,
-    face: Angle,
+    face?: Angle,
     skinId?: number
   ) {
     if (Handle.initFromHandle()) {
@@ -32,10 +39,16 @@ export class Unit extends Widget {
               unitId.value,
               pos.x,
               pos.y,
-              face.degrees,
+              face ? face.degrees : randomAngle().degrees,
               skinId
             )
-          : CreateUnit(p, unitId.value, pos.x, pos.y, face.degrees)
+          : CreateUnit(
+              p,
+              unitId.value,
+              pos.x,
+              pos.y,
+              face ? face.degrees : randomAngle().degrees
+            )
       );
     }
   }
@@ -433,8 +446,8 @@ export class Unit extends Widget {
     AddUnitToStock(this.handle, unitId.value, currentStock, stockMax);
   }
 
-  public applyTimedLife(buffId: number, duration: number) {
-    UnitApplyTimedLife(this.handle, buffId, duration);
+  public applyTimedLife(buffId: AbilId, duration: number) {
+    UnitApplyTimedLife(this.handle, buffId.value, duration);
   }
 
   public attachSound(sound: Sound) {
@@ -478,9 +491,9 @@ export class Unit extends Widget {
     amount: number,
     attack: boolean,
     ranged: boolean,
-    attackType: attacktype,
-    damageType: damagetype,
-    weaponType: weapontype
+    attackType: AttackType,
+    damageType: DamageType,
+    weaponSound: WeaponSound = WeaponSound.None
   ) {
     return UnitDamagePoint(
       this.handle,
@@ -491,30 +504,30 @@ export class Unit extends Widget {
       amount,
       attack,
       ranged,
-      attackType,
-      damageType,
-      weaponType
+      attackType.value,
+      damageType.value,
+      weaponSound.value
     );
   }
 
   public damageTarget(
-    target: widget,
+    target: Widget,
     amount: number,
     attack: boolean,
     ranged: boolean,
-    attackType: attacktype,
-    damageType: damagetype,
-    weaponType: weapontype
+    attackType: AttackType,
+    damageType: DamageType,
+    weaponSound: WeaponSound = WeaponSound.None
   ) {
     return UnitDamageTarget(
       this.handle,
-      target,
+      target.handle,
       amount,
       attack,
       ranged,
-      attackType,
-      damageType,
-      weaponType
+      attackType.value,
+      damageType.value,
+      weaponSound.value
     );
   }
 
@@ -693,6 +706,10 @@ export class Unit extends Widget {
     );
   }
 
+  hasBuff(buffId: AbilId): boolean {
+    return this.getAbilityLevel(buffId) > 0;
+  }
+
   public get items(): Item[] {
     let items: Item[] = [];
     for (let i = 0; i < this.inventorySize; i++) {
@@ -855,10 +872,25 @@ export class Unit extends Widget {
       : IssuePointOrderById(this.handle, order, pos.x, pos.y);
   }
 
-  public issueTargetOrder(order: string | number, targetWidget: Widget) {
+  public issueTargetOrder(
+    order: string | number,
+    targetWidget: Widget
+  ): boolean {
     return typeof order === 'string'
       ? IssueTargetOrder(this.handle, order, targetWidget.handle)
       : IssueTargetOrderById(this.handle, order, targetWidget.handle);
+  }
+
+  issueTrainOrder(unitId: UnitId) {
+    return IssueImmediateOrderById(this.handle, unitId.value);
+  }
+
+  issueResearchOrder(researchId: number) {
+    return IssueImmediateOrderById(this.handle, researchId);
+  }
+
+  issueUpgradeOrder(unitId: UnitId) {
+    return IssueImmediateOrderById(this.handle, unitId.value);
   }
 
   public isUnit(whichSpecifiedUnit: Unit) {
@@ -969,6 +1001,15 @@ export class Unit extends Widget {
 
   public removeUnitFromStock(itemId: UnitId) {
     RemoveUnitFromStock(this.handle, itemId.value);
+  }
+
+  /**
+   * Replace this unit with a new one of the given type. Returns the new unit.
+   */
+  replaceWith(unitId: UnitId, state: Unit.ReplaceState): Unit {
+    return Unit.fromHandle(
+      ReplaceUnitBJ(this.handle, unitId.value, Unit.ReplaceState.toValue(state))
+    );
   }
 
   public resetCooldown() {
@@ -1417,5 +1458,45 @@ export class Unit extends Widget {
 
   static get eventCaster(): Unit {
     return this.fromHandle(GetSpellAbilityUnit());
+  }
+
+  static get eventEnteringRegion(): Unit {
+    return this.fromHandle(GetEnteringUnit());
+  }
+
+  static get eventLeavingRegion(): Unit {
+    return this.fromHandle(GetLeavingUnit());
+  }
+
+  static get filterUnit(): Unit {
+    return this.fromHandle(GetFilterUnit());
+  }
+}
+
+export namespace Unit {
+  export enum ReplaceState {
+    // Use the same HP and mana percentages
+    Relative,
+    // Use the absolute values for the new unit
+    Absolute,
+    // Use the default values from the new unit
+    Default,
+    // Use the maximum values from the new unit
+    Maximum,
+  }
+
+  export namespace ReplaceState {
+    export function toValue(state: ReplaceState): number {
+      switch (state) {
+        case ReplaceState.Relative:
+          return bj_UNIT_STATE_METHOD_RELATIVE;
+        case ReplaceState.Absolute:
+          return bj_UNIT_STATE_METHOD_ABSOLUTE;
+        case ReplaceState.Default:
+          return bj_UNIT_STATE_METHOD_DEFAULTS;
+        case ReplaceState.Maximum:
+          return bj_UNIT_STATE_METHOD_MAXIMUM;
+      }
+    }
   }
 }

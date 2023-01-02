@@ -1,4 +1,4 @@
-import {AbilId, UnitId} from '../common';
+import {AbilId, TechId, UnitId} from '../common';
 import {
   Destructable,
   Item,
@@ -114,21 +114,21 @@ export const eventUnitResearchStart = unitEvent(
   EVENT_PLAYER_UNIT_RESEARCH_START,
   () => ({
     researcher: Unit.eventResearcher,
-    reseach: GetResearched(),
+    research: TechId.of(GetResearched()),
   })
 );
 export const eventUnitResearchCancel = unitEvent(
   EVENT_PLAYER_UNIT_RESEARCH_CANCEL,
   () => ({
     researcher: Unit.eventResearcher,
-    reseach: GetResearched(),
+    research: TechId.of(GetResearched()),
   })
 );
 export const eventUnitResearchFinish = unitEvent(
   EVENT_PLAYER_UNIT_RESEARCH_FINISH,
   () => ({
     researcher: Unit.eventResearcher,
-    reseach: GetResearched(),
+    research: TechId.of(GetResearched()),
   })
 );
 export const eventUnitIssuedOrder = unitEvent(
@@ -354,7 +354,7 @@ export const eventUnitStackItem = unitEvent(
 function spellTarget(): Unit | Item | Destructable | Vec2 {
   const u = GetSpellTargetUnit();
   if (u) {
-    Unit.fromHandle(u);
+    return Unit.fromHandle(u);
   }
   const d = GetSpellTargetDestructable();
   if (d) {

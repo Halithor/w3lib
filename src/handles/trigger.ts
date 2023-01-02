@@ -1,5 +1,6 @@
 /** @noSelfInFile **/
 
+import {UnitId} from '../common';
 import {Dialog, DialogButton} from './dialog';
 import {Frame} from './frame';
 import {Handle} from './handle';
@@ -323,6 +324,11 @@ export class Trigger extends Handle<trigger> {
     limitval: number
   ): Trigger {
     TriggerRegisterVariableEvent(this.handle, varName, opcode, limitval);
+    return this;
+  }
+
+  registerBuildCommandEvent(unitId: UnitId) {
+    TriggerRegisterBuildCommandEventBJ(this.handle, unitId.value);
     return this;
   }
 

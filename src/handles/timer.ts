@@ -41,6 +41,7 @@ export function doPeriodically(
   };
 }
 
+// The index given to the call back is a count of intervals passed, starting at 1.
 export function doPeriodicallyCounted(
   interval: number,
   count: number,

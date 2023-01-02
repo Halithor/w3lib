@@ -68,12 +68,28 @@ export class Event<T> {
         ? new FunctionSubscriber(subscriberOrNext)
         : subscriberOrNext;
 
+    this.subbers.push(subscriber);
+
     if (!this.initialized) {
       this.initialize();
     }
 
-    this.subbers.push(subscriber);
     return new Subscription(() => this.removeSubscription(subscriber));
+  }
+
+  subscribeOnce(
+    subscriberOrNext: Subscriber<T> | ((value: T) => void)
+  ): Subscription {
+    const subscriber: Subscriber<T> =
+      typeof subscriberOrNext == 'function'
+        ? new FunctionSubscriber(subscriberOrNext)
+        : subscriberOrNext;
+
+    const sub = this.subscribe((value: T) => {
+      subscriber.next(value);
+      sub.unsubscribe();
+    });
+    return sub;
   }
 
   protected initialize() {
@@ -82,7 +98,20 @@ export class Event<T> {
   }
 
   protected _emit(value: T) {
-    this.subbers.forEach(sub => sub.next(value));
+    this.subbers.forEach(sub => {
+      try {
+        sub.next(value);
+      } catch (e: unknown) {
+        if (e instanceof Error) {
+          print(
+            'Subscriber threw exception: ' +
+              e.message +
+              '\n' +
+              (e.stack ? e.stack : '')
+          );
+        }
+      }
+    });
   }
 
   protected removeSubscription(subscription: Subscriber<T>) {

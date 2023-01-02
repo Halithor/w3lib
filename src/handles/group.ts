@@ -17,7 +17,7 @@ export class Group extends Handle<group> {
   }
 
   public addGroupFast(addGroup: Group): number {
-    return BlzGroupAddGroupFast(this.handle, addGroup.handle);
+    return BlzGroupAddGroupFast(addGroup.handle, this.handle);
   }
 
   public addUnit(whichUnit: Unit): boolean {
@@ -71,7 +71,7 @@ export class Group extends Handle<group> {
     }
   }
 
-  public enumUnitsInRect(r: Rectangle, filter: (() => boolean) | null) {
+  public enumUnitsInRect(r: Rectangle, filter: (() => boolean) | null = null) {
     if (filter != null) {
       GroupEnumUnitsInRect(this.handle, r.handle, Filter(filter));
     } else {
@@ -96,11 +96,8 @@ export class Group extends Handle<group> {
     }
   }
 
-  public enumUnitsOfPlayer(
-    whichPlayer: MapPlayer,
-    filter: (() => boolean) | null
-  ) {
-    if (filter != null) {
+  public enumUnitsOfPlayer(whichPlayer: MapPlayer, filter?: () => boolean) {
+    if (filter != undefined) {
       GroupEnumUnitsOfPlayer(this.handle, whichPlayer.handle, Filter(filter));
     } else {
       GroupEnumUnitsOfPlayer(this.handle, whichPlayer.handle, null);
@@ -147,6 +144,18 @@ export class Group extends Handle<group> {
     ForGroup(this.handle, callback);
   }
 
+  public forEach(callback: (u: Unit) => void) {
+    this.for(() => {
+      callback(Group.getEnumUnit());
+    });
+  }
+
+  public map<R>(callback: (u: Unit) => R): R[] {
+    const result: R[] = [];
+    this.forEach(u => result.push(callback(u)));
+    return result;
+  }
+
   public get first() {
     return Unit.fromHandle(FirstOfGroup(this.handle));
   }
@@ -156,7 +165,7 @@ export class Group extends Handle<group> {
   }
 
   public random(): Unit {
-    return this.getUnitAt(Math.floor(Math.random() * this.size))
+    return this.getUnitAt(Math.floor(Math.random() * this.size));
   }
 
   public getUnitAt(index: number): Unit {
@@ -210,6 +219,15 @@ export class Group extends Handle<group> {
   public static getFilterUnit(): Unit {
     return Unit.fromHandle(GetFilterUnit());
   }
+}
+
+/**
+ * Construct a group of the provided units.
+ */
+export function groupOf(...units: Unit[]): Group {
+  const grp = new Group();
+  units.forEach(u => grp.addUnit(u));
+  return grp;
 }
 
 const maxCollisionSize = 200.0;
@@ -302,12 +320,28 @@ export function findNearestUnit(
   return nearest;
 }
 
+export function getUnitsInRect(
+  rct: Rectangle,
+  filter: ((u: Unit) => boolean) | null = null
+): Group {
+  const enumGroup = new Group();
+  if (filter != null) {
+    enumGroup.enumUnitsInRect(rct, () =>
+      filter(Unit.fromHandle(GetFilterUnit()))
+    );
+  } else {
+    enumGroup.enumUnitsInRect(rct, null);
+  }
+  return enumGroup;
+}
+
 export function forUnitsInRect(rct: Rectangle, callback: (u: Unit) => void) {
   const enumGroup = new Group();
   enumGroup.enumUnitsInRect(rct, null);
   enumGroup.for(() => {
     callback(Unit.fromHandle(GetEnumUnit()));
   });
+  enumGroup.destroy();
 }
 
 export function countUnitsInRect(rct: Rectangle) {
@@ -326,4 +360,13 @@ export function countUnitsInRange(
   let count = 0;
   forUnitsInRange(pos, radius, () => count++, collisionSizeFiltering);
   return count;
+}
+
+export function forUnitsOfPlayer(
+  whichPlayer: MapPlayer,
+  callback: (u: Unit) => void
+) {
+  const g = new Group();
+  g.enumUnitsOfPlayer(whichPlayer), g.forEach(u => callback(u));
+  g.destroy();
 }

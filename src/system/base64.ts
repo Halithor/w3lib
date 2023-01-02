@@ -3,9 +3,12 @@
 const chars =
   'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
 
+/**
+ * Encode a string to base64.
+ * @param input The string to encode.
+ */
 export function base64Encode(input: string) {
   let output = '';
-  // tslint:disable-next-line:no-conditional-assignment
   for (
     let block = 0, charCode = 0, idx = 0, map = chars;
     input.charAt(Math.floor(idx) | 0).length > 0 || ((map = '='), idx % 1);
@@ -15,9 +18,9 @@ export function base64Encode(input: string) {
 
     if (Math.floor(idx) > input.length && charCode === 0) {
       if (output.length % 4 === 1) {
-        return output + '=';
+        return `${output}=`;
       }
-      return output + '==';
+      return `${output}==`;
     }
 
     if (charCode > 0xff) {
@@ -33,6 +36,10 @@ export function base64Encode(input: string) {
   return output;
 }
 
+/**
+ * Decode a base64 string.
+ * @param input The base64 string to decode.
+ */
 export function base64Decode(input: string) {
   let i = input.length;
   for (; i > 0 && input[i] !== '='; i--) {
