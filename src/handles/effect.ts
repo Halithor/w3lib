@@ -1,6 +1,6 @@
 /** @noSelfInFile **/
 
-import { Unit } from 'w3lib/src/handles/unit';
+import {Unit} from './unit';
 import {doAfter} from '../handles/timer';
 import {Angle, Vec2, Vec3, vec3} from '../math/index';
 import {Handle} from './handle';
@@ -167,12 +167,12 @@ export function flashEffectUnit(
   scale?: number,
   angle?: Angle
 ) {
-  const e = new Effect(path, target, attachmentPoint)
+  const e = new Effect(path, target, attachmentPoint);
   if (scale) {
-    e.scale = scale
+    e.scale = scale;
   }
   if (angle) {
-    e.setYaw(angle.radians)
+    e.setYaw(angle.radians);
   }
-  e.destroy()
+  e.destroy();
 }

@@ -1,0 +1,57 @@
+/** @noSelfInFile **/
+/// <reference types="war3-types/core/common" />
+import { ItemId } from '../common';
+import { Vec2 } from '../math/index';
+import { MapPlayer } from './player';
+import { Widget } from './widget';
+export declare class Item extends Widget {
+    readonly handle: item;
+    constructor(itemId: ItemId, pos: Vec2, skinId?: number);
+    get charges(): number;
+    set charges(value: number);
+    set invulnerable(flag: boolean);
+    get invulnerable(): boolean;
+    get level(): number;
+    set iconPath(value: string);
+    get name(): string;
+    set name(value: string);
+    set tooltip(value: string);
+    set tooltipExtended(value: string);
+    set description(value: string);
+    get pawnable(): boolean;
+    set pawnable(flag: boolean);
+    get player(): player;
+    get type(): itemtype;
+    get typeId(): ItemId;
+    get userData(): number;
+    set userData(value: number);
+    get visible(): boolean;
+    set visible(flag: boolean);
+    get skin(): number;
+    set skin(skinId: number);
+    get x(): number;
+    set x(value: number);
+    get y(): number;
+    set y(value: number);
+    set pos(value: Vec2);
+    get pos(): Vec2;
+    destroy(): void;
+    getField(field: itembooleanfield | itemintegerfield | itemrealfield | itemstringfield): string | number | boolean;
+    isOwned(): boolean;
+    isPawnable(): boolean;
+    isPowerup(): boolean;
+    isSellable(): boolean;
+    setDropId(unitId: number): void;
+    setDropOnDeath(flag: boolean): void;
+    setDroppable(flag: boolean): void;
+    setField(field: itembooleanfield | itemintegerfield | itemrealfield | itemstringfield, value: boolean | number | string): boolean;
+    setOwner(whichPlayer: MapPlayer, changeColor: boolean): void;
+    static fromHandle(handle: item): Item;
+    static isIdPawnable(itemId: ItemId): boolean;
+    static isIdPowerup(itemId: ItemId): boolean;
+    static isIdSellable(itemId: ItemId): boolean;
+    static get eventManipulated(): Item;
+    static get eventSold(): Item;
+    static get eventStackingTarget(): Item;
+    static get eventStackingSource(): Item;
+}
