@@ -547,7 +547,7 @@ export class Unit extends Widget {
     return UnitDropItemPoint(this.handle, whichItem.handle, pos.x, pos.y);
   }
 
-  public dropItemFromSlot(whichItem: Item, slot: number) {
+  public putItemInSlot(whichItem: Item, slot: number) {
     return UnitDropItemSlot(this.handle, whichItem.handle, slot);
   }
 
@@ -729,6 +729,16 @@ export class Unit extends Widget {
     for (let i = 0; i < this.inventorySize; i++) {
       const slot = this.getItemInSlot(i);
       if (slot && slot.typeId == whichItemType) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  public getInventorySlotOfItem(whichItem: Item) {
+    for (let i = 0; i < this.inventorySize; i++) {
+      const slot = this.getItemInSlot(i);
+      if (slot && slot == whichItem) {
         return i;
       }
     }
@@ -983,11 +993,11 @@ export class Unit extends Widget {
     RemoveGuardPosition(this.handle);
   }
 
-  public removeItem(whichItem: Item) {
+  public dropItemInstantly(whichItem: Item) {
     UnitRemoveItem(this.handle, whichItem.handle);
   }
 
-  public removeItemFromSlot(itemSlot: number) {
+  public dropItemInstantlyFromSlot(itemSlot: number) {
     return UnitRemoveItemFromSlot(this.handle, itemSlot);
   }
 
@@ -996,7 +1006,7 @@ export class Unit extends Widget {
   }
 
   public removeType(whichUnitType: unittype) {
-    return UnitAddType(this.handle, whichUnitType);
+    return UnitRemoveType(this.handle, whichUnitType);
   }
 
   public removeUnitFromStock(itemId: UnitId) {

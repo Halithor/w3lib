@@ -44,12 +44,26 @@ export class Force extends Handle<force> {
     ForForce(this.handle, callback);
   }
 
+  forEach(callback: (p: MapPlayer, index: number) => void) {
+    let idx = 0;
+    this.for(() => {
+      callback(MapPlayer.fromEnum(), idx);
+      idx++;
+    });
+  }
+
   public hasPlayer(whichPlayer: MapPlayer) {
     return IsPlayerInForce(whichPlayer.handle, this.handle);
   }
 
   public removePlayer(whichPlayer: MapPlayer) {
     ForceRemovePlayer(this.handle, whichPlayer.handle);
+  }
+
+  get size(): number {
+    let size = 0;
+    this.for(() => size++);
+    return size;
   }
 
   public static fromHandle(handle: force): Force {
