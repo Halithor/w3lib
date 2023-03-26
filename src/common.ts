@@ -186,6 +186,55 @@ export class DamageType {
   static readonly MagicShadow = new DamageType(DAMAGE_TYPE_SHADOW_STRIKE);
   static readonly MagicSonic = new DamageType(DAMAGE_TYPE_SONIC);
   static readonly MagicSpiritlink = new DamageType(DAMAGE_TYPE_SPIRIT_LINK);
+
+  static fromType(value: damagetype): DamageType {
+    switch (value) {
+      case DAMAGE_TYPE_NORMAL:
+        return DamageType.Physical;
+      case DAMAGE_TYPE_ENHANCED:
+        return DamageType.EnhancedPhysical;
+      case DAMAGE_TYPE_POISON:
+        return DamageType.Poison;
+      case DAMAGE_TYPE_DISEASE:
+        return DamageType.Disease;
+      case DAMAGE_TYPE_ACID:
+        return DamageType.Acid;
+      case DAMAGE_TYPE_DEMOLITION:
+        return DamageType.Demolition;
+      case DAMAGE_TYPE_SLOW_POISON:
+        return DamageType.SlowPoison;
+      case DAMAGE_TYPE_UNIVERSAL:
+        return DamageType.Universal;
+      case DAMAGE_TYPE_UNKNOWN:
+        return DamageType.UniversalUnknown;
+      case DAMAGE_TYPE_COLD:
+        return DamageType.MagicCold;
+      case DAMAGE_TYPE_DEATH:
+        return DamageType.MagicDeath;
+      case DAMAGE_TYPE_DEFENSIVE:
+        return DamageType.MagicDefensive;
+      case DAMAGE_TYPE_DIVINE:
+        return DamageType.MagicDivine;
+      case DAMAGE_TYPE_FIRE:
+        return DamageType.MagicFire;
+      case DAMAGE_TYPE_FORCE:
+        return DamageType.MagicForce;
+      case DAMAGE_TYPE_LIGHTNING:
+        return DamageType.MagicLightning;
+      case DAMAGE_TYPE_MIND:
+        return DamageType.MagicMind;
+      case DAMAGE_TYPE_PLANT:
+        return DamageType.MagicPlant;
+      case DAMAGE_TYPE_SHADOW_STRIKE:
+        return DamageType.MagicShadow;
+      case DAMAGE_TYPE_SONIC:
+        return DamageType.MagicSonic;
+      case DAMAGE_TYPE_SPIRIT_LINK:
+        return DamageType.MagicSpiritlink;
+      default:
+        return DamageType.Physical;
+    }
+  }
 }
 
 export class WeaponSound {

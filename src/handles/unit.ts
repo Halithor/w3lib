@@ -8,6 +8,16 @@ import {
   UnitId,
   WeaponSound,
 } from '../common';
+import {addScriptHook, W3TS_HOOK} from '../hooks/index';
+import {
+  eventUnitConstructionCancel,
+  eventUnitConstructionFinish,
+  eventUnitConstructionStart,
+  eventUnitDeath,
+  eventUnitUpgradeCancel,
+  eventUnitUpgradeFinish,
+  eventUnitUpgradeStart,
+} from '../events/anyUnitEvents';
 import {Angle, randomAngle, Vec2, vec2} from '../math/index';
 import {Destructable} from './destructable';
 import {Force} from './force';
@@ -20,6 +30,8 @@ import {Widget} from './widget';
 
 export class Unit extends Widget {
   public readonly handle!: unit;
+  static underConstructionUnits: Group;
+  static upgradingUnits: Group;
 
   constructor(
     owner: MapPlayer | number,
@@ -819,6 +831,16 @@ export class Unit extends Widget {
 
   public isSelected(whichPlayer: MapPlayer) {
     return IsUnitSelected(this.handle, whichPlayer.handle);
+  }
+
+  isUnderConstruction(): boolean {
+    return true;
+    // return underConstructionUnits.hasUnit(this);
+  }
+
+  isUpgrading(): boolean {
+    return true;
+    // return upgradingUnits.hasUnit(this);
   }
 
   public issueBuildOrder(unit: string | UnitId, pos: Vec2) {

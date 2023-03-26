@@ -89,6 +89,8 @@ export class TextTag extends Handle<texttag> {
   setVisibleForPlayer(p: MapPlayer, value: boolean) {
     if (p.isLocalPlayer) {
       SetTextTagVisibility(this.handle, value);
+    } else {
+      this.text = '';
     }
   }
 
@@ -163,7 +165,7 @@ export function createLumberBountyTextTag(
     tt.setVisibleForPlayer(receiver, true);
   }
   return tt;
-}
+} 
 
 export function createManaBurnTextTag(pos: Vec2, damage: number) {
   const msg = '-' + damage.toString();
@@ -181,6 +183,7 @@ export function createManaGainTextTag(pos: Vec2, damage: number) {
   tt.color = color(82, 82, 255);
   tt.velocity = vec2(0, 0.04);
   tt.lifespan = 5;
+  return tt;
 }
 
 export function createMissTextTag(origin: Unit | Vec2): TextTag {

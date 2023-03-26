@@ -1,4 +1,4 @@
-import {AbilId, TechId, UnitId} from '../common';
+import {AbilId, AttackType, DamageType, TechId, UnitId} from '../common';
 import {
   Destructable,
   Item,
@@ -230,8 +230,8 @@ export const eventUnitLoadedIntoTransport = unitEvent(
 
 export type DamageInfo = {
   damage: number;
-  attackType: attacktype;
-  damageType: damagetype;
+  attackType: AttackType;
+  damageType: DamageType;
   weaponType: weapontype;
   isSpell: boolean;
   isMeleeAttack: boolean;
@@ -268,8 +268,8 @@ export const eventUnitDamaged = unitEvent<{
     attacker,
     info: {
       damage,
-      damageType,
-      attackType,
+      damageType: DamageType.fromType(damageType),
+      attackType: AttackType.fromType(attackType),
       weaponType,
       isMeleeAttack,
       isSpell,
@@ -307,8 +307,8 @@ export const eventUnitDamaging = unitEvent<{
     attacker,
     info: {
       damage,
-      damageType,
-      attackType,
+      damageType: DamageType.fromType(damageType),
+      attackType: AttackType.fromType(attackType),
       weaponType,
       isMeleeAttack,
       isSpell,

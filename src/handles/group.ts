@@ -1,5 +1,6 @@
 /** @noSelfInFile **/
 
+import {UnitId} from '../common';
 import {Vec2} from '../math/index';
 import {Handle} from './handle';
 import {MapPlayer} from './player';
@@ -8,6 +9,10 @@ import {Unit} from './unit';
 import {Widget} from './widget';
 
 export class Group extends Handle<group> {
+  static getNew() {
+    return new Group();
+  }
+
   constructor() {
     if (Handle.initFromHandle()) {
       super();
@@ -110,6 +115,10 @@ export class Group extends Handle<group> {
     } else {
       GroupEnumUnitsOfType(this.handle, unitName, null);
     }
+  }
+
+  public enumUnitsOfTypeId(unitType: UnitId) {
+    return Group.fromHandle(GetUnitsOfTypeIdAll(unitType.value));
   }
 
   public enumUnitsOfTypeCounted(
@@ -367,6 +376,14 @@ export function forUnitsOfPlayer(
   callback: (u: Unit) => void
 ) {
   const g = new Group();
-  g.enumUnitsOfPlayer(whichPlayer), g.forEach(u => callback(u));
+  g.enumUnitsOfPlayer(whichPlayer);
+  g.forEach(u => callback(u));
+  g.destroy();
+}
+
+export function forUnitsOfType(whichType: UnitId, callback: (u: Unit) => void) {
+  const g = new Group();
+  g.enumUnitsOfTypeId(whichType);
+  g.forEach(u => callback(u));
   g.destroy();
 }

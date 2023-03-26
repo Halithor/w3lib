@@ -129,11 +129,14 @@ export class Effect extends Handle<effect> {
 
 export function flashEffect(
   path: string,
-  pos: Vec2,
+  pos: Vec2 | Vec3,
   scale?: number,
   angle?: Angle
 ) {
   let e = AddSpecialEffect(path, pos.x, pos.y);
+  if (pos instanceof Vec3) {
+    BlzSetSpecialEffectZ(e, pos.z);
+  }
   if (scale) {
     BlzSetSpecialEffectScale(e, scale);
   }
