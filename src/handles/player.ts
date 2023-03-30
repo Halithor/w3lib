@@ -22,13 +22,41 @@ export enum AllianceState {
   NeutralVision,
 }
 
+/** Key for storing data on a player. The name should be unique among all keys used in the map. */
+export class DataKey<T> {
+  constructor(readonly name: string, readonly creator: () => T) {}
+}
+
 export class MapPlayer extends Handle<player> {
+  private static data: {[key: string]: {[key: number]: any}} = {};
+
   private constructor(index: number) {
     if (Handle.initFromHandle()) {
       super();
     } else {
       super(Player(index));
     }
+  }
+
+  getData<T>(key: DataKey<T>): T {
+    const forKey = MapPlayer.data[key.name];
+    if (forKey == null) {
+      this.setData(key, key.creator());
+      return this.getData(key);
+    }
+    const forPlayer = forKey[this.id];
+    if (forPlayer == null) {
+      this.setData(key, key.creator());
+      return this.getData(key);
+    }
+    return forPlayer;
+  }
+
+  setData<T>(key: DataKey<T>, data: T) {
+    if (!MapPlayer.data[key.name]) {
+      MapPlayer.data[key.name] = {};
+    }
+    MapPlayer.data[key.name][this.id] = data;
   }
 
   public set color(color: playercolor) {
