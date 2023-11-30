@@ -83,7 +83,7 @@ export class Frame extends Handle<framehandle> {
   }
 
   public get text() {
-    return BlzFrameGetText(this.handle);
+    return BlzFrameGetText(this.handle)!;
   }
 
   public set textSizeLimit(size: number) {
@@ -144,7 +144,7 @@ export class Frame extends Handle<framehandle> {
   }
 
   public getChild(index: number) {
-    return Frame.fromHandle(BlzFrameGetChild(this.handle, index));
+    return Frame.fromHandle(BlzFrameGetChild(this.handle, index)!);
   }
 
   public setAbsPoint(point: framepointtype, x: number, y: number) {
@@ -283,7 +283,7 @@ export class Frame extends Handle<framehandle> {
   }
 
   public static fromEvent() {
-    return this.fromHandle(BlzGetTriggerFrame());
+    return this.fromHandle(BlzGetTriggerFrame()!);
   }
 
   public static fromHandle(handle: framehandle): Frame {
@@ -291,11 +291,11 @@ export class Frame extends Handle<framehandle> {
   }
 
   public static fromName(name: string, createContext: number) {
-    return this.fromHandle(BlzGetFrameByName(name, createContext));
+    return this.fromHandle(BlzGetFrameByName(name, createContext)!);
   }
 
   public static fromOrigin(frameType: originframetype, index: number) {
-    return this.fromHandle(BlzGetOriginFrame(frameType, index));
+    return this.fromHandle(BlzGetOriginFrame(frameType, index)!);
   }
 
   public static getEventHandle() {

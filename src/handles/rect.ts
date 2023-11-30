@@ -57,16 +57,13 @@ export class Rectangle extends Handle<rect> {
   }
 
   public enumDestructables(
-    filter: boolexpr | (() => boolean) | null,
+    filter: boolexpr | undefined,
     actionFunc: () => void,
   ) {
     EnumDestructablesInRect(this.handle, filter, actionFunc);
   }
 
-  public enumItems(
-    filter: boolexpr | (() => boolean) | null,
-    actionFunc: () => void,
-  ) {
+  public enumItems(filter: boolexpr | undefined, actionFunc: () => void) {
     EnumItemsInRect(this.handle, filter, actionFunc);
   }
 
@@ -90,10 +87,10 @@ export class Rectangle extends Handle<rect> {
 
   // Returns full map bounds, including unplayable borders, in world coordinates
   public static getWorldBounds() {
-    return Rectangle.fromHandle(GetWorldBounds());
+    return Rectangle.fromHandle(GetWorldBounds()!);
   }
 
   public static getPlayableArea() {
-    return Rectangle.fromHandle(GetPlayableMapRect());
+    return Rectangle.fromHandle(GetPlayableMapRect()!);
   }
 }

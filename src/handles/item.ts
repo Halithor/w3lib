@@ -47,7 +47,7 @@ export class Item extends Widget {
   }
 
   get name() {
-    return GetItemName(this.handle);
+    return GetItemName(this.handle)!;
   }
 
   set name(value: string) {
@@ -245,25 +245,25 @@ export class Item extends Widget {
   }
 
   static get eventManipulated(): Item {
-    return this.fromHandle(GetManipulatedItem());
+    return this.fromHandle(GetManipulatedItem()!);
   }
 
   static get eventSold(): Item {
-    return this.fromHandle(GetSoldItem());
+    return this.fromHandle(GetSoldItem()!);
   }
 
   static get eventStackingTarget(): Item {
-    return this.fromHandle(BlzGetStackingItemTarget());
+    return this.fromHandle(BlzGetStackingItemTarget()!);
   }
 
   static get eventStackingSource(): Item {
-    return this.fromHandle(BlzGetStackingItemSource());
+    return this.fromHandle(BlzGetStackingItemSource()!);
   }
 }
 
 export function forItemsInRect(rect: Rectangle, callback: (i: Item) => void) {
-  EnumItemsInRect(rect.handle, null, () => {
-    callback(Item.fromHandle(GetEnumItem()));
+  EnumItemsInRect(rect.handle, undefined, () => {
+    callback(Item.fromHandle(GetEnumItem()!));
   });
 }
 

@@ -133,7 +133,7 @@ export function flashEffect(
   scale?: number,
   angle?: Angle,
 ) {
-  const e = AddSpecialEffect(path, pos.x, pos.y);
+  const e = AddSpecialEffect(path, pos.x, pos.y)!;
   if (pos instanceof Vec3) {
     BlzSetSpecialEffectZ(e, pos.z);
   }
@@ -153,7 +153,7 @@ export function flashEffectDuration(
   scale?: number,
   angle?: Angle,
 ) {
-  const e = AddSpecialEffect(path, pos.x, pos.y);
+  const e = AddSpecialEffect(path, pos.x, pos.y)!;
   if (scale) {
     BlzSetSpecialEffectScale(e, scale);
   }

@@ -61,7 +61,7 @@ export class FogModifier extends Handle<fogmodifier> {
         where.handle,
         useSharedVision,
         afterUnits,
-      ),
+      )!,
     );
   }
 }

@@ -101,7 +101,7 @@ export class Trigger extends Handle<trigger> {
     TriggerRegisterEnterRegion(
       this.handle,
       whichRegion,
-      filter ? Filter(filter) : null,
+      filter ? Filter(filter) : undefined,
     );
     return this;
   }
@@ -115,7 +115,7 @@ export class Trigger extends Handle<trigger> {
       this.handle,
       whichUnit,
       whichEvent,
-      filter ? Filter(filter) : null,
+      filter ? Filter(filter) : undefined,
     );
     return this;
   }
@@ -141,7 +141,7 @@ export class Trigger extends Handle<trigger> {
     TriggerRegisterLeaveRegion(
       this.handle,
       whichRegion,
-      filter ? Filter(filter) : null,
+      filter ? Filter(filter) : undefined,
     );
     return this;
   }
@@ -251,7 +251,7 @@ export class Trigger extends Handle<trigger> {
       this.handle,
       whichPlayer.handle,
       whichPlayerUnitEvent,
-      filter ? Filter(filter) : null,
+      filter ? Filter(filter) : undefined,
     );
     return this;
   }
@@ -292,7 +292,7 @@ export class Trigger extends Handle<trigger> {
       this.handle,
       whichUnit.handle,
       range,
-      filter ? Filter(filter) : null,
+      filter ? Filter(filter) : undefined,
     );
     return this;
   }
@@ -361,7 +361,7 @@ export class Trigger extends Handle<trigger> {
   }
 
   public static fromEvent(): Trigger {
-    return this.fromHandle(GetTriggeringTrigger());
+    return this.fromHandle(GetTriggeringTrigger()!);
   }
 
   public static fromHandle(handle: trigger): Trigger {

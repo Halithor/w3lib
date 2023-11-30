@@ -244,11 +244,11 @@ export const eventUnitDamaged = unitEvent<{
   info: DamageInfo;
 }>(EVENT_PLAYER_UNIT_DAMAGED, () => {
   const damage = GetEventDamage();
-  const target = Unit.fromHandle(BlzGetEventDamageTarget());
-  const attacker = Unit.fromHandle(GetEventDamageSource());
-  const damageType = BlzGetEventDamageType();
-  const attackType = BlzGetEventAttackType();
-  const weaponType = BlzGetEventWeaponType();
+  const target = Unit.fromHandle(BlzGetEventDamageTarget()!);
+  const attacker = Unit.fromHandle(GetEventDamageSource()!);
+  const damageType = BlzGetEventDamageType()!;
+  const attackType = BlzGetEventAttackType()!;
+  const weaponType = BlzGetEventWeaponType()!;
   const isSpell = attackType == ATTACK_TYPE_NORMAL;
   let isMeleeAttack = false;
   let isRangedAttack = false;
@@ -283,11 +283,11 @@ export const eventUnitDamaging = unitEvent<{
   info: DamageInfo;
 }>(EVENT_PLAYER_UNIT_DAMAGING, () => {
   const damage = GetEventDamage();
-  const target = Unit.fromHandle(BlzGetEventDamageTarget());
-  const attacker = Unit.fromHandle(GetEventDamageSource());
-  const damageType = BlzGetEventDamageType();
-  const attackType = BlzGetEventAttackType();
-  const weaponType = BlzGetEventWeaponType();
+  const target = Unit.fromHandle(BlzGetEventDamageTarget()!);
+  const attacker = Unit.fromHandle(GetEventDamageSource()!);
+  const damageType = BlzGetEventDamageType()!;
+  const attackType = BlzGetEventAttackType()!;
+  const weaponType = BlzGetEventWeaponType()!;
   const isSpell = attackType == ATTACK_TYPE_NORMAL;
   let isMeleeAttack = false;
   let isRangedAttack = false;

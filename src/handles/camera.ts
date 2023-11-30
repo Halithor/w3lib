@@ -59,7 +59,7 @@ export class Camera {
   }
 
   public static get targetPoint() {
-    return Point.fromHandle(GetCameraTargetPositionLoc());
+    return Point.fromHandle(GetCameraTargetPositionLoc()!);
   }
 
   public static adjustField(
@@ -299,7 +299,7 @@ export class CameraSetup extends Handle<camerasetup> {
   }
 
   public get label() {
-    return BlzCameraSetupGetLabel(this.handle);
+    return BlzCameraSetupGetLabel(this.handle)!;
   }
 
   public apply(doPan: boolean, panTimed: boolean) {

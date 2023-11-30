@@ -45,7 +45,7 @@ export class Group extends Handle<group> {
     if (filter != null) {
       GroupEnumUnitsInRange(this.handle, pos.x, pos.y, radius, Filter(filter));
     } else {
-      GroupEnumUnitsInRange(this.handle, pos.x, pos.y, radius, null);
+      GroupEnumUnitsInRange(this.handle, pos.x, pos.y, radius, undefined);
     }
   }
 
@@ -70,7 +70,7 @@ export class Group extends Handle<group> {
         pos.x,
         pos.y,
         radius,
-        null,
+        undefined,
         countLimit,
       );
     }
@@ -80,7 +80,7 @@ export class Group extends Handle<group> {
     if (filter != null) {
       GroupEnumUnitsInRect(this.handle, r.handle, Filter(filter));
     } else {
-      GroupEnumUnitsInRect(this.handle, r.handle, null);
+      GroupEnumUnitsInRect(this.handle, r.handle, undefined);
     }
   }
 
@@ -97,7 +97,7 @@ export class Group extends Handle<group> {
         countLimit,
       );
     } else {
-      GroupEnumUnitsInRectCounted(this.handle, r.handle, null, countLimit);
+      GroupEnumUnitsInRectCounted(this.handle, r.handle, undefined, countLimit);
     }
   }
 
@@ -105,7 +105,7 @@ export class Group extends Handle<group> {
     if (filter != undefined) {
       GroupEnumUnitsOfPlayer(this.handle, whichPlayer.handle, Filter(filter));
     } else {
-      GroupEnumUnitsOfPlayer(this.handle, whichPlayer.handle, null);
+      GroupEnumUnitsOfPlayer(this.handle, whichPlayer.handle, undefined);
     }
   }
 
@@ -113,12 +113,12 @@ export class Group extends Handle<group> {
     if (filter != null) {
       GroupEnumUnitsOfType(this.handle, unitName, Filter(filter));
     } else {
-      GroupEnumUnitsOfType(this.handle, unitName, null);
+      GroupEnumUnitsOfType(this.handle, unitName, undefined);
     }
   }
 
   public enumUnitsOfTypeId(unitType: UnitId) {
-    return Group.fromHandle(GetUnitsOfTypeIdAll(unitType.value));
+    return Group.fromHandle(GetUnitsOfTypeIdAll(unitType.value)!);
   }
 
   public enumUnitsOfTypeCounted(
@@ -134,7 +134,7 @@ export class Group extends Handle<group> {
         countLimit,
       );
     } else {
-      GroupEnumUnitsOfTypeCounted(this.handle, unitName, null, countLimit);
+      GroupEnumUnitsOfTypeCounted(this.handle, unitName, undefined, countLimit);
     }
   }
 
@@ -145,7 +145,7 @@ export class Group extends Handle<group> {
     if (filter != null) {
       GroupEnumUnitsSelected(this.handle, whichPlayer.handle, Filter(filter));
     } else {
-      GroupEnumUnitsSelected(this.handle, whichPlayer.handle, null);
+      GroupEnumUnitsSelected(this.handle, whichPlayer.handle, undefined);
     }
   }
 
@@ -166,7 +166,7 @@ export class Group extends Handle<group> {
   }
 
   public get first() {
-    return Unit.fromHandle(FirstOfGroup(this.handle));
+    return Unit.fromHandle(FirstOfGroup(this.handle)!);
   }
 
   public get size(): number {
@@ -178,7 +178,7 @@ export class Group extends Handle<group> {
   }
 
   public getUnitAt(index: number): Unit {
-    return Unit.fromHandle(BlzGroupUnitAt(this.handle, index));
+    return Unit.fromHandle(BlzGroupUnitAt(this.handle, index)!);
   }
 
   public hasUnit(whichUnit: Unit) {
@@ -222,11 +222,11 @@ export class Group extends Handle<group> {
   }
 
   public static getEnumUnit(): Unit {
-    return Unit.fromHandle(GetEnumUnit());
+    return Unit.fromHandle(GetEnumUnit()!);
   }
 
   public static getFilterUnit(): Unit {
-    return Unit.fromHandle(GetFilterUnit());
+    return Unit.fromHandle(GetFilterUnit()!);
   }
 }
 
@@ -250,13 +250,13 @@ export function getUnitsInRange(
   const enumGroup = new Group();
   if (collisionSizeFiltering) {
     enumGroup.enumUnitsInRange(pos, radius + maxCollisionSize, () => {
-      const u = Unit.fromHandle(GetFilterUnit());
+      const u = Unit.fromHandle(GetFilterUnit()!);
       return u.inRange(pos, radius) && (filter != null ? filter(u) : true);
     });
   } else {
     if (filter != null) {
       enumGroup.enumUnitsInRange(pos, radius, () =>
-        filter(Unit.fromHandle(GetFilterUnit())),
+        filter(Unit.fromHandle(GetFilterUnit()!)),
       );
     } else {
       enumGroup.enumUnitsInRange(pos, radius, null);
@@ -274,7 +274,7 @@ export function forUnitsInRange(
 ) {
   const enumGroup = getUnitsInRange(pos, radius, null, collisionSizeFiltering);
   enumGroup.for(() => {
-    callback(Unit.fromHandle(GetEnumUnit()));
+    callback(Unit.fromHandle(GetEnumUnit()!));
   });
   enumGroup.destroy();
 }
@@ -311,7 +311,7 @@ export function findNearestUnit(
   let filterUnit: (() => boolean) | null = null;
   if (filter != null) {
     filterUnit = () => {
-      const u = Unit.fromHandle(GetFilterUnit());
+      const u = Unit.fromHandle(GetFilterUnit()!);
       return filter(u);
     };
   }
@@ -322,7 +322,7 @@ export function findNearestUnit(
   let nearest: Unit = enumGroup.first;
   let bestDist = 2147483647; // max int32
   enumGroup.for(() => {
-    const u = Unit.fromHandle(GetEnumUnit());
+    const u = Unit.fromHandle(GetEnumUnit()!);
     const distSq = pos.distanceTo(u.pos);
     if (distSq < bestDist) {
       bestDist = distSq;
@@ -340,7 +340,7 @@ export function getUnitsInRect(
   const enumGroup = new Group();
   if (filter != null) {
     enumGroup.enumUnitsInRect(rct, () =>
-      filter(Unit.fromHandle(GetFilterUnit())),
+      filter(Unit.fromHandle(GetFilterUnit()!)),
     );
   } else {
     enumGroup.enumUnitsInRect(rct, null);
@@ -352,7 +352,7 @@ export function forUnitsInRect(rct: Rectangle, callback: (u: Unit) => void) {
   const enumGroup = new Group();
   enumGroup.enumUnitsInRect(rct, null);
   enumGroup.for(() => {
-    callback(Unit.fromHandle(GetEnumUnit()));
+    callback(Unit.fromHandle(GetEnumUnit()!));
   });
   enumGroup.destroy();
 }

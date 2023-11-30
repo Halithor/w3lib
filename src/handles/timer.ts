@@ -142,7 +142,7 @@ export class Timer extends Handle<timer> {
   }
 
   public static fromExpired(): Timer {
-    return this.fromHandle(GetExpiredTimer());
+    return this.fromHandle(GetExpiredTimer()!);
   }
 
   public static fromHandle(handle: timer): Timer {

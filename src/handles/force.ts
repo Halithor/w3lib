@@ -71,6 +71,6 @@ export class Force extends Handle<force> {
   }
 
   static get allPlayers(): Force {
-    return Force.fromHandle(bj_FORCE_ALL_PLAYERS);
+    return Force.fromHandle(bj_FORCE_ALL_PLAYERS!);
   }
 }

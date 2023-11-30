@@ -93,7 +93,7 @@ export class Multiboard extends Handle<multiboard> {
   }
 
   get title(): string {
-    return MultiboardGetTitleText(this.handle);
+    return MultiboardGetTitleText(this.handle)!;
   }
 
   set title(val: string) {

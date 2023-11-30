@@ -153,7 +153,7 @@ export class Leaderboard extends Handle<leaderboard> {
   }
 
   public get label() {
-    return LeaderboardGetLabelText(this.handle);
+    return LeaderboardGetLabelText(this.handle)!;
   }
 
   public static fromHandle(handle: leaderboard): Leaderboard {
@@ -161,6 +161,6 @@ export class Leaderboard extends Handle<leaderboard> {
   }
 
   public static fromPlayer(p: MapPlayer) {
-    return this.fromHandle(PlayerGetLeaderboard(p.handle));
+    return this.fromHandle(PlayerGetLeaderboard(p.handle)!);
   }
 }

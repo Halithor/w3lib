@@ -126,7 +126,7 @@ export class Destructable extends Widget {
   }
 
   public static fromEvent() {
-    return this.fromHandle(GetTriggerDestructable());
+    return this.fromHandle(GetTriggerDestructable()!);
   }
 
   public static fromHandle(handle: destructable): Destructable {
@@ -139,7 +139,7 @@ export function forDestructablesInRect(
   callback: (d: Destructable) => void,
 ) {
   EnumDestructablesInRectAll(rect.handle, () => {
-    callback(Destructable.fromHandle(GetEnumDestructable()));
+    callback(Destructable.fromHandle(GetEnumDestructable()!));
   });
 }
 

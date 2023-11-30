@@ -98,7 +98,7 @@ export class MapPlayer extends Handle<player> {
   }
 
   public get name() {
-    return GetPlayerName(this.handle);
+    return GetPlayerName(this.handle)!;
   }
 
   public set name(value: string) {
@@ -459,7 +459,7 @@ export class MapPlayer extends Handle<player> {
   public selectUnitGroup(group: Group) {
     this.selectUnitClear();
     group.for(() => {
-      SelectUnitAddForPlayer(GetEnumUnit(), this.handle);
+      SelectUnitAddForPlayer(GetEnumUnit()!, this.handle);
     });
   }
 
@@ -482,15 +482,15 @@ export class MapPlayer extends Handle<player> {
   }
 
   public static fromEnum() {
-    return MapPlayer.fromHandle(GetEnumPlayer());
+    return MapPlayer.fromHandle(GetEnumPlayer()!);
   }
 
   public static fromEvent() {
-    return MapPlayer.fromHandle(GetTriggerPlayer());
+    return MapPlayer.fromHandle(GetTriggerPlayer()!);
   }
 
   public static fromFilter() {
-    return MapPlayer.fromHandle(GetFilterPlayer());
+    return MapPlayer.fromHandle(GetFilterPlayer()!);
   }
 
   public static fromHandle(handle: player): MapPlayer {
@@ -498,7 +498,7 @@ export class MapPlayer extends Handle<player> {
   }
 
   public static fromIndex(index: number) {
-    return this.fromHandle(Player(index));
+    return this.fromHandle(Player(index)!);
   }
 
   public static fromLocal() {
@@ -506,11 +506,11 @@ export class MapPlayer extends Handle<player> {
   }
 
   static get eventTriggering(): MapPlayer {
-    return this.fromHandle(GetTriggerPlayer());
+    return this.fromHandle(GetTriggerPlayer()!);
   }
 
   static get eventPreviousOwner(): MapPlayer {
-    return MapPlayer.fromHandle(GetChangingUnitPrevOwner());
+    return MapPlayer.fromHandle(GetChangingUnitPrevOwner()!);
   }
 
   static get neutralHostile(): MapPlayer {
@@ -523,5 +523,5 @@ export class MapPlayer extends Handle<player> {
 }
 
 for (let i = 0; i < bj_MAX_PLAYER_SLOTS; i++) {
-  Players[i] = MapPlayer.fromHandle(Player(i));
+  Players[i] = MapPlayer.fromHandle(Player(i)!);
 }

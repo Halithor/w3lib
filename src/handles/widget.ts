@@ -20,7 +20,7 @@ export class Widget extends Handle<widget> {
   }
 
   public static fromEvent() {
-    return this.fromHandle(GetTriggerWidget());
+    return this.fromHandle(GetTriggerWidget()!);
   }
 
   public static fromHandle(handle: widget): Widget {
@@ -28,10 +28,10 @@ export class Widget extends Handle<widget> {
   }
 
   static get eventTriggering(): Widget {
-    return this.fromHandle(GetTriggerWidget());
+    return this.fromHandle(GetTriggerWidget()!);
   }
 
   static get eventOrderTarget(): Widget {
-    return this.fromHandle(GetOrderTarget());
+    return this.fromHandle(GetOrderTarget()!);
   }
 }

@@ -37,7 +37,7 @@ export class Unit extends Widget {
       super(
         skinId
           ? BlzCreateUnitWithSkin(
-              p,
+              p!,
               unitId.value,
               pos.x,
               pos.y,
@@ -45,7 +45,7 @@ export class Unit extends Widget {
               skinId,
             )
           : CreateUnit(
-              p,
+              p!,
               unitId.value,
               pos.x,
               pos.y,
@@ -208,7 +208,7 @@ export class Unit extends Widget {
   }
 
   public get name() {
-    return GetUnitName(this.handle);
+    return GetUnitName(this.handle)!;
   }
 
   public set name(value: string) {
@@ -220,7 +220,7 @@ export class Unit extends Widget {
   }
 
   public get nameProper() {
-    return GetHeroProperName(this.handle);
+    return GetHeroProperName(this.handle)!;
   }
 
   public set owner(whichPlayer: MapPlayer) {
@@ -265,18 +265,18 @@ export class Unit extends Widget {
   }
 
   public get rallyDestructable() {
-    return Destructable.fromHandle(GetUnitRallyDestructable(this.handle));
+    return Destructable.fromHandle(GetUnitRallyDestructable(this.handle)!);
   }
 
   public get rallyPoint() {
-    const loc = GetUnitRallyPoint(this.handle);
+    const loc = GetUnitRallyPoint(this.handle)!;
     const pos = vec2(GetLocationX(loc), GetLocationY(loc));
     RemoveLocation(loc);
     return pos;
   }
 
   public get rallyUnit() {
-    return Unit.fromHandle(GetUnitRallyUnit(this.handle));
+    return Unit.fromHandle(GetUnitRallyUnit(this.handle)!);
   }
 
   public set resourceAmount(amount: number) {
@@ -413,7 +413,7 @@ export class Unit extends Widget {
   }
 
   public addItemById(itemId: ItemId): Item {
-    return Item.fromHandle(UnitAddItemById(this.handle, itemId.value));
+    return Item.fromHandle(UnitAddItemById(this.handle, itemId.value)!);
   }
 
   public addItemToSlotById(itemId: ItemId, itemSlot: number) {
@@ -1020,7 +1020,7 @@ export class Unit extends Widget {
         this.handle,
         unitId.value,
         Unit.ReplaceState.toValue(state),
-      ),
+      )!,
     );
   }
 
@@ -1341,7 +1341,7 @@ export class Unit extends Widget {
   }
 
   public static fromEvent() {
-    return this.fromHandle(GetTriggerUnit());
+    return this.fromHandle(GetTriggerUnit()!);
   }
 
   public static fromHandle(handle: unit): Unit {
@@ -1361,129 +1361,129 @@ export class Unit extends Widget {
   }
 
   static get eventTriggering(): Unit {
-    return this.fromHandle(GetTriggerUnit());
+    return this.fromHandle(GetTriggerUnit()!);
   }
 
   static get eventAttacker(): Unit {
-    return this.fromHandle(GetAttacker());
+    return this.fromHandle(GetAttacker()!);
   }
 
   static get eventRescuer(): Unit {
-    return this.fromHandle(GetRescuer());
+    return this.fromHandle(GetRescuer()!);
   }
 
   static get eventDying(): Unit {
-    return this.fromHandle(GetDyingUnit());
+    return this.fromHandle(GetDyingUnit()!);
   }
 
   static get eventKilling(): Unit | undefined {
     return GetKillingUnit() != null
-      ? Unit.fromHandle(GetKillingUnit())
+      ? Unit.fromHandle(GetKillingUnit()!)
       : undefined;
   }
 
   static get eventDecaying(): Unit {
-    return this.fromHandle(GetDecayingUnit());
+    return this.fromHandle(GetDecayingUnit()!);
   }
 
   static get eventDetected(): Unit {
-    return this.fromHandle(GetDetectedUnit());
+    return this.fromHandle(GetDetectedUnit()!);
   }
 
   static get eventConstructingStructure(): Unit {
-    return Unit.fromHandle(GetConstructingStructure());
+    return Unit.fromHandle(GetConstructingStructure()!);
   }
 
   static get eventCanceledStructure(): Unit {
-    return Unit.fromHandle(GetCancelledStructure());
+    return Unit.fromHandle(GetCancelledStructure()!);
   }
 
   static get eventConstructedStructure(): Unit {
-    return Unit.fromHandle(GetConstructedStructure());
+    return Unit.fromHandle(GetConstructedStructure()!);
   }
 
   static get eventTrained(): Unit {
-    return this.fromHandle(GetTrainedUnit());
+    return this.fromHandle(GetTrainedUnit()!);
   }
 
   static get eventResearcher(): Unit {
-    return this.fromHandle(GetResearchingUnit());
+    return this.fromHandle(GetResearchingUnit()!);
   }
 
   static get eventOrdered(): Unit {
-    return this.fromHandle(GetOrderedUnit());
+    return this.fromHandle(GetOrderedUnit()!);
   }
 
   static get eventOrderTarget(): Unit {
-    return this.fromHandle(GetOrderTargetUnit());
+    return this.fromHandle(GetOrderTargetUnit()!);
   }
 
   static get eventHeroLeveling(): Unit {
-    return this.fromHandle(GetLevelingUnit());
+    return this.fromHandle(GetLevelingUnit()!);
   }
 
   static get eventHeroLearning(): Unit {
-    return this.fromHandle(GetLearningUnit());
+    return this.fromHandle(GetLearningUnit()!);
   }
 
   static get eventHeroRevivable(): Unit {
-    return this.fromHandle(GetRevivableUnit());
+    return this.fromHandle(GetRevivableUnit()!);
   }
 
   static get eventHeroReviving(): Unit {
-    return this.fromHandle(GetRevivingUnit());
+    return this.fromHandle(GetRevivingUnit()!);
   }
 
   static get eventSummoner(): Unit {
-    return this.fromHandle(GetSummoningUnit());
+    return this.fromHandle(GetSummoningUnit()!);
   }
 
   static get eventSummoned(): Unit {
-    return this.fromHandle(GetSummonedUnit());
+    return this.fromHandle(GetSummonedUnit()!);
   }
 
   static get eventManipulating(): Unit {
-    return this.fromHandle(GetManipulatingUnit());
+    return this.fromHandle(GetManipulatingUnit()!);
   }
 
   static get eventLoaded(): Unit {
-    return this.fromHandle(GetLoadedUnit());
+    return this.fromHandle(GetLoadedUnit()!);
   }
 
   static get eventTransport(): Unit {
-    return this.fromHandle(GetTransportUnit());
+    return this.fromHandle(GetTransportUnit()!);
   }
 
   static get eventSold(): Unit {
-    return this.fromHandle(GetSoldUnit());
+    return this.fromHandle(GetSoldUnit()!);
   }
 
   static get eventSeller(): Unit {
-    return this.fromHandle(GetSellingUnit());
+    return this.fromHandle(GetSellingUnit()!);
   }
 
   static get eventOwnershipChanging(): Unit {
-    return this.fromHandle(GetChangingUnit());
+    return this.fromHandle(GetChangingUnit()!);
   }
 
   static get eventBuyer(): Unit {
-    return this.fromHandle(GetBuyingUnit());
+    return this.fromHandle(GetBuyingUnit()!);
   }
 
   static get eventCaster(): Unit {
-    return this.fromHandle(GetSpellAbilityUnit());
+    return this.fromHandle(GetSpellAbilityUnit()!);
   }
 
   static get eventEnteringRegion(): Unit {
-    return this.fromHandle(GetEnteringUnit());
+    return this.fromHandle(GetEnteringUnit()!);
   }
 
   static get eventLeavingRegion(): Unit {
-    return this.fromHandle(GetLeavingUnit());
+    return this.fromHandle(GetLeavingUnit()!);
   }
 
   static get filterUnit(): Unit {
-    return this.fromHandle(GetFilterUnit());
+    return this.fromHandle(GetFilterUnit()!);
   }
 }
 

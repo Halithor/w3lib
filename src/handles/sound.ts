@@ -31,7 +31,7 @@ export class Sound extends Handle<sound> {
   }
 
   public get dialogueSpeakerNameKey() {
-    return GetDialogueSpeakerNameKey(this.handle);
+    return GetDialogueSpeakerNameKey(this.handle)!;
   }
 
   public set dialogueSpeakerNameKey(speakerName: string) {
@@ -39,7 +39,7 @@ export class Sound extends Handle<sound> {
   }
 
   public get dialogueTextKey() {
-    return GetDialogueTextKey(this.handle);
+    return GetDialogueTextKey(this.handle)!;
   }
 
   public set dialogueTextKey(dialogueText: string) {
