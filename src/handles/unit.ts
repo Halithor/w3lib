@@ -19,7 +19,7 @@ import {Sound} from './sound';
 import {Widget} from './widget';
 
 export class Unit extends Widget {
-  public readonly handle!: unit;
+  declare public readonly handle: unit;
   static underConstructionUnits: Group;
   static upgradingUnits: Group;
 
@@ -673,7 +673,7 @@ export class Unit extends Widget {
 
   public getItemInSlot(slot: number): Item | undefined {
     const i = UnitItemInSlot(this.handle, slot);
-    if (i) {
+    if (i != null) {
       return Item.fromHandle(i);
     }
     return undefined;
@@ -1377,7 +1377,7 @@ export class Unit extends Widget {
   }
 
   static get eventKilling(): Unit | undefined {
-    return GetKillingUnit() ? Unit.fromHandle(GetKillingUnit()) : undefined;
+    return GetKillingUnit() != null ? Unit.fromHandle(GetKillingUnit()) : undefined;
   }
 
   static get eventDecaying(): Unit {

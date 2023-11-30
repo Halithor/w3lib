@@ -4,28 +4,34 @@
   "description": "TypeScript API for Warcraft III custom maps.",
   "author": "Halithor",
   "license": "MIT",
-  "main": "src/index.ts",
+  "main": "./dist/index",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**/*.lua",
+    "dist/**/*.d.ts"
+  ],
   "scripts": {
     "lint": "gts lint",
     "clean": "gts clean",
-    "compile": "tsc",
+    "compile": "tstl",
     "fix": "gts fix",
     "prepare": "npm.cmd run compile",
     "pretest": "npm.cmd run compile",
     "posttest": "npm.cmd run lint"
   },
   "devDependencies": {
-    "gts": "^3.0.2",
-    "lua-types": "^2.6.1",
-    "typescript": "^4.1.2",
+    "gts": "^5.0.0",
+    "lua-types": "^2.13.1",
+    "typescript": "~5.2.0",
+    "typescript-to-lua": "^1.22.0",
     "war3-types": "^1.0.4"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Halithor/w3ts-stdlib.git"
+    "url": "git+https://github.com/Halithor/w3lib.git"
   },
   "bugs": {
-    "url": "https://github.com/Halithor/w3ts-stdlib/issues"
+    "url": "https://github.com/Halithor/w3lib/issues"
   },
-  "homepage": "https://github.com/Halithor/w3ts-stdlib#readme"
+  "homepage": "https://github.com/Halithor/w3lib#readme"
 }

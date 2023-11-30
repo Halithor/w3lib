@@ -7,7 +7,7 @@ import {Handle} from './handle';
 import {Widget} from './widget';
 
 export class Destructable extends Widget {
-  public readonly handle!: destructable;
+  declare public readonly handle: destructable;
 
   constructor(
     destId: DestId,

@@ -8,7 +8,7 @@ import { Rectangle } from './rect';
 import {Widget} from './widget';
 
 export class Item extends Widget {
-  public readonly handle!: item;
+  declare public readonly handle: item;
 
   constructor(itemId: ItemId, pos: Vec2, skinId?: number) {
     if (Handle.initFromHandle()) {

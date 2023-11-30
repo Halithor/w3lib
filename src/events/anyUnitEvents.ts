@@ -353,15 +353,15 @@ export const eventUnitStackItem = unitEvent(
 
 function spellTarget(): Unit | Item | Destructable | Vec2 {
   const u = GetSpellTargetUnit();
-  if (u) {
+  if (u != null) {
     return Unit.fromHandle(u);
   }
   const d = GetSpellTargetDestructable();
-  if (d) {
+  if (d != null) {
     return Destructable.fromHandle(d);
   }
   const i = GetSpellTargetItem();
-  if (i) {
+  if (i != null) {
     return Item.fromHandle(i);
   }
   return vec2(GetSpellTargetX(), GetSpellTargetY());
