@@ -285,13 +285,17 @@ export function getRandomUnitInRange(
   radius: number,
   filter: (u: Unit) => boolean,
   collisionSizeFiltering: boolean = false
-): Unit {
+): Unit|undefined {
   const enumGroup = getUnitsInRange(
     pos,
     radius,
     filter,
     collisionSizeFiltering
   );
+  if (enumGroup.size == 0) {
+    enumGroup.destroy();
+    return undefined;
+  }
   const u = enumGroup.getUnitAt(GetRandomInt(0, enumGroup.size - 1));
   enumGroup.destroy();
   return u;

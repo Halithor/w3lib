@@ -4,6 +4,7 @@ import {ItemId} from '../common';
 import {vec2, Vec2} from '../math/index';
 import {Handle} from './handle';
 import {MapPlayer} from './player';
+import { Rectangle } from './rect';
 import {Widget} from './widget';
 
 export class Item extends Widget {
@@ -254,4 +255,24 @@ export class Item extends Widget {
   static get eventStackingSource(): Item {
     return this.fromHandle(BlzGetStackingItemSource());
   }
+}
+
+
+export function forItemsInRect(rect: Rectangle, callback: (i: Item) => void) {
+  EnumItemsInRect(rect.handle, null, () => {
+    callback(Item.fromHandle(GetEnumItem()))
+  });
+}
+
+export function forItemsInRange(pos: Vec2, radius: number, callback: (i: Item) => void) {
+  const offset = vec2(radius + 32, radius + 32);
+  const rect = new Rectangle(pos.sub(offset), pos.add(offset));
+
+  const radiusSq = radius * radius;
+  forItemsInRect(rect, i => {
+    if (i.pos.distanceToSq(pos) < radiusSq) {
+      callback(i);
+    }
+  });
+  rect.destroy();
 }
