@@ -32,6 +32,7 @@
   "tstl": {
     "luaTarget": "5.3",
     "buildMode": "library",
-    "noHeader": true
+    "noHeader": true,
+    "noImplicitSelf": true
   }
 }
