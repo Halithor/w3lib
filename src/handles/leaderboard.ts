@@ -1,7 +1,7 @@
 /** @noSelfInFile **/
 
-import {Handle} from './handle';
-import {MapPlayer} from './player';
+import { Handle } from "./handle";
+import { MapPlayer } from "./player";
 
 export class Leaderboard extends Handle<leaderboard> {
   constructor() {
@@ -65,7 +65,7 @@ export class Leaderboard extends Handle<leaderboard> {
     red: number,
     green: number,
     blue: number,
-    alpha: number
+    alpha: number,
   ) {
     LeaderboardSetItemLabelColor(this.handle, item, red, green, blue, alpha);
   }
@@ -74,14 +74,14 @@ export class Leaderboard extends Handle<leaderboard> {
     item: number,
     showLabel = true,
     showValues = true,
-    showIcons = true
+    showIcons = true,
   ) {
     LeaderboardSetItemStyle(
       this.handle,
       item,
       showLabel,
       showValues,
-      showIcons
+      showIcons,
     );
   }
 
@@ -94,7 +94,7 @@ export class Leaderboard extends Handle<leaderboard> {
     red: number,
     green: number,
     blue: number,
-    alpha: number
+    alpha: number,
   ) {
     LeaderboardSetItemValueColor(this.handle, item, red, green, blue, alpha);
   }
@@ -103,7 +103,7 @@ export class Leaderboard extends Handle<leaderboard> {
     red: number,
     green: number,
     blue: number,
-    alpha: number
+    alpha: number,
   ) {
     LeaderboardSetLabelColor(this.handle, red, green, blue, alpha);
   }
@@ -116,14 +116,14 @@ export class Leaderboard extends Handle<leaderboard> {
     showLabel = true,
     showNames = true,
     showValues = true,
-    showIcons = true
+    showIcons = true,
   ) {
     LeaderboardSetStyle(
       this.handle,
       showLabel,
       showNames,
       showValues,
-      showIcons
+      showIcons,
     );
   }
 
@@ -131,7 +131,7 @@ export class Leaderboard extends Handle<leaderboard> {
     red: number,
     green: number,
     blue: number,
-    alpha: number
+    alpha: number,
   ) {
     LeaderboardSetValueColor(this.handle, red, green, blue, alpha);
   }

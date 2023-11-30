@@ -1,7 +1,7 @@
 /** @noSelfInFile **/
 
-import {Handle} from './handle';
-import {MapPlayer} from './player';
+import { Handle } from "./handle";
+import { MapPlayer } from "./player";
 
 export class GameCache extends Handle<gamecache> {
   public readonly filename: string;
@@ -82,7 +82,7 @@ export class GameCache extends Handle<gamecache> {
     forWhichPlayer: MapPlayer,
     x: number,
     y: number,
-    face: number
+    face: number,
   ) {
     return RestoreUnit(
       this.handle,
@@ -91,7 +91,7 @@ export class GameCache extends Handle<gamecache> {
       forWhichPlayer.handle,
       x,
       y,
-      face
+      face,
     );
   }
 
@@ -102,13 +102,13 @@ export class GameCache extends Handle<gamecache> {
   public store(
     missionKey: string,
     key: string,
-    value: number | string | boolean | unit
+    value: number | string | boolean | unit,
   ) {
-    if (typeof value === 'string') {
+    if (typeof value === "string") {
       StoreString(this.handle, missionKey, key, value);
-    } else if (typeof value === 'boolean') {
+    } else if (typeof value === "boolean") {
       StoreBoolean(this.handle, missionKey, key, value);
-    } else if (typeof value === 'number') {
+    } else if (typeof value === "number") {
       StoreReal(this.handle, missionKey, key, value);
     } else {
       StoreUnit(this.handle, missionKey, key, value);

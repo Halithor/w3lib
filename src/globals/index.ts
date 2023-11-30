@@ -1,1 +1,1 @@
-import {MapPlayer} from '../handles/player';
+import { MapPlayer } from "../handles/player";

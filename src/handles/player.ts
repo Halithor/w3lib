@@ -1,12 +1,12 @@
 /** @noSelfInFile **/
 
-import {Group} from './group';
-import {Unit} from './unit';
-import {Vec2} from '../math/index';
-import {Force} from './force';
-import {Handle} from './handle';
-import {AbilId, TechId, UnitId} from '../common';
-import {playerColors} from '../helper/index';
+import { Group } from "./group";
+import { Unit } from "./unit";
+import { Vec2 } from "../math/index";
+import { Force } from "./force";
+import { Handle } from "./handle";
+import { AbilId, TechId, UnitId } from "../common";
+import { playerColors } from "../helper/index";
 
 export const Players: MapPlayer[] = [];
 const localPlayer = GetLocalPlayer();
@@ -24,11 +24,14 @@ export enum AllianceState {
 
 /** Key for storing data on a player. The name should be unique among all keys used in the map. */
 export class DataKey<T> {
-  constructor(readonly name: string, readonly creator: (p: MapPlayer) => T) {}
+  constructor(
+    readonly name: string,
+    readonly creator: (p: MapPlayer) => T,
+  ) {}
 }
 
 export class MapPlayer extends Handle<player> {
-  private static data: {[key: string]: {[key: number]: any}} = {};
+  private static data: { [key: string]: { [key: number]: any } } = {};
 
   private constructor(index: number) {
     if (Handle.initFromHandle()) {
@@ -104,16 +107,16 @@ export class MapPlayer extends Handle<player> {
   }
 
   public get nameShort() {
-    const idx = this.name.indexOf('#');
+    const idx = this.name.indexOf("#");
     return this.name.substring(0, idx > 0 ? idx : this.name.length);
   }
 
   public get nameColored() {
-    return playerColors[this.id].code + this.name + '|r';
+    return playerColors[this.id].code + this.name + "|r";
   }
 
   public get nameShortColored() {
-    return playerColors[this.id].code + this.nameShort + '|r';
+    return playerColors[this.id].code + this.nameShort + "|r";
   }
 
   public get race() {
@@ -188,12 +191,12 @@ export class MapPlayer extends Handle<player> {
 
   public compareAlliance(
     otherPlayer: MapPlayer,
-    whichAllianceSetting: alliancetype
+    whichAllianceSetting: alliancetype,
   ) {
     return GetPlayerAlliance(
       this.handle,
       otherPlayer.handle,
-      whichAllianceSetting
+      whichAllianceSetting,
     );
   }
 
@@ -271,13 +274,13 @@ export class MapPlayer extends Handle<player> {
   public getUnitCountByType(
     unitName: string,
     includeIncomplete: boolean,
-    includeUpgrades: boolean
+    includeUpgrades: boolean,
   ) {
     return GetPlayerTypedUnitCount(
       this.handle,
       unitName,
       includeIncomplete,
-      includeUpgrades
+      includeUpgrades,
     );
   }
 
@@ -320,13 +323,13 @@ export class MapPlayer extends Handle<player> {
   public setAlliance(
     otherPlayer: MapPlayer,
     whichAllianceSetting: alliancetype,
-    value: boolean
+    value: boolean,
   ) {
     SetPlayerAlliance(
       this.handle,
       otherPlayer.handle,
       whichAllianceSetting,
-      value
+      value,
     );
   }
 
@@ -416,7 +419,7 @@ export class MapPlayer extends Handle<player> {
         break;
       default:
         const _checkExhaustive: never = state;
-        throw new Error('should not happen');
+        throw new Error("should not happen");
     }
   }
   public setOnScoreScreen(flag: boolean) {
@@ -430,7 +433,7 @@ export class MapPlayer extends Handle<player> {
   public setTaxRate(
     otherPlayer: MapPlayer,
     whichResource: playerstate,
-    rate: number
+    rate: number,
   ) {
     SetPlayerTaxRate(this.handle, otherPlayer.handle, whichResource, rate);
   }

@@ -3,13 +3,13 @@
  * `instanceof` calls to work on the constructors.
  */
 
-export function getFourCC(num: Number): string {
-  return string.pack('>I4', num);
+export function getFourCC(num: number): string {
+  return string.pack(">I4", num);
 }
 
 // UnitID represents a unit type's identifier.
 export class UnitId {
-  private static map: {[key: number]: UnitId} = {};
+  private static map: { [key: number]: UnitId } = {};
 
   private constructor(private readonly _value: number) {}
 
@@ -31,7 +31,7 @@ export class UnitId {
 
 // ItemId represents an item type's identifier.
 export class ItemId {
-  private static map: {[key: number]: ItemId} = {};
+  private static map: { [key: number]: ItemId } = {};
 
   private constructor(private readonly _value: number) {}
 
@@ -53,7 +53,7 @@ export class ItemId {
 
 // ItemId represents an destructable type's identifier.
 export class DestId {
-  private static map: {[key: number]: DestId} = {};
+  private static map: { [key: number]: DestId } = {};
 
   private constructor(private readonly _value: number) {}
 
@@ -75,7 +75,7 @@ export class DestId {
 
 // ItemId represents an destructable type's identifier.
 export class AbilId {
-  private static map: {[key: number]: AbilId} = {};
+  private static map: { [key: number]: AbilId } = {};
 
   private constructor(private readonly _value: number) {}
 
@@ -97,7 +97,7 @@ export class AbilId {
 
 // TechId represents an destructable type's identifier.
 export class TechId {
-  private static map: {[key: number]: TechId} = {};
+  private static map: { [key: number]: TechId } = {};
 
   private constructor(private readonly _value: number) {}
 
@@ -242,61 +242,61 @@ export class WeaponSound {
 
   static readonly None = new WeaponSound(WEAPON_TYPE_WHOKNOWS);
   static readonly MetalChopLight = new WeaponSound(
-    WEAPON_TYPE_METAL_LIGHT_CHOP
+    WEAPON_TYPE_METAL_LIGHT_CHOP,
   );
   static readonly MetalChopMedium = new WeaponSound(
-    WEAPON_TYPE_METAL_MEDIUM_CHOP
+    WEAPON_TYPE_METAL_MEDIUM_CHOP,
   );
   static readonly MetalChopHeavy = new WeaponSound(
-    WEAPON_TYPE_METAL_HEAVY_CHOP
+    WEAPON_TYPE_METAL_HEAVY_CHOP,
   );
   static readonly MetalSliceLight = new WeaponSound(
-    WEAPON_TYPE_METAL_LIGHT_SLICE
+    WEAPON_TYPE_METAL_LIGHT_SLICE,
   );
   static readonly MetalSliceMedium = new WeaponSound(
-    WEAPON_TYPE_METAL_MEDIUM_SLICE
+    WEAPON_TYPE_METAL_MEDIUM_SLICE,
   );
   static readonly MetalSliceHeavy = new WeaponSound(
-    WEAPON_TYPE_METAL_HEAVY_SLICE
+    WEAPON_TYPE_METAL_HEAVY_SLICE,
   );
   static readonly MetalBashMedium = new WeaponSound(
-    WEAPON_TYPE_METAL_MEDIUM_BASH
+    WEAPON_TYPE_METAL_MEDIUM_BASH,
   );
   static readonly MetalBashHeavy = new WeaponSound(
-    WEAPON_TYPE_METAL_HEAVY_BASH
+    WEAPON_TYPE_METAL_HEAVY_BASH,
   );
   static readonly MetalStabMedium = new WeaponSound(
-    WEAPON_TYPE_METAL_MEDIUM_STAB
+    WEAPON_TYPE_METAL_MEDIUM_STAB,
   );
   static readonly MetalStabHeavy = new WeaponSound(
-    WEAPON_TYPE_METAL_HEAVY_STAB
+    WEAPON_TYPE_METAL_HEAVY_STAB,
   );
   static readonly WoodSliceLight = new WeaponSound(
-    WEAPON_TYPE_WOOD_LIGHT_SLICE
+    WEAPON_TYPE_WOOD_LIGHT_SLICE,
   );
   static readonly WoodSliceMedium = new WeaponSound(
-    WEAPON_TYPE_WOOD_MEDIUM_SLICE
+    WEAPON_TYPE_WOOD_MEDIUM_SLICE,
   );
   static readonly WoodSliceHeavy = new WeaponSound(
-    WEAPON_TYPE_WOOD_HEAVY_SLICE
+    WEAPON_TYPE_WOOD_HEAVY_SLICE,
   );
   static readonly WoodBashLight = new WeaponSound(WEAPON_TYPE_WOOD_LIGHT_BASH);
   static readonly WoodBashMedium = new WeaponSound(
-    WEAPON_TYPE_WOOD_MEDIUM_BASH
+    WEAPON_TYPE_WOOD_MEDIUM_BASH,
   );
   static readonly WoodBashHeavy = new WeaponSound(WEAPON_TYPE_WOOD_HEAVY_BASH);
   static readonly WoodStabLight = new WeaponSound(WEAPON_TYPE_WOOD_LIGHT_STAB);
   static readonly WoodStabMedium = new WeaponSound(
-    WEAPON_TYPE_WOOD_MEDIUM_STAB
+    WEAPON_TYPE_WOOD_MEDIUM_STAB,
   );
   static readonly ClawSliceLight = new WeaponSound(
-    WEAPON_TYPE_CLAW_LIGHT_SLICE
+    WEAPON_TYPE_CLAW_LIGHT_SLICE,
   );
   static readonly ClawSliceMedium = new WeaponSound(
-    WEAPON_TYPE_CLAW_MEDIUM_SLICE
+    WEAPON_TYPE_CLAW_MEDIUM_SLICE,
   );
   static readonly ClawSliceHeavy = new WeaponSound(
-    WEAPON_TYPE_CLAW_HEAVY_SLICE
+    WEAPON_TYPE_CLAW_HEAVY_SLICE,
   );
   static readonly AxeChopMedium = new WeaponSound(WEAPON_TYPE_AXE_MEDIUM_CHOP);
   static readonly RockBashHeavy = new WeaponSound(WEAPON_TYPE_ROCK_HEAVY_BASH);

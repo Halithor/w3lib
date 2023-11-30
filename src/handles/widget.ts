@@ -1,6 +1,6 @@
 /** @noSelfInFile **/
 
-import {Handle} from './handle';
+import { Handle } from "./handle";
 
 export class Widget extends Handle<widget> {
   public get life() {

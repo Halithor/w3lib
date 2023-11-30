@@ -1,7 +1,7 @@
 /** @noSelfInFile **/
 
-import {Vec3} from '../math/index';
-import {Handle} from './handle';
+import { Vec3 } from "../math/index";
+import { Handle } from "./handle";
 
 export class Sound extends Handle<sound> {
   constructor(
@@ -11,7 +11,7 @@ export class Sound extends Handle<sound> {
     stopWhenOutOfRange: boolean,
     fadeInRate: number,
     fadeOutRate: number,
-    eaxSetting: string
+    eaxSetting: string,
   ) {
     if (Handle.initFromHandle()) {
       super();
@@ -24,8 +24,8 @@ export class Sound extends Handle<sound> {
           stopWhenOutOfRange,
           fadeInRate,
           fadeOutRate,
-          eaxSetting
-        )
+          eaxSetting,
+        ),
       );
     }
   }
@@ -69,7 +69,7 @@ export class Sound extends Handle<sound> {
   public registerStacked(
     byPosition: boolean,
     rectWidth: number,
-    rectHeight: number
+    rectHeight: number,
   ) {
     RegisterStackedSound(this.handle, byPosition, rectWidth, rectHeight);
   }
@@ -145,7 +145,7 @@ export class Sound extends Handle<sound> {
   public unregisterStacked(
     byPosition: boolean,
     rectWidth: number,
-    rectHeight: number
+    rectHeight: number,
   ) {
     UnregisterStackedSound(this.handle, byPosition, rectWidth, rectHeight);
   }

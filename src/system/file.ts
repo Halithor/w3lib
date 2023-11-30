@@ -28,7 +28,7 @@
  */
 export class File {
   // The ability used to read and write data.
-  private static dummyAbility: number = FourCC('Amls');
+  private static dummyAbility: number = FourCC("Amls");
 
   // The string limit per Preload call.
   private static preloadLimit = 259;
@@ -98,14 +98,14 @@ export class File {
   public static writeRaw(
     filename: string,
     contents: string,
-    allowReading = false
+    allowReading = false,
   ): File {
     PreloadGenClear();
     PreloadGenStart();
 
     if (allowReading) {
       Preload(
-        `\")\n//! beginusercode\nlocal o=''\nPreload=function(s)o=o..s end\nPreloadEnd=function()end\n//!endusercode\n//`
+        `\")\n//! beginusercode\nlocal o=''\nPreload=function(s)o=o..s end\nPreloadEnd=function()end\n//!endusercode\n//`,
       );
       contents = File.escape(contents);
     }
@@ -116,7 +116,7 @@ export class File {
 
     if (allowReading) {
       Preload(
-        `\")\n//! beginusercode\nBlzSetAbilityIcon(${this.dummyAbility},o)\n//!endusercode\n//`
+        `\")\n//! beginusercode\nBlzSetAbilityIcon(${this.dummyAbility},o)\n//!endusercode\n//`,
       );
     }
 

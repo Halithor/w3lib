@@ -7,19 +7,19 @@ import {
   ItemId,
   UnitId,
   WeaponSound,
-} from '../common';
-import {Angle, randomAngle, Vec2, vec2} from '../math/index';
-import {Destructable} from './destructable';
-import {Force} from './force';
-import {Group} from './group';
-import {Handle} from './handle';
-import {Item} from './item';
-import {MapPlayer} from './player';
-import {Sound} from './sound';
-import {Widget} from './widget';
+} from "../common";
+import { Angle, randomAngle, Vec2, vec2 } from "../math/index";
+import { Destructable } from "./destructable";
+import { Force } from "./force";
+import { Group } from "./group";
+import { Handle } from "./handle";
+import { Item } from "./item";
+import { MapPlayer } from "./player";
+import { Sound } from "./sound";
+import { Widget } from "./widget";
 
 export class Unit extends Widget {
-  declare public readonly handle: unit;
+  public declare readonly handle: unit;
   static underConstructionUnits: Group;
   static upgradingUnits: Group;
 
@@ -28,12 +28,12 @@ export class Unit extends Widget {
     unitId: UnitId,
     pos: Vec2,
     face?: Angle,
-    skinId?: number
+    skinId?: number,
   ) {
     if (Handle.initFromHandle()) {
       super();
     } else {
-      const p = typeof owner === 'number' ? Player(owner) : owner.handle;
+      const p = typeof owner === "number" ? Player(owner) : owner.handle;
       super(
         skinId
           ? BlzCreateUnitWithSkin(
@@ -42,15 +42,15 @@ export class Unit extends Widget {
               pos.x,
               pos.y,
               face ? face.degrees : randomAngle().degrees,
-              skinId
+              skinId,
             )
           : CreateUnit(
               p,
               unitId.value,
               pos.x,
               pos.y,
-              face ? face.degrees : randomAngle().degrees
-            )
+              face ? face.degrees : randomAngle().degrees,
+            ),
       );
     }
   }
@@ -297,7 +297,7 @@ export class Unit extends Widget {
 
   public get selectionScale() {
     const result = this.getField(UNIT_RF_SELECTION_SCALE);
-    return typeof result === 'number' ? result : 0;
+    return typeof result === "number" ? result : 0;
   }
 
   public set show(flag: boolean) {
@@ -423,7 +423,7 @@ export class Unit extends Widget {
   public addItemToStock(
     itemId: ItemId,
     currentStock: number,
-    stockMax: number
+    stockMax: number,
   ) {
     AddItemToStock(this.handle, itemId.value, currentStock, stockMax);
   }
@@ -443,7 +443,7 @@ export class Unit extends Widget {
   public addUnitToStock(
     unitId: UnitId,
     currentStock: number,
-    stockMax: number
+    stockMax: number,
   ) {
     AddUnitToStock(this.handle, unitId.value, currentStock, stockMax);
   }
@@ -471,7 +471,7 @@ export class Unit extends Widget {
     physical: boolean,
     timedLife: boolean,
     aura: boolean,
-    autoDispel: boolean
+    autoDispel: boolean,
   ) {
     return UnitCountBuffsEx(
       this.handle,
@@ -481,7 +481,7 @@ export class Unit extends Widget {
       physical,
       timedLife,
       aura,
-      autoDispel
+      autoDispel,
     );
   }
 
@@ -495,7 +495,7 @@ export class Unit extends Widget {
     ranged: boolean,
     attackType: AttackType,
     damageType: DamageType,
-    weaponSound: WeaponSound = WeaponSound.None
+    weaponSound: WeaponSound = WeaponSound.None,
   ) {
     return UnitDamagePoint(
       this.handle,
@@ -508,7 +508,7 @@ export class Unit extends Widget {
       ranged,
       attackType.value,
       damageType.value,
-      weaponSound.value
+      weaponSound.value,
     );
   }
 
@@ -519,7 +519,7 @@ export class Unit extends Widget {
     ranged: boolean,
     attackType: AttackType,
     damageType: DamageType,
-    weaponSound: WeaponSound = WeaponSound.None
+    weaponSound: WeaponSound = WeaponSound.None,
   ) {
     return UnitDamageTarget(
       this.handle,
@@ -529,7 +529,7 @@ export class Unit extends Widget {
       ranged,
       attackType.value,
       damageType.value,
-      weaponSound.value
+      weaponSound.value,
     );
   }
 
@@ -555,7 +555,7 @@ export class Unit extends Widget {
 
   public dropItemTarget(
     whichItem: Item,
-    target: Widget /* | Unit | Item | Destructable*/
+    target: Widget /* | Unit | Item | Destructable*/,
   ) {
     return UnitDropItemTarget(this.handle, whichItem.handle, target.handle);
   }
@@ -613,24 +613,28 @@ export class Unit extends Widget {
   }
 
   public getField(
-    field: unitbooleanfield | unitintegerfield | unitrealfield | unitstringfield
+    field:
+      | unitbooleanfield
+      | unitintegerfield
+      | unitrealfield
+      | unitstringfield,
   ) {
-    const fieldType = field.toString().substr(0, field.toString().indexOf(':'));
+    const fieldType = field.toString().substr(0, field.toString().indexOf(":"));
 
     switch (fieldType) {
-      case 'unitbooleanfield':
+      case "unitbooleanfield":
         const fieldBool: unitbooleanfield = field as unitbooleanfield;
 
         return BlzGetUnitBooleanField(this.handle, fieldBool);
-      case 'unitintegerfield':
+      case "unitintegerfield":
         const fieldInt: unitintegerfield = field as unitintegerfield;
 
         return BlzGetUnitIntegerField(this.handle, fieldInt);
-      case 'unitrealfield':
+      case "unitrealfield":
         const fieldReal: unitrealfield = field as unitrealfield;
 
         return BlzGetUnitRealField(this.handle, fieldReal);
-      case 'unitstringfield':
+      case "unitstringfield":
         const fieldString: unitstringfield = field as unitstringfield;
 
         return BlzGetUnitStringField(this.handle, fieldString);
@@ -694,7 +698,7 @@ export class Unit extends Widget {
     physical: boolean,
     timedLife: boolean,
     aura: boolean,
-    autoDispel: boolean
+    autoDispel: boolean,
   ) {
     return UnitHasBuffsEx(
       this.handle,
@@ -704,7 +708,7 @@ export class Unit extends Widget {
       physical,
       timedLife,
       aura,
-      autoDispel
+      autoDispel,
     );
   }
 
@@ -713,7 +717,7 @@ export class Unit extends Widget {
   }
 
   public get items(): Item[] {
-    let items: Item[] = [];
+    const items: Item[] = [];
     for (let i = 0; i < this.inventorySize; i++) {
       const inSlot = this.getItemInSlot(i);
       if (inSlot) {
@@ -824,13 +828,13 @@ export class Unit extends Widget {
   }
 
   public issueBuildOrder(unit: string | UnitId, pos: Vec2) {
-    return typeof unit === 'string'
+    return typeof unit === "string"
       ? IssueBuildOrder(this.handle, unit, pos.x, pos.y)
       : IssueBuildOrderById(this.handle, unit.value, pos.x, pos.y);
   }
 
   public issueImmediateOrder(order: string | number) {
-    return typeof order === 'string'
+    return typeof order === "string"
       ? IssueImmediateOrder(this.handle, order)
       : IssueImmediateOrderById(this.handle, order);
   }
@@ -839,56 +843,56 @@ export class Unit extends Widget {
     order: string | number,
     x: number,
     y: number,
-    instantTargetWidget: Widget
+    instantTargetWidget: Widget,
   ) {
-    return typeof order === 'string'
+    return typeof order === "string"
       ? IssueInstantPointOrder(
           this.handle,
           order,
           x,
           y,
-          instantTargetWidget.handle
+          instantTargetWidget.handle,
         )
       : IssueInstantPointOrderById(
           this.handle,
           order,
           x,
           y,
-          instantTargetWidget.handle
+          instantTargetWidget.handle,
         );
   }
 
   public issueInstantTargetOrder(
     order: string | number,
     targetWidget: Widget,
-    instantTargetWidget: Widget
+    instantTargetWidget: Widget,
   ) {
-    return typeof order === 'string'
+    return typeof order === "string"
       ? IssueInstantTargetOrder(
           this.handle,
           order,
           targetWidget.handle,
-          instantTargetWidget.handle
+          instantTargetWidget.handle,
         )
       : IssueInstantTargetOrderById(
           this.handle,
           order,
           targetWidget.handle,
-          instantTargetWidget.handle
+          instantTargetWidget.handle,
         );
   }
 
   public issueOrderAt(order: string | number, pos: Vec2) {
-    return typeof order === 'string'
+    return typeof order === "string"
       ? IssuePointOrder(this.handle, order, pos.x, pos.y)
       : IssuePointOrderById(this.handle, order, pos.x, pos.y);
   }
 
   public issueTargetOrder(
     order: string | number,
-    targetWidget: Widget
+    targetWidget: Widget,
   ): boolean {
-    return typeof order === 'string'
+    return typeof order === "string"
       ? IssueTargetOrder(this.handle, order, targetWidget.handle)
       : IssueTargetOrderById(this.handle, order, targetWidget.handle);
   }
@@ -926,7 +930,7 @@ export class Unit extends Widget {
     lookAtTarget: Unit,
     offsetX: number,
     offsetY: number,
-    offsetZ: number
+    offsetZ: number,
   ) {
     SetUnitLookAt(
       this.handle,
@@ -934,7 +938,7 @@ export class Unit extends Widget {
       lookAtTarget.handle,
       offsetX,
       offsetY,
-      offsetZ
+      offsetZ,
     );
   }
 
@@ -977,7 +981,7 @@ export class Unit extends Widget {
     physical: boolean,
     timedLife: boolean,
     aura: boolean,
-    autoDispel: boolean
+    autoDispel: boolean,
   ) {
     UnitRemoveBuffsEx(
       this.handle,
@@ -987,7 +991,7 @@ export class Unit extends Widget {
       physical,
       timedLife,
       aura,
-      autoDispel
+      autoDispel,
     );
   }
 
@@ -1020,7 +1024,11 @@ export class Unit extends Widget {
    */
   replaceWith(unitId: UnitId, state: Unit.ReplaceState): Unit {
     return Unit.fromHandle(
-      ReplaceUnitBJ(this.handle, unitId.value, Unit.ReplaceState.toValue(state))
+      ReplaceUnitBJ(
+        this.handle,
+        unitId.value,
+        Unit.ReplaceState.toValue(state),
+      ),
     );
   }
 
@@ -1061,7 +1069,7 @@ export class Unit extends Widget {
   }
 
   public setAnimation(whichAnimation: string | number) {
-    if (typeof whichAnimation === 'string') {
+    if (typeof whichAnimation === "string") {
       SetUnitAnimation(this.handle, whichAnimation);
     } else {
       SetUnitAnimationByIndex(this.handle, whichAnimation);
@@ -1118,29 +1126,29 @@ export class Unit extends Widget {
       | unitintegerfield
       | unitrealfield
       | unitstringfield,
-    value: boolean | number | string
+    value: boolean | number | string,
   ) {
-    const fieldType = field.toString().substr(0, field.toString().indexOf(':'));
+    const fieldType = field.toString().substr(0, field.toString().indexOf(":"));
 
-    if (fieldType === 'unitbooleanfield' && typeof value === 'boolean') {
+    if (fieldType === "unitbooleanfield" && typeof value === "boolean") {
       return BlzSetUnitBooleanField(
         this.handle,
         field as unitbooleanfield,
-        value
+        value,
       );
-    } else if (fieldType === 'unitintegerfield' && typeof value === 'number') {
+    } else if (fieldType === "unitintegerfield" && typeof value === "number") {
       return BlzSetUnitIntegerField(
         this.handle,
         field as unitintegerfield,
-        value
+        value,
       );
-    } else if (fieldType === 'unitrealfield' && typeof value === 'number') {
+    } else if (fieldType === "unitrealfield" && typeof value === "number") {
       return BlzSetUnitRealField(this.handle, field as unitrealfield, value);
-    } else if (fieldType === 'unitstringfield' && typeof value === 'string') {
+    } else if (fieldType === "unitstringfield" && typeof value === "string") {
       return BlzSetUnitStringField(
         this.handle,
         field as unitstringfield,
-        value
+        value,
       );
     }
 
@@ -1154,46 +1162,46 @@ export class Unit extends Widget {
       | unitweaponrealfield
       | unitweaponstringfield,
     index: number,
-    value: boolean | number | string
+    value: boolean | number | string,
   ) {
-    const fieldType = field.toString().substr(0, field.toString().indexOf(':'));
+    const fieldType = field.toString().substr(0, field.toString().indexOf(":"));
 
-    if (fieldType === 'unitweaponbooleanfield' && typeof value === 'boolean') {
+    if (fieldType === "unitweaponbooleanfield" && typeof value === "boolean") {
       return BlzSetUnitWeaponBooleanField(
         this.handle,
         field as unitweaponbooleanfield,
         index,
-        value
+        value,
       );
     } else if (
-      fieldType === 'unitweaponintegerfield' &&
-      typeof value === 'number'
+      fieldType === "unitweaponintegerfield" &&
+      typeof value === "number"
     ) {
       return BlzSetUnitWeaponIntegerField(
         this.handle,
         field as unitweaponintegerfield,
         index,
-        value
+        value,
       );
     } else if (
-      fieldType === 'unitweaponrealfield' &&
-      typeof value === 'number'
+      fieldType === "unitweaponrealfield" &&
+      typeof value === "number"
     ) {
       return BlzSetUnitWeaponRealField(
         this.handle,
         field as unitweaponrealfield,
         index,
-        value
+        value,
       );
     } else if (
-      fieldType === 'unitweaponstringfield' &&
-      typeof value === 'string'
+      fieldType === "unitweaponstringfield" &&
+      typeof value === "string"
     ) {
       return BlzSetUnitWeaponStringField(
         this.handle,
         field as unitweaponstringfield,
         index,
-        value
+        value,
       );
     }
 
@@ -1276,7 +1284,7 @@ export class Unit extends Widget {
     red: number,
     green: number,
     blue: number,
-    alpha: number
+    alpha: number,
   ) {
     SetUnitVertexColor(this.handle, red, green, blue, alpha);
   }
@@ -1328,7 +1336,7 @@ export class Unit extends Widget {
   public get waygateDestination(): Vec2 {
     return vec2(
       WaygateGetDestinationX(this.handle),
-      WaygateGetDestinationY(this.handle)
+      WaygateGetDestinationY(this.handle),
     );
   }
 
@@ -1377,7 +1385,9 @@ export class Unit extends Widget {
   }
 
   static get eventKilling(): Unit | undefined {
-    return GetKillingUnit() != null ? Unit.fromHandle(GetKillingUnit()) : undefined;
+    return GetKillingUnit() != null
+      ? Unit.fromHandle(GetKillingUnit())
+      : undefined;
   }
 
   static get eventDecaying(): Unit {

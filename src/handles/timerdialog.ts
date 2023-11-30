@@ -1,7 +1,7 @@
 /** @noSelfInFile **/
 
-import {Handle} from './handle';
-import {Timer} from './timer';
+import { Handle } from "./handle";
+import { Timer } from "./timer";
 
 export class TimerDialog extends Handle<timerdialog> {
   constructor(t: Timer) {

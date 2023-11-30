@@ -14,9 +14,9 @@ const hooksConfigBefore: scriptHookSignature[] = [];
 const hooksConfigAfter: scriptHookSignature[] = [];
 
 export const executeHooksMainBefore = () =>
-  hooksMainBefore.forEach(func => func());
+  hooksMainBefore.forEach((func) => func());
 export const executeHooksMainAfter = () =>
-  hooksMainAfter.forEach(func => func());
+  hooksMainAfter.forEach((func) => func());
 
 export function hookedMain() {
   executeHooksMainBefore();
@@ -25,9 +25,9 @@ export function hookedMain() {
 }
 
 export const executeHooksConfigBefore = () =>
-  hooksConfigBefore.forEach(func => func());
+  hooksConfigBefore.forEach((func) => func());
 export const executeHooksConfigAfter = () =>
-  hooksConfigAfter.forEach(func => func());
+  hooksConfigAfter.forEach((func) => func());
 
 export function hookedConfig() {
   executeHooksConfigBefore();
@@ -39,13 +39,13 @@ main = hookedMain;
 config = hookedConfig;
 
 export enum W3TS_HOOK {
-  MAIN_BEFORE = 'main::before',
-  MAIN_AFTER = 'main::after',
-  CONFIG_BEFORE = 'config::before',
-  CONFIG_AFTER = 'config::after',
+  MAIN_BEFORE = "main::before",
+  MAIN_AFTER = "main::after",
+  CONFIG_BEFORE = "config::before",
+  CONFIG_AFTER = "config::after",
 }
 
-const entryPoints: {[key: string]: scriptHookSignature[]} = {
+const entryPoints: { [key: string]: scriptHookSignature[] } = {
   [W3TS_HOOK.MAIN_BEFORE]: hooksMainBefore,
   [W3TS_HOOK.MAIN_AFTER]: hooksMainAfter,
   [W3TS_HOOK.CONFIG_BEFORE]: hooksConfigBefore,
@@ -54,7 +54,7 @@ const entryPoints: {[key: string]: scriptHookSignature[]} = {
 
 export function addScriptHook(
   entryPoint: string,
-  hook: scriptHookSignature
+  hook: scriptHookSignature,
 ): boolean {
   if (!(entryPoint in entryPoints)) {
     return false;

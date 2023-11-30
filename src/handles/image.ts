@@ -1,6 +1,6 @@
 /** @noSelfInFile **/
 
-import {Handle} from './handle';
+import { Handle } from "./handle";
 
 export enum ImageType {
   Selection = 1,
@@ -21,7 +21,7 @@ export class Image extends Handle<image> {
     originX: number,
     originY: number,
     originZ: number,
-    imageType: ImageType
+    imageType: ImageType,
   ) {
     if (Handle.initFromHandle()) {
       super();
@@ -38,8 +38,8 @@ export class Image extends Handle<image> {
           originX,
           originY,
           originZ,
-          imageType
-        )
+          imageType,
+        ),
       );
     }
   }

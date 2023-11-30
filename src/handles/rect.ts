@@ -1,7 +1,7 @@
 /** @noSelfInFile **/
 
-import {vec2, Vec2} from '../math/index';
-import {Handle} from './handle';
+import { vec2, Vec2 } from "../math/index";
+import { Handle } from "./handle";
 
 export class Rectangle extends Handle<rect> {
   constructor(min: Vec2, max: Vec2) {
@@ -58,14 +58,14 @@ export class Rectangle extends Handle<rect> {
 
   public enumDestructables(
     filter: boolexpr | (() => boolean) | null,
-    actionFunc: () => void
+    actionFunc: () => void,
   ) {
     EnumDestructablesInRect(this.handle, filter, actionFunc);
   }
 
   public enumItems(
     filter: boolexpr | (() => boolean) | null,
-    actionFunc: () => void
+    actionFunc: () => void,
   ) {
     EnumItemsInRect(this.handle, filter, actionFunc);
   }

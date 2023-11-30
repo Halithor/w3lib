@@ -1,6 +1,6 @@
 /** @noSelfInFile **/
 
-import {Handle} from './handle';
+import { Handle } from "./handle";
 
 export class Point extends Handle<location> {
   constructor(x: number, y: number) {

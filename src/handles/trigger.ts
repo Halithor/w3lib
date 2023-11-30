@@ -1,12 +1,12 @@
 /** @noSelfInFile **/
 
-import {UnitId} from '../common';
-import {Dialog, DialogButton} from './dialog';
-import {Frame} from './frame';
-import {Handle} from './handle';
-import {MapPlayer} from './player';
-import {Unit} from './unit';
-import {Widget} from './widget';
+import { UnitId } from "../common";
+import { Dialog, DialogButton } from "./dialog";
+import { Frame } from "./frame";
+import { Handle } from "./handle";
+import { MapPlayer } from "./player";
+import { Unit } from "./unit";
+import { Widget } from "./widget";
 
 export class Trigger extends Handle<trigger> {
   constructor() {
@@ -96,12 +96,12 @@ export class Trigger extends Handle<trigger> {
 
   public registerEnterRegion(
     whichRegion: region,
-    filter: (() => boolean) | null
+    filter: (() => boolean) | null,
   ): Trigger {
     TriggerRegisterEnterRegion(
       this.handle,
       whichRegion,
-      filter ? Filter(filter) : null
+      filter ? Filter(filter) : null,
     );
     return this;
   }
@@ -109,13 +109,13 @@ export class Trigger extends Handle<trigger> {
   public registerFilterUnitEvent(
     whichUnit: unit,
     whichEvent: unitevent,
-    filter: (() => boolean) | null
+    filter: (() => boolean) | null,
   ): Trigger {
     TriggerRegisterFilterUnitEvent(
       this.handle,
       whichUnit,
       whichEvent,
-      filter ? Filter(filter) : null
+      filter ? Filter(filter) : null,
     );
     return this;
   }
@@ -128,7 +128,7 @@ export class Trigger extends Handle<trigger> {
   public registerGameStateEvent(
     whichState: gamestate,
     opcode: limitop,
-    limitval: number
+    limitval: number,
   ): Trigger {
     TriggerRegisterGameStateEvent(this.handle, whichState, opcode, limitval);
     return this;
@@ -136,24 +136,24 @@ export class Trigger extends Handle<trigger> {
 
   public registerLeaveRegion(
     whichRegion: region,
-    filter: (() => boolean) | null
+    filter: (() => boolean) | null,
   ): Trigger {
     TriggerRegisterLeaveRegion(
       this.handle,
       whichRegion,
-      filter ? Filter(filter) : null
+      filter ? Filter(filter) : null,
     );
     return this;
   }
 
   public registerPlayerAllianceChange(
     whichPlayer: MapPlayer,
-    whichAlliance: alliancetype
+    whichAlliance: alliancetype,
   ): Trigger {
     TriggerRegisterPlayerAllianceChange(
       this.handle,
       whichPlayer.handle,
-      whichAlliance
+      whichAlliance,
     );
     return this;
   }
@@ -161,25 +161,25 @@ export class Trigger extends Handle<trigger> {
   public registerPlayerChatEvent(
     whichPlayer: MapPlayer,
     chatMessageToDetect: string,
-    exactMatchOnly: boolean
+    exactMatchOnly: boolean,
   ): Trigger {
     TriggerRegisterPlayerChatEvent(
       this.handle,
       whichPlayer.handle,
       chatMessageToDetect,
-      exactMatchOnly
+      exactMatchOnly,
     );
     return this;
   }
 
   public registerPlayerEvent(
     whichPlayer: MapPlayer,
-    whichPlayerEvent: playerevent
+    whichPlayerEvent: playerevent,
   ): Trigger {
     TriggerRegisterPlayerEvent(
       this.handle,
       whichPlayer.handle,
-      whichPlayerEvent
+      whichPlayerEvent,
     );
     return this;
   }
@@ -188,26 +188,26 @@ export class Trigger extends Handle<trigger> {
     whichPlayer: MapPlayer,
     whichKey: oskeytype,
     metaKey: number,
-    fireOnKeyDown: boolean
+    fireOnKeyDown: boolean,
   ): Trigger {
     BlzTriggerRegisterPlayerKeyEvent(
       this.handle,
       whichPlayer.handle,
       whichKey,
       metaKey,
-      fireOnKeyDown
+      fireOnKeyDown,
     );
     return this;
   }
 
   public registerPlayerMouseEvent(
     whichPlayer: MapPlayer,
-    whichMouseEvent: number
+    whichMouseEvent: number,
   ): Trigger {
     TriggerRegisterPlayerMouseEventBJ(
       this.handle,
       whichPlayer.handle,
-      whichMouseEvent
+      whichMouseEvent,
     );
     return this;
   }
@@ -216,14 +216,14 @@ export class Trigger extends Handle<trigger> {
     whichPlayer: MapPlayer,
     whichState: playerstate,
     opcode: limitop,
-    limitval: number
+    limitval: number,
   ): Trigger {
     TriggerRegisterPlayerStateEvent(
       this.handle,
       whichPlayer.handle,
       whichState,
       opcode,
-      limitval
+      limitval,
     );
     return this;
   }
@@ -231,13 +231,13 @@ export class Trigger extends Handle<trigger> {
   public registerPlayerSyncEvent(
     whichPlayer: MapPlayer,
     prefix: string,
-    fromServer: boolean
+    fromServer: boolean,
   ): Trigger {
     BlzTriggerRegisterPlayerSyncEvent(
       this.handle,
       whichPlayer.handle,
       prefix,
-      fromServer
+      fromServer,
     );
     return this;
   }
@@ -245,13 +245,13 @@ export class Trigger extends Handle<trigger> {
   public registerPlayerUnitEvent(
     whichPlayer: MapPlayer,
     whichPlayerUnitEvent: playerunitevent,
-    filter: (() => boolean) | null
+    filter: (() => boolean) | null,
   ): Trigger {
     TriggerRegisterPlayerUnitEvent(
       this.handle,
       whichPlayer.handle,
       whichPlayerUnitEvent,
-      filter ? Filter(filter) : null
+      filter ? Filter(filter) : null,
     );
     return this;
   }
@@ -286,13 +286,13 @@ export class Trigger extends Handle<trigger> {
   public registerUnitInRange(
     whichUnit: Unit,
     range: number,
-    filter?: () => boolean
+    filter?: () => boolean,
   ): Trigger {
     TriggerRegisterUnitInRange(
       this.handle,
       whichUnit.handle,
       range,
-      filter ? Filter(filter) : null
+      filter ? Filter(filter) : null,
     );
     return this;
   }
@@ -301,14 +301,14 @@ export class Trigger extends Handle<trigger> {
     whichUnit: Unit,
     whichState: unitstate,
     opcode: limitop,
-    limitval: number
+    limitval: number,
   ): Trigger {
     TriggerRegisterUnitStateEvent(
       this.handle,
       whichUnit.handle,
       whichState,
       opcode,
-      limitval
+      limitval,
     );
     return this;
   }
@@ -321,7 +321,7 @@ export class Trigger extends Handle<trigger> {
   public registerVariableEvent(
     varName: string,
     opcode: limitop,
-    limitval: number
+    limitval: number,
   ): Trigger {
     TriggerRegisterVariableEvent(this.handle, varName, opcode, limitval);
     return this;
@@ -354,7 +354,7 @@ export class Trigger extends Handle<trigger> {
 
   public triggerRegisterFrameEvent(
     frame: Frame,
-    eventId: frameeventtype
+    eventId: frameeventtype,
   ): Trigger {
     BlzTriggerRegisterFrameEvent(this.handle, frame.handle, eventId);
     return this;

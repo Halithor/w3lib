@@ -1,7 +1,7 @@
 /** @noSelfInFile **/
 
-import {Handle} from './handle';
-import {MapPlayer} from './player';
+import { Handle } from "./handle";
+import { MapPlayer } from "./player";
 
 export class Force extends Handle<force> {
   constructor() {

@@ -1,13 +1,13 @@
 /** @noSelfInFile **/
 
-import {Handle} from './handle';
+import { Handle } from "./handle";
 
 export class Frame extends Handle<framehandle> {
   constructor(
     name: string,
     owner: Frame,
     priority: number,
-    createContext: number
+    createContext: number,
   );
   /**
    * Creates a SimpleFrame.
@@ -20,7 +20,7 @@ export class Frame extends Handle<framehandle> {
     name: string,
     owner: Frame,
     priority: number,
-    createContext?: number
+    createContext?: number,
   ) {
     if (Handle.initFromHandle()) {
       super();
@@ -207,7 +207,7 @@ export class Frame extends Handle<framehandle> {
     relative: Frame,
     relativePoint: framepointtype,
     x: number,
-    y: number
+    y: number,
   ) {
     BlzFrameSetPoint(this.handle, point, relative.handle, relativePoint, x, y);
     return this;

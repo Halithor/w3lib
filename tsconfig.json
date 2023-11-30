@@ -1,5 +1,4 @@
 {
-  "extends": "./node_modules/gts/tsconfig-google.json",
   "$schema": "https://raw.githubusercontent.com/TypeScriptToLua/TypeScriptToLua/master/tsconfig-schema.json",
   "compilerOptions": {
     "outDir": "dist",
@@ -29,9 +28,7 @@
       "war3-types/special/w3ts"
     ]
   },
-  "include": [
-    "./src/**/*.ts"
-  ],
+  "include": ["./src/**/*.ts"],
   "tstl": {
     "luaTarget": "5.3",
     "buildMode": "library",

@@ -1,7 +1,7 @@
 /** @noSelfInFile **/
 
-import {Handle} from './handle';
-import {MapPlayer} from './player';
+import { Handle } from "./handle";
+import { MapPlayer } from "./player";
 
 export class DialogButton extends Handle<button> {
   constructor(
@@ -9,7 +9,7 @@ export class DialogButton extends Handle<button> {
     text: string,
     hotkey = 0,
     quit = false,
-    score = false
+    score = false,
   ) {
     if (Handle.initFromHandle()) {
       super();

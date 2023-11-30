@@ -1,20 +1,20 @@
 /** @noSelfInFile **/
 
-import {Rectangle} from './rect';
-import {DestId} from '../common';
-import {Angle, Vec2, vec2, Vec3} from '../math/index';
-import {Handle} from './handle';
-import {Widget} from './widget';
+import { Rectangle } from "./rect";
+import { DestId } from "../common";
+import { Angle, Vec2, vec2, Vec3 } from "../math/index";
+import { Handle } from "./handle";
+import { Widget } from "./widget";
 
 export class Destructable extends Widget {
-  declare public readonly handle: destructable;
+  public declare readonly handle: destructable;
 
   constructor(
     destId: DestId,
     pos: Vec3,
     face: Angle,
     scale: number,
-    varation: number
+    varation: number,
   ) {
     if (Handle.initFromHandle()) {
       super();
@@ -27,8 +27,8 @@ export class Destructable extends Widget {
           pos.z,
           face.degrees,
           scale,
-          varation
-        )
+          varation,
+        ),
       );
     }
   }
@@ -109,7 +109,7 @@ export class Destructable extends Widget {
     if (this.life > 0) {
       this.kill();
     }
-    this.setAnim('death alternate');
+    this.setAnim("death alternate");
   }
 
   public gateClose() {
@@ -122,7 +122,7 @@ export class Destructable extends Widget {
     if (this.life > 0) {
       this.kill();
     }
-    this.setAnim('death');
+    this.setAnim("death");
   }
 
   public static fromEvent() {
@@ -136,7 +136,7 @@ export class Destructable extends Widget {
 
 export function forDestructablesInRect(
   rect: Rectangle,
-  callback: (d: Destructable) => void
+  callback: (d: Destructable) => void,
 ) {
   EnumDestructablesInRectAll(rect.handle, () => {
     callback(Destructable.fromHandle(GetEnumDestructable()));
@@ -148,13 +148,13 @@ export function forDestructablesInRect(
 export function forDestructablesInCircle(
   pos: Vec2,
   radius: number,
-  callback: (d: Destructable) => void
+  callback: (d: Destructable) => void,
 ) {
   // add buffer for AoE
   const adjustedRadius = radius + 65;
   const r = new Rectangle(
     pos.sub(vec2(adjustedRadius, adjustedRadius)),
-    pos.add(vec2(adjustedRadius, adjustedRadius))
+    pos.add(vec2(adjustedRadius, adjustedRadius)),
   );
 
   const radiusSq = radius * radius;
@@ -172,7 +172,7 @@ export function forDestructablesInCircle(
 export function killDestructablesInCircle(
   pos: Vec2,
   radius: number,
-  callback?: (d: Destructable) => void
+  callback?: (d: Destructable) => void,
 ) {
   forDestructablesInCircle(pos, radius, (d: Destructable) => {
     if (d.life > 1) {
@@ -189,7 +189,7 @@ export function killDestructablesInCircle(
 export function getRandomDestructableInRange(
   pos: Vec2,
   radius: number,
-  filter?: (d: Destructable) => boolean
+  filter?: (d: Destructable) => boolean,
 ): Destructable | undefined {
   let count = 0;
   let selected: Destructable | undefined = undefined;

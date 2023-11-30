@@ -1,17 +1,17 @@
 /** @noSelfInFile */
 
 const chars =
-  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
 /**
  * Encode a string to base64.
  * @param input The string to encode.
  */
 export function base64Encode(input: string) {
-  let output = '';
+  let output = "";
   for (
     let block = 0, charCode = 0, idx = 0, map = chars;
-    input.charAt(Math.floor(idx) | 0).length > 0 || ((map = '='), idx % 1);
+    input.charAt(Math.floor(idx) | 0).length > 0 || ((map = "="), idx % 1);
     output += map.charAt(Math.floor(63 & (block >>> (8 - (idx % 1) * 8))))
   ) {
     charCode = string.byte(input, Math.floor((idx += 3 / 4)) + 1) || 0;
@@ -25,7 +25,7 @@ export function base64Encode(input: string) {
 
     if (charCode > 0xff) {
       print(
-        "'base64Encode' failed: The string to be encoded contains characters outside of the Latin1 range."
+        "'base64Encode' failed: The string to be encoded contains characters outside of the Latin1 range.",
       );
       return output;
     }
@@ -42,14 +42,14 @@ export function base64Encode(input: string) {
  */
 export function base64Decode(input: string) {
   let i = input.length;
-  for (; i > 0 && input[i] !== '='; i--) {
+  for (; i > 0 && input[i] !== "="; i--) {
     /* do nothing */
   }
   const str = input.substr(0, i - 1);
-  let output = '';
+  let output = "";
   if (str.length % 4 === 1) {
     print(
-      "'base64Decode' failed: The string to be decoded is not correctly encoded."
+      "'base64Decode' failed: The string to be decoded is not correctly encoded.",
     );
     return output;
   }
