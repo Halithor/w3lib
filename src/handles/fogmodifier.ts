@@ -44,7 +44,7 @@ export class FogModifier extends Handle<fogmodifier> {
   }
 
   public static fromHandle(handle: fogmodifier): FogModifier {
-    return this.getObject(handle);
+    return this.getObject(handle) as FogModifier;
   }
 
   public static fromRect(

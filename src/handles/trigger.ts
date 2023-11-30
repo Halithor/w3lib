@@ -365,6 +365,6 @@ export class Trigger extends Handle<trigger> {
   }
 
   public static fromHandle(handle: trigger): Trigger {
-    return this.getObject(handle);
+    return this.getObject(handle) as Trigger;
   }
 }

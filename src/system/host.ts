@@ -1,7 +1,7 @@
 /** @noSelfInFile */
 
 import { MapPlayer } from "../handles/index";
-import { doAfter, Timer } from "../handles/timer";
+import { doAfter } from "../handles/timer";
 import { addScriptHook, W3TS_HOOK } from "../hooks/index";
 import { base64Decode, base64Encode } from "./base64";
 import { BinaryReader } from "./binaryreader";
@@ -50,7 +50,7 @@ function findHost() {
   writer.writeFloat(localStartTime - localJoinTime);
 
   new SyncRequest(MapPlayer.fromLocal(), base64Encode(writer.toString()))
-    .then((res, req) => {
+    .then((res) => {
       const data = base64Decode(res.data);
       const reader = new BinaryReader(data);
       const syncedTime = reader.readFloat();

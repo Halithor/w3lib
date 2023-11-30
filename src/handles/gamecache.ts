@@ -136,7 +136,7 @@ export class GameCache extends Handle<gamecache> {
   }
 
   public static fromHandle(handle: gamecache): GameCache {
-    return this.getObject(handle);
+    return this.getObject(handle) as GameCache;
   }
 
   public static reloadFromDisk() {

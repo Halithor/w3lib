@@ -102,6 +102,6 @@ export class Quest extends Handle<quest> {
   }
 
   public static fromHandle(handle: quest): Quest {
-    return this.getObject(handle);
+    return this.getObject(handle) as Quest;
   }
 }

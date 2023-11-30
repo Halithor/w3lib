@@ -146,6 +146,6 @@ export class Timer extends Handle<timer> {
   }
 
   public static fromHandle(handle: timer): Timer {
-    return this.getObject(handle);
+    return this.getObject(handle) as Timer;
   }
 }

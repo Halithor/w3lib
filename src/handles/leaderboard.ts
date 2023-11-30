@@ -157,7 +157,7 @@ export class Leaderboard extends Handle<leaderboard> {
   }
 
   public static fromHandle(handle: leaderboard): Leaderboard {
-    return this.getObject(handle);
+    return this.getObject(handle) as Leaderboard;
   }
 
   public static fromPlayer(p: MapPlayer) {

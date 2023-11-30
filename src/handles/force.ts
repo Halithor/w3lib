@@ -67,7 +67,7 @@ export class Force extends Handle<force> {
   }
 
   public static fromHandle(handle: force): Force {
-    return this.getObject(handle);
+    return this.getObject(handle) as Force;
   }
 
   static get allPlayers(): Force {

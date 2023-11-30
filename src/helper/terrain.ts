@@ -1,5 +1,4 @@
-import { Item, Rectangle } from "../handles/index";
-import { vec2, Vec2 } from "../math/index";
+import { Vec2 } from "../math/index";
 
 export type TerrainType = number;
 

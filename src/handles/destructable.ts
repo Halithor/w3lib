@@ -130,7 +130,7 @@ export class Destructable extends Widget {
   }
 
   public static fromHandle(handle: destructable): Destructable {
-    return this.getObject(handle);
+    return this.getObject(handle) as Destructable;
   }
 }
 

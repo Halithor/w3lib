@@ -37,6 +37,6 @@ export class TimerDialog extends Handle<timerdialog> {
   }
 
   public static fromHandle(handle: timerdialog): TimerDialog {
-    return this.getObject(handle);
+    return this.getObject(handle) as TimerDialog;
   }
 }

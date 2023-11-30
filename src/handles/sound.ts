@@ -151,7 +151,7 @@ export class Sound extends Handle<sound> {
   }
 
   public static fromHandle(handle: sound): Sound {
-    return this.getObject(handle);
+    return this.getObject(handle) as Sound;
   }
 
   public static getFileDuration(fileName: string) {

@@ -44,6 +44,6 @@ export class Point extends Handle<location> {
   }
 
   public static fromHandle(handle: location): Point {
-    return this.getObject(handle);
+    return this.getObject(handle) as Point;
   }
 }

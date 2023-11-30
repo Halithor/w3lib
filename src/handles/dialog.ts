@@ -21,7 +21,7 @@ export class DialogButton extends Handle<button> {
   }
 
   public static fromHandle(handle: button): DialogButton {
-    return this.getObject(handle);
+    return this.getObject(handle) as DialogButton;
   }
 }
 
@@ -51,6 +51,6 @@ export class Dialog extends Handle<dialog> {
   }
 
   public static fromHandle(handle: dialog): Dialog {
-    return this.getObject(handle);
+    return this.getObject(handle) as Dialog;
   }
 }

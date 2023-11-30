@@ -41,7 +41,7 @@ export class MultiboardItem extends Handle<multiboarditem> {
   }
 
   public static fromHandle(handle: multiboarditem): MultiboardItem {
-    return this.getObject(handle);
+    return this.getObject(handle) as MultiboardItem;
   }
 }
 

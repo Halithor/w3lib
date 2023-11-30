@@ -58,6 +58,6 @@ export class Ubersplat extends Handle<ubersplat> {
   }
 
   public static fromHandle(handle: ubersplat): Ubersplat {
-    return this.getObject(handle);
+    return this.getObject(handle) as Ubersplat;
   }
 }

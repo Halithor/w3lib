@@ -623,21 +623,13 @@ export class Unit extends Widget {
 
     switch (fieldType) {
       case "unitbooleanfield":
-        const fieldBool: unitbooleanfield = field as unitbooleanfield;
-
-        return BlzGetUnitBooleanField(this.handle, fieldBool);
+        return BlzGetUnitBooleanField(this.handle, field as unitbooleanfield);
       case "unitintegerfield":
-        const fieldInt: unitintegerfield = field as unitintegerfield;
-
-        return BlzGetUnitIntegerField(this.handle, fieldInt);
+        return BlzGetUnitIntegerField(this.handle, field as unitintegerfield);
       case "unitrealfield":
-        const fieldReal: unitrealfield = field as unitrealfield;
-
-        return BlzGetUnitRealField(this.handle, fieldReal);
+        return BlzGetUnitRealField(this.handle, field as unitrealfield);
       case "unitstringfield":
-        const fieldString: unitstringfield = field as unitstringfield;
-
-        return BlzGetUnitStringField(this.handle, fieldString);
+        return BlzGetUnitStringField(this.handle, field as unitstringfield);
       default:
         return 0;
     }
@@ -1353,7 +1345,7 @@ export class Unit extends Widget {
   }
 
   public static fromHandle(handle: unit): Unit {
-    return this.getObject(handle);
+    return this.getObject(handle) as Unit;
   }
 
   public static getPointValueByType(unitType: number) {

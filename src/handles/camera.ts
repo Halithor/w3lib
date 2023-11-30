@@ -348,6 +348,6 @@ export class CameraSetup extends Handle<camerasetup> {
   }
 
   public static fromHandle(handle: camerasetup): camerasetup {
-    return this.getObject(handle);
+    return this.getObject(handle) as camerasetup;
   }
 }

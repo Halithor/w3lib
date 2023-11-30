@@ -24,7 +24,7 @@ export class Widget extends Handle<widget> {
   }
 
   public static fromHandle(handle: widget): Widget {
-    return this.getObject(handle);
+    return this.getObject(handle) as Widget;
   }
 
   static get eventTriggering(): Widget {

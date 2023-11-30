@@ -218,7 +218,7 @@ export class Group extends Handle<group> {
   }
 
   public static fromHandle(handle: group): Group {
-    return this.getObject(handle);
+    return this.getObject(handle) as Group;
   }
 
   public static getEnumUnit(): Unit {
@@ -359,7 +359,7 @@ export function forUnitsInRect(rct: Rectangle, callback: (u: Unit) => void) {
 
 export function countUnitsInRect(rct: Rectangle) {
   let count = 0;
-  forUnitsInRect(rct, (u) => {
+  forUnitsInRect(rct, () => {
     count++;
   });
   return count;

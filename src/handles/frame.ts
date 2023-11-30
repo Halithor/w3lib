@@ -287,7 +287,7 @@ export class Frame extends Handle<framehandle> {
   }
 
   public static fromHandle(handle: framehandle): Frame {
-    return this.getObject(handle);
+    return this.getObject(handle) as Frame;
   }
 
   public static fromName(name: string, createContext: number) {

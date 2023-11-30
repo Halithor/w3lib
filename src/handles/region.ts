@@ -43,7 +43,7 @@ export class Region extends Handle<region> {
   }
 
   public static fromHandle(handle: region): Region {
-    return this.getObject(handle);
+    return this.getObject(handle) as Region;
   }
 
   public static fromRect(rect: rect): Region {

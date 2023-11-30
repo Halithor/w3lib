@@ -85,7 +85,7 @@ export class Rectangle extends Handle<rect> {
   }
 
   public static fromHandle(handle: rect): Rectangle {
-    return this.getObject(handle);
+    return this.getObject(handle) as Rectangle;
   }
 
   // Returns full map bounds, including unplayable borders, in world coordinates

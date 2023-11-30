@@ -1,6 +1,6 @@
 /** @noSelfInFile **/
 
-const map: WeakMap<handle, any> = new WeakMap<handle, any>();
+const map: WeakMap<handle, unknown> = new WeakMap<handle, unknown>();
 
 export class Handle<T extends handle> {
   public readonly handle: T;

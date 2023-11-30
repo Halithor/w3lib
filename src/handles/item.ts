@@ -229,7 +229,7 @@ export class Item extends Widget {
   }
 
   public static fromHandle(handle: item): Item {
-    return this.getObject(handle);
+    return this.getObject(handle) as Item;
   }
 
   public static isIdPawnable(itemId: ItemId) {

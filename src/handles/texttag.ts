@@ -1,5 +1,5 @@
 import { color, Color } from "../helper/index";
-import { vec2, Vec2, vec3, Vec3 } from "../math/index";
+import { vec2, Vec2, Vec3 } from "../math/index";
 import { Handle } from "./handle";
 import { MapPlayer } from "./player";
 import { Unit } from "./unit";

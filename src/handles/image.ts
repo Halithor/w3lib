@@ -77,6 +77,6 @@ export class Image extends Handle<image> {
   }
 
   public static fromHandle(handle: image): Image {
-    return this.getObject(handle);
+    return this.getObject(handle) as Image;
   }
 }

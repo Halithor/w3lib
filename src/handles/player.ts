@@ -9,7 +9,6 @@ import { AbilId, TechId, UnitId } from "../common";
 import { playerColors } from "../helper/index";
 
 export const Players: MapPlayer[] = [];
-const localPlayer = GetLocalPlayer();
 
 export enum AllianceState {
   Unallied,
@@ -31,7 +30,7 @@ export class DataKey<T> {
 }
 
 export class MapPlayer extends Handle<player> {
-  private static data: { [key: string]: { [key: number]: any } } = {};
+  private static data: { [key: string]: { [key: number]: unknown } } = {};
 
   private constructor(index: number) {
     if (Handle.initFromHandle()) {
@@ -52,7 +51,7 @@ export class MapPlayer extends Handle<player> {
       this.setData(key, key.creator(this));
       return this.getData(key);
     }
-    return forPlayer;
+    return forPlayer as T;
   }
 
   setData<T>(key: DataKey<T>, data: T) {
@@ -418,7 +417,6 @@ export class MapPlayer extends Handle<player> {
         this.setAlliance(otherPlayer, ALLIANCE_PASSIVE, true);
         break;
       default:
-        const _checkExhaustive: never = state;
         throw new Error("should not happen");
     }
   }
@@ -496,7 +494,7 @@ export class MapPlayer extends Handle<player> {
   }
 
   public static fromHandle(handle: player): MapPlayer {
-    return this.getObject(handle);
+    return this.getObject(handle) as MapPlayer;
   }
 
   public static fromIndex(index: number) {
