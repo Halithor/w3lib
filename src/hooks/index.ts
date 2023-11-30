@@ -1,6 +1,9 @@
 /** @noSelfInFile */
 
+// eslint-disable-next-line prefer-const
 declare let main: () => void;
+
+// eslint-disable-next-line prefer-const
 declare let config: () => void;
 
 const oldMain = main;

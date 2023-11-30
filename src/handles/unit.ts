@@ -1487,6 +1487,7 @@ export class Unit extends Widget {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace Unit {
   export enum ReplaceState {
     // Use the same HP and mana percentages
@@ -1499,6 +1500,7 @@ export namespace Unit {
     Maximum,
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   export namespace ReplaceState {
     export function toValue(state: ReplaceState): number {
       switch (state) {

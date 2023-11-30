@@ -8,8 +8,8 @@ interface Observer<T> {
   next: (value: T) => void;
 }
 
-export class Subscriber<T> implements Observer<T> {
-  next(value: T): void {}
+export abstract class Subscriber<T> implements Observer<T> {
+  abstract next(value: T): void;
 }
 
 class FunctionSubscriber<T> extends Subscriber<T> {
