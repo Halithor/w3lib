@@ -6,7 +6,7 @@ export class Color {
     readonly red: ColorValue,
     readonly green: ColorValue,
     readonly blue: ColorValue,
-    alpha?: ColorValue
+    alpha?: ColorValue,
   ) {
     if (alpha) {
       this.alpha = alpha;
@@ -16,14 +16,16 @@ export class Color {
   }
 
   get code(): string {
-    return `|c${toHex(this.alpha)}${toHex(this.red)}${toHex(this.green)}${toHex(this.blue)}`
+    return `|c${toHex(this.alpha)}${toHex(this.red)}${toHex(this.green)}${toHex(
+      this.blue,
+    )}`;
   }
 }
 
 function toHex(num: ColorValue): string {
-  let hex = num.toString(16)
+  let hex = num.toString(16);
   if (hex.length < 2) {
-    hex = '0' + hex;
+    hex = "0" + hex;
   }
   return hex;
 }
@@ -32,7 +34,7 @@ export const color = (
   red: ColorValue,
   green: ColorValue,
   blue: ColorValue,
-  alpha?: ColorValue
+  alpha?: ColorValue,
 ) => new Color(red, green, blue, alpha);
 
 // playerColors is the player colors sorted by index. Does not include
@@ -66,30 +68,30 @@ export const playerColors = [
 
 // playerColorNames is the names of players colors sorted by player index.
 export const playerColorNames = [
-  'red',
-  'blue',
-  'teal',
-  'purple',
-  'yellow',
-  'orange',
-  'green',
-  'pink',
-  'gray',
-  'light blue',
-  'dark green',
-  'brown',
-  'maroon',
-  'navy',
-  'turquoise',
-  'violet',
-  'wheat',
-  'peach',
-  'mint',
-  'lavender',
-  'coal',
-  'snow',
-  'emerald',
-  'peanut',
+  "red",
+  "blue",
+  "teal",
+  "purple",
+  "yellow",
+  "orange",
+  "green",
+  "pink",
+  "gray",
+  "light blue",
+  "dark green",
+  "brown",
+  "maroon",
+  "navy",
+  "turquoise",
+  "violet",
+  "wheat",
+  "peach",
+  "mint",
+  "lavender",
+  "coal",
+  "snow",
+  "emerald",
+  "peanut",
 ];
 
 // This is the only way to type a integer range in typescript. Please don't

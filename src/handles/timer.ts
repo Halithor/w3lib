@@ -1,6 +1,6 @@
 /** @noSelfInFile **/
 
-import {Handle} from './handle';
+import { Handle } from "./handle";
 
 // doAfter uses a timer to perform an action after a given duration. Returns a cancelation function,
 // which can be called to cancel the callback.
@@ -23,7 +23,7 @@ export function doAfter(timeout: number, callback: () => void) {
 export function doPeriodically(
   interval: number,
   callback: (cancel: () => void) => void,
-  final?: () => void
+  final?: () => void,
 ) {
   const t = Timer.get();
   const cancel = () => {
@@ -46,7 +46,7 @@ export function doPeriodicallyCounted(
   interval: number,
   count: number,
   callback: (cancel: () => void, index: number) => void,
-  final?: () => void
+  final?: () => void,
 ) {
   const t = Timer.get();
   const cancel = () => {
@@ -142,10 +142,10 @@ export class Timer extends Handle<timer> {
   }
 
   public static fromExpired(): Timer {
-    return this.fromHandle(GetExpiredTimer());
+    return this.fromHandle(GetExpiredTimer()!);
   }
 
   public static fromHandle(handle: timer): Timer {
-    return this.getObject(handle);
+    return this.getObject(handle) as Timer;
   }
 }

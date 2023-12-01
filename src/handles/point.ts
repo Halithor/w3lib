@@ -1,6 +1,6 @@
 /** @noSelfInFile **/
 
-import {Handle} from './handle';
+import { Handle } from "./handle";
 
 export class Point extends Handle<location> {
   constructor(x: number, y: number) {
@@ -44,6 +44,6 @@ export class Point extends Handle<location> {
   }
 
   public static fromHandle(handle: location): Point {
-    return this.getObject(handle);
+    return this.getObject(handle) as Point;
   }
 }

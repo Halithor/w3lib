@@ -1,10 +1,10 @@
-import {HEIGHT_ENABLER} from './basics';
-import {AbilId, unitId} from './common';
-import {doAfter, MapPlayer, Unit, Widget} from './handles/index';
-import {degrees, vec2, Vec2} from './math/index';
+import { HEIGHT_ENABLER } from "./basics";
+import { AbilId, unitId } from "./common";
+import { doAfter, MapPlayer, Unit, Widget } from "./handles/index";
+import { degrees, vec2, Vec2 } from "./math/index";
 
 // The UnitId of the dummy
-const dummyId = unitId('dumm');
+const dummyId = unitId("dumm");
 // Seconds to delay until recycling
 const recycleDelay = 5;
 
@@ -20,7 +20,7 @@ export class Dummy {
       MapPlayer.neutralPassive,
       dummyId,
       vec2(0, 0),
-      degrees(0)
+      degrees(0),
     );
     this.unit.addAbility(HEIGHT_ENABLER);
     this.unit.removeAbility(HEIGHT_ENABLER);
@@ -29,7 +29,7 @@ export class Dummy {
   static get(owner: MapPlayer, pos: Vec2): Dummy {
     const dummy =
       Dummy.freeDummies.length == 0 ? new Dummy() : Dummy.freeDummies.pop();
-    if (!dummy) throw new Error('getting dummy popped nothing!');
+    if (!dummy) throw new Error("getting dummy popped nothing!");
 
     dummy.freed = false;
     dummy.unit.resetCooldown();
@@ -64,7 +64,7 @@ export class Dummy {
     pos: Vec2,
     ability: AbilId,
     order: string | number,
-    level: number = 1
+    level: number = 1,
   ) {
     const dummy = Dummy.get(player, pos);
     dummy.setAbility(ability, level);
@@ -80,7 +80,7 @@ export class Dummy {
     target: Vec2 | Widget,
     ability: AbilId,
     order: string | number,
-    level: number = 1
+    level: number = 1,
   ): boolean {
     const dummy = Dummy.get(player, pos);
     dummy.setAbility(ability, level);
@@ -102,7 +102,7 @@ export class Dummy {
     channelDuration: number,
     ability: AbilId,
     order: string | number,
-    level: number = 1
+    level: number = 1,
   ) {
     const dummy = Dummy.get(player, pos);
     dummy.setAbility(ability, level);

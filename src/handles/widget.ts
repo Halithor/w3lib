@@ -1,6 +1,6 @@
 /** @noSelfInFile **/
 
-import {Handle} from './handle';
+import { Handle } from "./handle";
 
 export class Widget extends Handle<widget> {
   public get life() {
@@ -20,18 +20,18 @@ export class Widget extends Handle<widget> {
   }
 
   public static fromEvent() {
-    return this.fromHandle(GetTriggerWidget());
+    return this.fromHandle(GetTriggerWidget()!);
   }
 
   public static fromHandle(handle: widget): Widget {
-    return this.getObject(handle);
+    return this.getObject(handle) as Widget;
   }
 
   static get eventTriggering(): Widget {
-    return this.fromHandle(GetTriggerWidget());
+    return this.fromHandle(GetTriggerWidget()!);
   }
 
   static get eventOrderTarget(): Widget {
-    return this.fromHandle(GetOrderTarget());
+    return this.fromHandle(GetOrderTarget()!);
   }
 }

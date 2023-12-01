@@ -1,1 +1,0 @@
-{"version":3,"file":"gametime.js","sourceRoot":"","sources":["../../src/system/gametime.ts"],"names":[],"mappings":";;;AAAA,4CAAuC;AAEvC,IAAI,WAAW,GAAG,GAAG,CAAC;AAEtB,MAAM,SAAS,GAAG,IAAI,aAAK,EAAE,CAAC,aAAa,CAAC,EAAE,EAAE,GAAG,EAAE;IACnD,WAAW,IAAI,EAAE,CAAC;AACpB,CAAC,CAAC,CAAC;AAEH,SAAgB,cAAc;IAC5B,OAAO,WAAW,GAAG,SAAS,CAAC,OAAO,CAAC;AACzC,CAAC;AAFD,wCAEC"}

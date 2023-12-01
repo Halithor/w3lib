@@ -8,8 +8,8 @@ interface Observer<T> {
   next: (value: T) => void;
 }
 
-export class Subscriber<T> implements Observer<T> {
-  next(value: T): void {}
+export abstract class Subscriber<T> implements Observer<T> {
+  abstract next(value: T): void;
 }
 
 class FunctionSubscriber<T> extends Subscriber<T> {
@@ -57,14 +57,14 @@ export class Event<T> {
   private teardown: TeardownLogic | undefined;
 
   constructor(
-    private readonly setup: (emit: (value: T) => void) => TeardownLogic
+    private readonly setup: (emit: (value: T) => void) => TeardownLogic,
   ) {}
 
   subscribe(
-    subscriberOrNext: Subscriber<T> | ((value: T) => void)
+    subscriberOrNext: Subscriber<T> | ((value: T) => void),
   ): Subscription {
     const subscriber: Subscriber<T> =
-      typeof subscriberOrNext == 'function'
+      typeof subscriberOrNext == "function"
         ? new FunctionSubscriber(subscriberOrNext)
         : subscriberOrNext;
 
@@ -78,10 +78,10 @@ export class Event<T> {
   }
 
   subscribeOnce(
-    subscriberOrNext: Subscriber<T> | ((value: T) => void)
+    subscriberOrNext: Subscriber<T> | ((value: T) => void),
   ): Subscription {
     const subscriber: Subscriber<T> =
-      typeof subscriberOrNext == 'function'
+      typeof subscriberOrNext == "function"
         ? new FunctionSubscriber(subscriberOrNext)
         : subscriberOrNext;
 
@@ -98,16 +98,16 @@ export class Event<T> {
   }
 
   protected _emit(value: T) {
-    this.subbers.forEach(sub => {
+    this.subbers.forEach((sub) => {
       try {
         sub.next(value);
       } catch (e: unknown) {
         if (e instanceof Error) {
           print(
-            'Subscriber threw exception: ' +
+            "Subscriber threw exception: " +
               e.message +
-              '\n' +
-              (e.stack ? e.stack : '')
+              "\n" +
+              (e.stack ? e.stack : ""),
           );
         }
       }
@@ -125,8 +125,8 @@ export class Event<T> {
   }
 
   map<V>(transformation: (value: T) => V): Event<V> {
-    return new Event(emit => {
-      const sub = this.subscribe(val => {
+    return new Event((emit) => {
+      const sub = this.subscribe((val) => {
         emit(transformation(val));
       });
       return () => sub.unsubscribe();
@@ -134,8 +134,8 @@ export class Event<T> {
   }
 
   filter(check: (value: T) => boolean): Event<T> {
-    return new Event(emit => {
-      const sub = this.subscribe(val => {
+    return new Event((emit) => {
+      const sub = this.subscribe((val) => {
         if (check(val)) {
           emit(val);
         }

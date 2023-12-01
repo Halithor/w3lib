@@ -1,9 +1,9 @@
 /** @noSelfInFile **/
 
-import {Vec2} from '../math/index';
-import {Handle} from './handle';
-import {Rectangle} from './rect';
-import {Unit} from './unit';
+import { Vec2 } from "../math/index";
+import { Handle } from "./handle";
+import { Rectangle } from "./rect";
+import { Unit } from "./unit";
 
 export class Region extends Handle<region> {
   constructor() {
@@ -43,7 +43,7 @@ export class Region extends Handle<region> {
   }
 
   public static fromHandle(handle: region): Region {
-    return this.getObject(handle);
+    return this.getObject(handle) as Region;
   }
 
   public static fromRect(rect: rect): Region {

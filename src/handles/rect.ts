@@ -1,7 +1,7 @@
 /** @noSelfInFile **/
 
-import {vec2, Vec2} from '../math/index';
-import {Handle} from './handle';
+import { vec2, Vec2 } from "../math/index";
+import { Handle } from "./handle";
 
 export class Rectangle extends Handle<rect> {
   constructor(min: Vec2, max: Vec2) {
@@ -57,16 +57,13 @@ export class Rectangle extends Handle<rect> {
   }
 
   public enumDestructables(
-    filter: boolexpr | (() => boolean) | null,
-    actionFunc: () => void
+    filter: boolexpr | undefined,
+    actionFunc: () => void,
   ) {
     EnumDestructablesInRect(this.handle, filter, actionFunc);
   }
 
-  public enumItems(
-    filter: boolexpr | (() => boolean) | null,
-    actionFunc: () => void
-  ) {
+  public enumItems(filter: boolexpr | undefined, actionFunc: () => void) {
     EnumItemsInRect(this.handle, filter, actionFunc);
   }
 
@@ -85,15 +82,15 @@ export class Rectangle extends Handle<rect> {
   }
 
   public static fromHandle(handle: rect): Rectangle {
-    return this.getObject(handle);
+    return this.getObject(handle) as Rectangle;
   }
 
   // Returns full map bounds, including unplayable borders, in world coordinates
   public static getWorldBounds() {
-    return Rectangle.fromHandle(GetWorldBounds());
+    return Rectangle.fromHandle(GetWorldBounds()!);
   }
 
   public static getPlayableArea() {
-    return Rectangle.fromHandle(GetPlayableMapRect());
+    return Rectangle.fromHandle(GetPlayableMapRect()!);
   }
 }

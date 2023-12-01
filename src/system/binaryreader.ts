@@ -46,40 +46,40 @@ export class BinaryReader {
   }
 
   public readDouble(): number {
-    return this.read('>d', 4);
+    return this.read(">d", 4);
   }
 
   public readFloat(): number {
-    return this.read('>f', 4);
+    return this.read(">f", 4);
   }
 
   public readInt16(): number {
-    return this.read('>h', 2);
+    return this.read(">h", 2);
   }
 
   public readInt32(): number {
-    return this.read('>i4', 4);
+    return this.read(">i4", 4);
   }
 
   public readInt8(): number {
-    return this.read('>b', 1);
+    return this.read(">b", 1);
   }
 
   public readString(): string {
-    const value: string = this.read('>z', 0);
+    const value: string = this.read(">z", 0);
     this.pos += value.length + 1;
     return value;
   }
 
   public readUInt16(): number {
-    return this.read('>H', 2);
+    return this.read(">H", 2);
   }
 
   public readUInt32(): number {
-    return this.read('>I4', 4);
+    return this.read(">I4", 4);
   }
 
   public readUInt8(): number {
-    return this.read('>B', 1);
+    return this.read(">B", 1);
   }
 }

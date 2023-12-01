@@ -1,14 +1,14 @@
 /** @noSelfInFile **/
 
-import {ItemId} from '../common';
-import {vec2, Vec2} from '../math/index';
-import {Handle} from './handle';
-import {MapPlayer} from './player';
-import { Rectangle } from './rect';
-import {Widget} from './widget';
+import { ItemId } from "../common";
+import { vec2, Vec2 } from "../math/index";
+import { Handle } from "./handle";
+import { MapPlayer } from "./player";
+import { Rectangle } from "./rect";
+import { Widget } from "./widget";
 
 export class Item extends Widget {
-  public readonly handle!: item;
+  public declare readonly handle: item;
 
   constructor(itemId: ItemId, pos: Vec2, skinId?: number) {
     if (Handle.initFromHandle()) {
@@ -17,7 +17,7 @@ export class Item extends Widget {
       super(
         skinId
           ? BlzCreateItemWithSkin(itemId.value, pos.x, pos.y, skinId)
-          : CreateItem(itemId.value, pos.x, pos.y)
+          : CreateItem(itemId.value, pos.x, pos.y),
       );
     }
   }
@@ -47,7 +47,7 @@ export class Item extends Widget {
   }
 
   get name() {
-    return GetItemName(this.handle);
+    return GetItemName(this.handle)!;
   }
 
   set name(value: string) {
@@ -139,18 +139,22 @@ export class Item extends Widget {
   }
 
   public getField(
-    field: itembooleanfield | itemintegerfield | itemrealfield | itemstringfield
+    field:
+      | itembooleanfield
+      | itemintegerfield
+      | itemrealfield
+      | itemstringfield,
   ) {
-    const fieldType = field.toString().substr(0, field.toString().indexOf(':'));
+    const fieldType = field.toString().substr(0, field.toString().indexOf(":"));
 
     switch (fieldType) {
-      case 'unitbooleanfield':
+      case "unitbooleanfield":
         return BlzGetItemBooleanField(this.handle, field as itembooleanfield);
-      case 'unitintegerfield':
+      case "unitintegerfield":
         return BlzGetItemIntegerField(this.handle, field as itemintegerfield);
-      case 'unitrealfield':
+      case "unitrealfield":
         return BlzGetItemRealField(this.handle, field as itemrealfield);
-      case 'unitstringfield':
+      case "unitstringfield":
         return BlzGetItemStringField(this.handle, field as itemstringfield);
       default:
         return 0;
@@ -191,29 +195,29 @@ export class Item extends Widget {
       | itemintegerfield
       | itemrealfield
       | itemstringfield,
-    value: boolean | number | string
+    value: boolean | number | string,
   ) {
-    const fieldType = field.toString().substr(0, field.toString().indexOf(':'));
+    const fieldType = field.toString().substr(0, field.toString().indexOf(":"));
 
-    if (fieldType === 'unitbooleanfield' && typeof value === 'boolean') {
+    if (fieldType === "unitbooleanfield" && typeof value === "boolean") {
       return BlzSetItemBooleanField(
         this.handle,
         field as itembooleanfield,
-        value
+        value,
       );
-    } else if (fieldType === 'unitintegerfield' && typeof value === 'number') {
+    } else if (fieldType === "unitintegerfield" && typeof value === "number") {
       return BlzSetItemIntegerField(
         this.handle,
         field as itemintegerfield,
-        value
+        value,
       );
-    } else if (fieldType === 'unitrealfield' && typeof value === 'number') {
+    } else if (fieldType === "unitrealfield" && typeof value === "number") {
       return BlzSetItemRealField(this.handle, field as itemrealfield, value);
-    } else if (fieldType === 'unitstringfield' && typeof value === 'string') {
+    } else if (fieldType === "unitstringfield" && typeof value === "string") {
       return BlzSetItemStringField(
         this.handle,
         field as itemstringfield,
-        value
+        value,
       );
     }
 
@@ -225,7 +229,7 @@ export class Item extends Widget {
   }
 
   public static fromHandle(handle: item): Item {
-    return this.getObject(handle);
+    return this.getObject(handle) as Item;
   }
 
   public static isIdPawnable(itemId: ItemId) {
@@ -241,35 +245,38 @@ export class Item extends Widget {
   }
 
   static get eventManipulated(): Item {
-    return this.fromHandle(GetManipulatedItem());
+    return this.fromHandle(GetManipulatedItem()!);
   }
 
   static get eventSold(): Item {
-    return this.fromHandle(GetSoldItem());
+    return this.fromHandle(GetSoldItem()!);
   }
 
   static get eventStackingTarget(): Item {
-    return this.fromHandle(BlzGetStackingItemTarget());
+    return this.fromHandle(BlzGetStackingItemTarget()!);
   }
 
   static get eventStackingSource(): Item {
-    return this.fromHandle(BlzGetStackingItemSource());
+    return this.fromHandle(BlzGetStackingItemSource()!);
   }
 }
 
-
 export function forItemsInRect(rect: Rectangle, callback: (i: Item) => void) {
-  EnumItemsInRect(rect.handle, null, () => {
-    callback(Item.fromHandle(GetEnumItem()))
+  EnumItemsInRect(rect.handle, undefined, () => {
+    callback(Item.fromHandle(GetEnumItem()!));
   });
 }
 
-export function forItemsInRange(pos: Vec2, radius: number, callback: (i: Item) => void) {
+export function forItemsInRange(
+  pos: Vec2,
+  radius: number,
+  callback: (i: Item) => void,
+) {
   const offset = vec2(radius + 32, radius + 32);
   const rect = new Rectangle(pos.sub(offset), pos.add(offset));
 
   const radiusSq = radius * radius;
-  forItemsInRect(rect, i => {
+  forItemsInRect(rect, (i) => {
     if (i.pos.distanceToSq(pos) < radiusSq) {
       callback(i);
     }

@@ -1,7 +1,7 @@
 /** @noSelfInFile **/
 
-import {Handle} from './handle';
-import {MapPlayer} from './player';
+import { Handle } from "./handle";
+import { MapPlayer } from "./player";
 
 export class Force extends Handle<force> {
   constructor() {
@@ -67,10 +67,10 @@ export class Force extends Handle<force> {
   }
 
   public static fromHandle(handle: force): Force {
-    return this.getObject(handle);
+    return this.getObject(handle) as Force;
   }
 
   static get allPlayers(): Force {
-    return Force.fromHandle(bj_FORCE_ALL_PLAYERS);
+    return Force.fromHandle(bj_FORCE_ALL_PLAYERS!);
   }
 }

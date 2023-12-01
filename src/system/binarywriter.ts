@@ -27,7 +27,7 @@
  * values[6] = reader.readUInt16(); // 45000
  * ```
  */
- export class BinaryWriter {
+export class BinaryWriter {
   public readonly values: (string | number)[] = [];
 
   private fmj = ">";

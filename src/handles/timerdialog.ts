@@ -1,7 +1,7 @@
 /** @noSelfInFile **/
 
-import {Handle} from './handle';
-import {Timer} from './timer';
+import { Handle } from "./handle";
+import { Timer } from "./timer";
 
 export class TimerDialog extends Handle<timerdialog> {
   constructor(t: Timer) {
@@ -37,6 +37,6 @@ export class TimerDialog extends Handle<timerdialog> {
   }
 
   public static fromHandle(handle: timerdialog): TimerDialog {
-    return this.getObject(handle);
+    return this.getObject(handle) as TimerDialog;
   }
 }

@@ -1,8 +1,8 @@
-import {color, Color} from '../helper/index';
-import {vec2, Vec2, vec3, Vec3} from '../math/index';
-import {Handle} from './handle';
-import {MapPlayer} from './player';
-import {Unit} from './unit';
+import { color, Color } from "../helper/index";
+import { vec2, Vec2, Vec3 } from "../math/index";
+import { Handle } from "./handle";
+import { MapPlayer } from "./player";
+import { Unit } from "./unit";
 
 export class TextTag extends Handle<texttag> {
   // properties needed to be able to update one aspect at a time.
@@ -24,7 +24,7 @@ export class TextTag extends Handle<texttag> {
       color.red,
       color.green,
       color.blue,
-      color.alpha
+      color.alpha,
     );
   }
 
@@ -38,7 +38,7 @@ export class TextTag extends Handle<texttag> {
       value.red,
       value.green,
       value.blue,
-      value.alpha
+      value.alpha,
     );
   }
 
@@ -90,7 +90,7 @@ export class TextTag extends Handle<texttag> {
     if (p.isLocalPlayer) {
       SetTextTagVisibility(this.handle, value);
     } else {
-      this.text = '';
+      this.text = "";
     }
   }
 
@@ -105,7 +105,7 @@ const offset = vec2(16, 0);
 export function standardTextTagForPlayer(
   pos: Vec2,
   text: string,
-  player: MapPlayer
+  player: MapPlayer,
 ): TextTag {
   const tt = new TextTag(text, pos.withZ(0), fontSize, color(255, 255, 255));
   tt.fadepoint = 2.0;
@@ -127,7 +127,7 @@ export function standardTextTag(pos: Vec2, text: string): TextTag {
 }
 
 export function createCriticalStrikeTextTag(u: Unit, damage: number): TextTag {
-  const msg = Math.round(damage).toString() + '!';
+  const msg = Math.round(damage).toString() + "!";
   const tt = standardTextTag(u.pos, msg);
   tt.color = color(255, 0, 0);
   tt.velocity = vec2(0, 0.04);
@@ -138,9 +138,9 @@ export function createCriticalStrikeTextTag(u: Unit, damage: number): TextTag {
 export function createGoldBountyTextTag(
   pos: Vec2,
   bounty: number,
-  receiver?: MapPlayer
+  receiver?: MapPlayer,
 ): TextTag {
-  const msg = '+' + bounty.toString();
+  const msg = "+" + bounty.toString();
   const offsetPos = pos.sub(offset);
   const tt = standardTextTag(offsetPos, msg);
   tt.color = color(255, 220, 0);
@@ -154,9 +154,9 @@ export function createGoldBountyTextTag(
 export function createLumberBountyTextTag(
   pos: Vec2,
   bounty: number,
-  receiver?: MapPlayer
+  receiver?: MapPlayer,
 ): TextTag {
-  const msg = '+' + bounty.toString();
+  const msg = "+" + bounty.toString();
   const offsetPos = pos.sub(offset);
   const tt = standardTextTag(offsetPos, msg);
   tt.color = color(0, 200, 80);
@@ -165,10 +165,10 @@ export function createLumberBountyTextTag(
     tt.setVisibleForPlayer(receiver, true);
   }
   return tt;
-} 
+}
 
 export function createManaBurnTextTag(pos: Vec2, damage: number) {
-  const msg = '-' + damage.toString();
+  const msg = "-" + damage.toString();
   const offsetPos = pos.sub(offset);
   const tt = standardTextTag(offsetPos, msg);
   tt.color = color(82, 82, 255);
@@ -177,7 +177,7 @@ export function createManaBurnTextTag(pos: Vec2, damage: number) {
 }
 
 export function createManaGainTextTag(pos: Vec2, damage: number) {
-  const msg = '+' + damage.toString();
+  const msg = "+" + damage.toString();
   const offsetPos = pos.sub(offset);
   const tt = standardTextTag(offsetPos, msg);
   tt.color = color(82, 82, 255);
@@ -193,7 +193,7 @@ export function createMissTextTag(origin: Unit | Vec2): TextTag {
   } else {
     pos = origin;
   }
-  const tt = standardTextTag(pos, 'miss');
+  const tt = standardTextTag(pos, "miss");
   tt.color = color(255, 0, 0);
   tt.fadepoint = 1;
   return tt;

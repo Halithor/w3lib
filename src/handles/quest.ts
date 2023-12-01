@@ -1,6 +1,6 @@
 /** @noSelfInFile **/
 
-import {Handle} from './handle';
+import { Handle } from "./handle";
 
 export class QuestItem extends Handle<questitem> {
   constructor(whichQuest: Quest) {
@@ -102,6 +102,6 @@ export class Quest extends Handle<quest> {
   }
 
   public static fromHandle(handle: quest): Quest {
-    return this.getObject(handle);
+    return this.getObject(handle) as Quest;
   }
 }

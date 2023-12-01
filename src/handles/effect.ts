@@ -1,12 +1,12 @@
 /** @noSelfInFile **/
 
-import {Unit} from './unit';
-import {doAfter} from '../handles/timer';
-import {Angle, Vec2, Vec3, vec3} from '../math/index';
-import {Handle} from './handle';
-import {MapPlayer} from './player';
-import {Point} from './point';
-import {Widget} from './widget';
+import { Unit } from "./unit";
+import { doAfter } from "../handles/timer";
+import { Angle, Vec2, Vec3, vec3 } from "../math/index";
+import { Handle } from "./handle";
+import { MapPlayer } from "./player";
+import { Point } from "./point";
+import { Widget } from "./widget";
 
 export class Effect extends Handle<effect> {
   constructor(modelName: string, pos: Vec2);
@@ -36,7 +36,7 @@ export class Effect extends Handle<effect> {
     return vec3(
       BlzGetLocalSpecialEffectX(this.handle),
       BlzGetLocalSpecialEffectY(this.handle),
-      BlzGetLocalSpecialEffectZ(this.handle)
+      BlzGetLocalSpecialEffectZ(this.handle),
     );
   }
 
@@ -123,7 +123,7 @@ export class Effect extends Handle<effect> {
   }
 
   public static fromHandle(handle: effect): Effect {
-    return this.getObject(handle);
+    return this.getObject(handle) as Effect;
   }
 }
 
@@ -131,9 +131,9 @@ export function flashEffect(
   path: string,
   pos: Vec2 | Vec3,
   scale?: number,
-  angle?: Angle
+  angle?: Angle,
 ) {
-  let e = AddSpecialEffect(path, pos.x, pos.y);
+  const e = AddSpecialEffect(path, pos.x, pos.y)!;
   if (pos instanceof Vec3) {
     BlzSetSpecialEffectZ(e, pos.z);
   }
@@ -151,9 +151,9 @@ export function flashEffectDuration(
   pos: Vec2,
   duration: number,
   scale?: number,
-  angle?: Angle
+  angle?: Angle,
 ) {
-  let e = AddSpecialEffect(path, pos.x, pos.y);
+  const e = AddSpecialEffect(path, pos.x, pos.y)!;
   if (scale) {
     BlzSetSpecialEffectScale(e, scale);
   }
@@ -166,9 +166,9 @@ export function flashEffectDuration(
 export function flashEffectUnit(
   path: string,
   target: Unit,
-  attachmentPoint: string = 'origin',
+  attachmentPoint: string = "origin",
   scale?: number,
-  angle?: Angle
+  angle?: Angle,
 ) {
   const e = new Effect(path, target, attachmentPoint);
   if (scale) {

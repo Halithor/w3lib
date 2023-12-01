@@ -1,8 +1,8 @@
 /** @noSelfInFile **/
 
-import {Handle} from './handle';
-import {MapPlayer} from './player';
-import {Rectangle} from './rect';
+import { Handle } from "./handle";
+import { MapPlayer } from "./player";
+import { Rectangle } from "./rect";
 
 export class FogModifier extends Handle<fogmodifier> {
   constructor(
@@ -12,7 +12,7 @@ export class FogModifier extends Handle<fogmodifier> {
     centerY: number,
     radius: number,
     useSharedVision: boolean,
-    afterUnits: boolean
+    afterUnits: boolean,
   ) {
     if (Handle.initFromHandle()) {
       super();
@@ -25,8 +25,8 @@ export class FogModifier extends Handle<fogmodifier> {
           centerY,
           radius,
           useSharedVision,
-          afterUnits
-        )
+          afterUnits,
+        ),
       );
     }
   }
@@ -44,7 +44,7 @@ export class FogModifier extends Handle<fogmodifier> {
   }
 
   public static fromHandle(handle: fogmodifier): FogModifier {
-    return this.getObject(handle);
+    return this.getObject(handle) as FogModifier;
   }
 
   public static fromRect(
@@ -52,7 +52,7 @@ export class FogModifier extends Handle<fogmodifier> {
     whichState: fogstate,
     where: Rectangle,
     useSharedVision: boolean,
-    afterUnits: boolean
+    afterUnits: boolean,
   ): FogModifier {
     return this.fromHandle(
       CreateFogModifierRect(
@@ -60,8 +60,8 @@ export class FogModifier extends Handle<fogmodifier> {
         whichState,
         where.handle,
         useSharedVision,
-        afterUnits
-      )
+        afterUnits,
+      )!,
     );
   }
 }

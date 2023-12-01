@@ -1,5 +1,5 @@
-import {Color} from '../helper/index';
-import {Handle} from './handle';
+import { Color } from "../helper/index";
+import { Handle } from "./handle";
 
 export class MultiboardItem extends Handle<multiboarditem> {
   constructor(multiboard: Multiboard, row: number, col: number) {
@@ -28,7 +28,7 @@ export class MultiboardItem extends Handle<multiboarditem> {
       val.red,
       val.green,
       val.blue,
-      val.alpha
+      val.alpha,
     );
   }
 
@@ -41,7 +41,7 @@ export class MultiboardItem extends Handle<multiboarditem> {
   }
 
   public static fromHandle(handle: multiboarditem): MultiboardItem {
-    return this.getObject(handle);
+    return this.getObject(handle) as MultiboardItem;
   }
 }
 
@@ -93,7 +93,7 @@ export class Multiboard extends Handle<multiboard> {
   }
 
   get title(): string {
-    return MultiboardGetTitleText(this.handle);
+    return MultiboardGetTitleText(this.handle)!;
   }
 
   set title(val: string) {
@@ -106,7 +106,7 @@ export class Multiboard extends Handle<multiboard> {
       val.red,
       val.green,
       val.blue,
-      val.alpha
+      val.alpha,
     );
   }
 
@@ -145,7 +145,7 @@ export class Multiboard extends Handle<multiboard> {
       val.red,
       val.green,
       val.blue,
-      val.alpha
+      val.alpha,
     );
   }
 
@@ -154,7 +154,7 @@ export class Multiboard extends Handle<multiboard> {
   }
 
   setColWidth(col: number, width: number) {
-    this.column(col).forEach(item => item.width = width);
+    this.column(col).forEach((item) => (item.width = width));
   }
 
   /** Get all items in a column, top to bottom */
@@ -167,7 +167,7 @@ export class Multiboard extends Handle<multiboard> {
   }
 
   private cleanupItems() {
-    this.items.forEach(mbitem => {
+    this.items.forEach((mbitem) => {
       mbitem.destroy();
     });
     this.items = [];

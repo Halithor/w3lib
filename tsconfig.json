@@ -1,34 +1,24 @@
 {
-  "extends": "./node_modules/gts/tsconfig-google.json",
+  "$schema": "https://raw.githubusercontent.com/TypeScriptToLua/TypeScriptToLua/master/tsconfig-schema.json",
   "compilerOptions": {
-    "rootDir": "./src",
-    "outDir": "build",
-    "target": "es6",
-    "lib": ["es6"],
+    "outDir": "dist",
+    "declaration": true,
+    "declarationMap": true,
+    "target": "ESNext",
+    "lib": ["ESNext"],
+    "moduleResolution": "Node",
     "strict": true,
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "alwaysStrict": true,
-    "strictNullChecks": true,
-    "moduleResolution": "classic",
     "types": [
-      "lua-types/core/index",
-      "lua-types/core/coroutine",
-      "lua-types/core/global",
-      "lua-types/core/math",
-      "lua-types/core/metatable",
-      "lua-types/core/modules",
-      "lua-types/core/string",
-      "lua-types/core/table",
-      "lua-types/core/os",
-      "lua-types/special/5.3",
-      "war3-types/core/compat",
-      "war3-types/core/common",
-      "war3-types/core/blizzard",
-      "war3-types/core/commonai",
-      "war3-types/core/polyfill",
-      "war3-types/special/w3ts"
+      "@typescript-to-lua/language-extensions",
+      "lua-types/5.3",
+      "war3-types-strict/1.33.0"
     ]
   },
-  "include": ["src/**/*.ts", "test/**/*.ts"]
+  "include": ["./src/**/*.ts"],
+  "tstl": {
+    "luaTarget": "5.3",
+    "buildMode": "library",
+    "noHeader": true,
+    "noImplicitSelf": true
+  }
 }

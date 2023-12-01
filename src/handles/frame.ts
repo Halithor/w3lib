@@ -1,13 +1,13 @@
 /** @noSelfInFile **/
 
-import {Handle} from './handle';
+import { Handle } from "./handle";
 
 export class Frame extends Handle<framehandle> {
   constructor(
     name: string,
     owner: Frame,
     priority: number,
-    createContext: number
+    createContext: number,
   );
   /**
    * Creates a SimpleFrame.
@@ -20,7 +20,7 @@ export class Frame extends Handle<framehandle> {
     name: string,
     owner: Frame,
     priority: number,
-    createContext?: number
+    createContext?: number,
   ) {
     if (Handle.initFromHandle()) {
       super();
@@ -83,7 +83,7 @@ export class Frame extends Handle<framehandle> {
   }
 
   public get text() {
-    return BlzFrameGetText(this.handle);
+    return BlzFrameGetText(this.handle)!;
   }
 
   public set textSizeLimit(size: number) {
@@ -144,7 +144,7 @@ export class Frame extends Handle<framehandle> {
   }
 
   public getChild(index: number) {
-    return Frame.fromHandle(BlzFrameGetChild(this.handle, index));
+    return Frame.fromHandle(BlzFrameGetChild(this.handle, index)!);
   }
 
   public setAbsPoint(point: framepointtype, x: number, y: number) {
@@ -207,7 +207,7 @@ export class Frame extends Handle<framehandle> {
     relative: Frame,
     relativePoint: framepointtype,
     x: number,
-    y: number
+    y: number,
   ) {
     BlzFrameSetPoint(this.handle, point, relative.handle, relativePoint, x, y);
     return this;
@@ -283,19 +283,19 @@ export class Frame extends Handle<framehandle> {
   }
 
   public static fromEvent() {
-    return this.fromHandle(BlzGetTriggerFrame());
+    return this.fromHandle(BlzGetTriggerFrame()!);
   }
 
   public static fromHandle(handle: framehandle): Frame {
-    return this.getObject(handle);
+    return this.getObject(handle) as Frame;
   }
 
   public static fromName(name: string, createContext: number) {
-    return this.fromHandle(BlzGetFrameByName(name, createContext));
+    return this.fromHandle(BlzGetFrameByName(name, createContext)!);
   }
 
   public static fromOrigin(frameType: originframetype, index: number) {
-    return this.fromHandle(BlzGetOriginFrame(frameType, index));
+    return this.fromHandle(BlzGetOriginFrame(frameType, index)!);
   }
 
   public static getEventHandle() {

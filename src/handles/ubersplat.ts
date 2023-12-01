@@ -1,6 +1,6 @@
 /** @noSelfInFile **/
 
-import {Handle} from './handle';
+import { Handle } from "./handle";
 
 export class Ubersplat extends Handle<ubersplat> {
   constructor(
@@ -12,7 +12,7 @@ export class Ubersplat extends Handle<ubersplat> {
     blue: number,
     alpha: number,
     forcePaused: boolean,
-    noBirthTime: boolean
+    noBirthTime: boolean,
   ) {
     if (Handle.initFromHandle()) {
       super();
@@ -27,8 +27,8 @@ export class Ubersplat extends Handle<ubersplat> {
           blue,
           alpha,
           forcePaused,
-          noBirthTime
-        )
+          noBirthTime,
+        ),
       );
     }
   }
@@ -58,6 +58,6 @@ export class Ubersplat extends Handle<ubersplat> {
   }
 
   public static fromHandle(handle: ubersplat): Ubersplat {
-    return this.getObject(handle);
+    return this.getObject(handle) as Ubersplat;
   }
 }

@@ -1,7 +1,7 @@
 /** @noSelfInFile **/
 
-import {Vec3} from '../math/index';
-import {Handle} from './handle';
+import { Vec3 } from "../math/index";
+import { Handle } from "./handle";
 
 export class Sound extends Handle<sound> {
   constructor(
@@ -11,7 +11,7 @@ export class Sound extends Handle<sound> {
     stopWhenOutOfRange: boolean,
     fadeInRate: number,
     fadeOutRate: number,
-    eaxSetting: string
+    eaxSetting: string,
   ) {
     if (Handle.initFromHandle()) {
       super();
@@ -24,14 +24,14 @@ export class Sound extends Handle<sound> {
           stopWhenOutOfRange,
           fadeInRate,
           fadeOutRate,
-          eaxSetting
-        )
+          eaxSetting,
+        ),
       );
     }
   }
 
   public get dialogueSpeakerNameKey() {
-    return GetDialogueSpeakerNameKey(this.handle);
+    return GetDialogueSpeakerNameKey(this.handle)!;
   }
 
   public set dialogueSpeakerNameKey(speakerName: string) {
@@ -39,7 +39,7 @@ export class Sound extends Handle<sound> {
   }
 
   public get dialogueTextKey() {
-    return GetDialogueTextKey(this.handle);
+    return GetDialogueTextKey(this.handle)!;
   }
 
   public set dialogueTextKey(dialogueText: string) {
@@ -69,7 +69,7 @@ export class Sound extends Handle<sound> {
   public registerStacked(
     byPosition: boolean,
     rectWidth: number,
-    rectHeight: number
+    rectHeight: number,
   ) {
     RegisterStackedSound(this.handle, byPosition, rectWidth, rectHeight);
   }
@@ -145,13 +145,13 @@ export class Sound extends Handle<sound> {
   public unregisterStacked(
     byPosition: boolean,
     rectWidth: number,
-    rectHeight: number
+    rectHeight: number,
   ) {
     UnregisterStackedSound(this.handle, byPosition, rectWidth, rectHeight);
   }
 
   public static fromHandle(handle: sound): Sound {
-    return this.getObject(handle);
+    return this.getObject(handle) as Sound;
   }
 
   public static getFileDuration(fileName: string) {

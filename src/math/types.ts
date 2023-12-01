@@ -1,6 +1,6 @@
 /** @noSelfInFile */
 
-import {Point} from '../handles/point';
+import { Point } from "../handles/point";
 
 /** Converts Degrees to Radians */
 const DEGTORAD = 0.017453293;
@@ -167,7 +167,7 @@ export class Vec2 {
   // target. When the target and this vector are equal, return a vector
   // pointing right.
   public normalizedPointerTo(other: Vec2): Vec2 {
-    let v = other.sub(this).norm;
+    const v = other.sub(this).norm;
     if (v.length == 0) {
       return new Vec2(1, 0);
     }
@@ -196,7 +196,7 @@ export class Vec2 {
   }
 
   public toString() {
-    return '(' + this.x.toString() + ', ' + this.y.toString() + ')';
+    return "(" + this.x.toString() + ", " + this.y.toString() + ")";
   }
 
   public withZ(z: number) {
@@ -213,7 +213,11 @@ export class Vec2 {
 }
 
 export class Vec3 {
-  constructor(readonly x: number, readonly y: number, readonly z: number) {}
+  constructor(
+    readonly x: number,
+    readonly y: number,
+    readonly z: number,
+  ) {}
 
   public withoutZ() {
     return new Vec2(this.x, this.y);
@@ -243,7 +247,7 @@ export class Vec3 {
     return new Vec3(
       this.y * other.z - this.z * other.y,
       this.z * other.x - this.x * other.z,
-      this.x * other.y - this.y * other.x
+      this.x * other.y - this.y * other.x,
     );
   }
 
@@ -286,7 +290,7 @@ export class Vec3 {
     return new Vec3(
       this.x + dist * angleGround.cos * angleAir.sin,
       this.y + dist * angleGround.sin * angleAir.sin,
-      this.z + dist * angleAir.cos
+      this.z + dist * angleAir.cos,
     );
   }
 
@@ -310,13 +314,13 @@ export class Vec3 {
 
   public toString() {
     return (
-      '(' +
+      "(" +
       this.x.toString() +
-      ', ' +
+      ", " +
       this.y.toString() +
-      ',' +
+      "," +
       this.z.toString() +
-      ')'
+      ")"
     );
   }
 }
@@ -328,7 +332,7 @@ export const vec3 = (x: number, y: number, z: number) => new Vec3(x, y, z);
 export function getRandomPosInRect(rect: rect): Vec2 {
   return new Vec2(
     GetRandomInt(GetRectMinX(rect), GetRectMaxX(rect)),
-    GetRandomInt(GetRectMinY(rect), GetRectMaxY(rect))
+    GetRandomInt(GetRectMinY(rect), GetRectMaxY(rect)),
   );
 }
 
