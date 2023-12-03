@@ -16,7 +16,7 @@ export function whenAnyUnitLeavesRegion(
   region: Region,
 ): Event<{ leaving: Unit }> {
   return new Event((emit) => {
-    const trg = new Trigger().registerEnterRegion(region.handle, null);
+    const trg = new Trigger().registerLeaveRegion(region.handle, null);
     trg.addAction(() => emit({ leaving: Unit.eventLeavingRegion }));
 
     return () => trg.destroy();
