@@ -122,6 +122,10 @@ export class Effect extends Handle<effect> {
     BlzSetSpecialEffectYaw(this.handle, y);
   }
 
+  public set yaw(angle: Angle) {
+    BlzSetSpecialEffectYaw(this.handle, angle.radians);
+  }
+
   public static fromHandle(handle: effect): Effect {
     return this.getObject(handle) as Effect;
   }
