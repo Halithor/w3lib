@@ -2,6 +2,9 @@
 
 import { Point } from "../handles/point";
 
+export const FULL_CIRCLE_RADS = 2 * math.pi;
+export const FULL_CIRCLE_DEGS = 360;
+
 /** Converts Degrees to Radians */
 const DEGTORAD = 0.017453293;
 /** Converts Radians to Degrees */
@@ -23,7 +26,7 @@ export class Angle {
   }
 
   public static random(): Angle {
-    return new Angle(GetRandomReal(0, math.pi * 2));
+    return new Angle(GetRandomReal(0, FULL_CIRCLE_RADS));
   }
 
   public get degrees() {
@@ -60,10 +63,10 @@ export class Angle {
   // angularDistance calculates the difference between two angles, with a max
   // of half a rotation.
   public angularDistance(other: Angle): Angle {
-    const n1 = this.degrees % 360;
-    const n2 = other.degrees % 360;
-    const diff = (n1 - n2) % 360;
-    const rotDist = 360 - diff;
+    const n1 = this.degrees % FULL_CIRCLE_DEGS;
+    const n2 = other.degrees % FULL_CIRCLE_DEGS;
+    const diff = (n1 - n2) % FULL_CIRCLE_DEGS;
+    const rotDist = FULL_CIRCLE_DEGS - diff;
     if (diff < rotDist) {
       return degrees(diff);
     } else {

@@ -8,3 +8,4 @@ export * from "./helper/index";
 export * from "./dummy";
 export * from "./basics";
 export * from "./projectile";
+export * from "./indicators";

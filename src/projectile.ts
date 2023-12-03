@@ -30,6 +30,8 @@ export interface ProjectileOpts {
 
   checkVertical?: boolean;
   destroyOnImpact?: boolean;
+
+  onCleanup?: () => void;
 }
 
 const DEFAULT_RADIUS = 80;
@@ -191,6 +193,8 @@ export function createProjectile(
   const cleanup = () => {
     effect.destroy();
     period.cancel();
+
+    opts?.onCleanup?.();
   };
 
   return cleanup;

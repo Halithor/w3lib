@@ -138,6 +138,10 @@ export class MapPlayer extends Handle<player> {
     return GetStartLocationY(this.startLocation);
   }
 
+  public get startLocationVec() {
+    return new Vec2(this.startLocationX, this.startLocationY);
+  }
+
   public get startLocationPoint() {
     return GetStartLocationLoc(this.startLocation);
   }
