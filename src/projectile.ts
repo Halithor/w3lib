@@ -8,7 +8,10 @@ import {
 } from "./handles";
 import { Vec2, Vec3, vec3 } from "./math";
 
-export type OnImpactFunc = (target: Vec3 | Unit | Destructable, pos: Vec2) => void;
+export type OnImpactFunc = (
+  target: Vec3 | Unit | Destructable,
+  pos: Vec2,
+) => void;
 export type CancelFunc = () => void;
 
 export interface ProjectileOpts {
@@ -32,7 +35,10 @@ export interface ProjectileOpts {
 const DEFAULT_RADIUS = 80;
 const INTERVAL = 0.03;
 
-export function createProjectile(opts: ProjectileOpts, onImpact: OnImpactFunc): CancelFunc {
+export function createProjectile(
+  opts: ProjectileOpts,
+  onImpact: OnImpactFunc,
+): CancelFunc {
   const {
     src,
     dst,
