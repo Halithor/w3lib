@@ -8,3 +8,7 @@ export function isCastBy(
   return (e: { caster: Unit; abilityId: AbilId }) =>
     e.caster === unit && e.abilityId === id;
 }
+
+export function hasAbility(id: AbilId): (e: { attacker: Unit }) => boolean {
+  return (e: { attacker: Unit }) => e.attacker.getAbilityLevel(id) > 0;
+}
