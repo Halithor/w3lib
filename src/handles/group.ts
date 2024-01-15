@@ -217,6 +217,18 @@ export class Group extends Handle<group> {
     return GroupRemoveUnit(this.handle, whichUnit.handle);
   }
 
+  [Symbol.iterator]() {
+    let idx = 0;
+    let size = this.size;
+    const self = this;
+    return {
+      next(): IteratorResult<Unit> {
+        if (idx >= size) return { value: self.random(), done: true };
+        return { value: self.getUnitAt(idx++), done: false };
+      },
+    };
+  }
+
   public static fromHandle(handle: group): Group {
     return this.getObject(handle) as Group;
   }

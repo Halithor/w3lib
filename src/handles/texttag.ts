@@ -140,7 +140,7 @@ export function createGoldBountyTextTag(
   bounty: number,
   receiver?: MapPlayer,
 ): TextTag {
-  const msg = "+" + bounty.toString();
+  const msg = (bounty > 0 ? "+" : "") + bounty.toString();
   const offsetPos = pos.sub(offset);
   const tt = standardTextTag(offsetPos, msg);
   tt.color = color(255, 220, 0);
@@ -156,7 +156,7 @@ export function createLumberBountyTextTag(
   bounty: number,
   receiver?: MapPlayer,
 ): TextTag {
-  const msg = "+" + bounty.toString();
+  const msg = (bounty > 0 ? "+" : "") + bounty.toString();
   const offsetPos = pos.sub(offset);
   const tt = standardTextTag(offsetPos, msg);
   tt.color = color(0, 200, 80);
@@ -177,7 +177,7 @@ export function createManaBurnTextTag(pos: Vec2, damage: number) {
 }
 
 export function createManaGainTextTag(pos: Vec2, damage: number) {
-  const msg = "+" + damage.toString();
+  const msg = (damage > 0 ? "+" : "") + damage.toString();
   const offsetPos = pos.sub(offset);
   const tt = standardTextTag(offsetPos, msg);
   tt.color = color(82, 82, 255);
