@@ -37,13 +37,11 @@ export class Group extends Handle<group> {
     DestroyGroup(this.handle);
   }
 
-  public enumUnitsInRange(
-    pos: Vec2,
-    radius: number,
-    filter: (() => boolean) | null,
-  ) {
+  public enumUnitsInRange(pos: Vec2, radius: number, filter?: () => boolean) {
     if (filter != null) {
-      GroupEnumUnitsInRange(this.handle, pos.x, pos.y, radius, Filter(filter));
+      const filterFunc = Filter(filter);
+      GroupEnumUnitsInRange(this.handle, pos.x, pos.y, radius, filterFunc);
+      DestroyFilter(filterFunc);
     } else {
       GroupEnumUnitsInRange(this.handle, pos.x, pos.y, radius, undefined);
     }
@@ -76,9 +74,11 @@ export class Group extends Handle<group> {
     }
   }
 
-  public enumUnitsInRect(r: Rectangle, filter: (() => boolean) | null = null) {
+  public enumUnitsInRect(r: Rectangle, filter?: () => boolean) {
     if (filter != null) {
-      GroupEnumUnitsInRect(this.handle, r.handle, Filter(filter));
+      const filterFunc = Filter(filter);
+      GroupEnumUnitsInRect(this.handle, r.handle, filterFunc);
+      DestroyFilter(filterFunc);
     } else {
       GroupEnumUnitsInRect(this.handle, r.handle, undefined);
     }
@@ -254,56 +254,50 @@ export function groupOf(...units: Unit[]): Group {
 const maxCollisionSize = 200.0;
 
 export function getUnitsInRange(
-  pos: Vec2,
+  origin: Vec2 | Unit,
   radius: number,
-  filter: ((u: Unit) => boolean) | null,
-  collisionSizeFiltering: boolean = false,
+  filter?: (u: Unit) => boolean,
 ): Group {
   const enumGroup = new Group();
-  if (collisionSizeFiltering) {
-    enumGroup.enumUnitsInRange(pos, radius + maxCollisionSize, () => {
+  if (origin instanceof Vec2) {
+    enumGroup.enumUnitsInRange(origin, radius + maxCollisionSize, () => {
       const u = Unit.fromHandle(GetFilterUnit()!);
-      return u.inRange(pos, radius) && (filter != null ? filter(u) : true);
+      return u.inRange(origin, radius) && (filter != null ? filter(u) : true);
     });
-  } else {
-    if (filter != null) {
-      enumGroup.enumUnitsInRange(pos, radius, () =>
-        filter(Unit.fromHandle(GetFilterUnit()!)),
-      );
-    } else {
-      enumGroup.enumUnitsInRange(pos, radius, null);
-    }
+  } else if (origin instanceof Unit) {
+    // Use the unit's collision and the inRangeOfUnit check instead.
+    enumGroup.enumUnitsInRange(
+      origin.pos,
+      radius + maxCollisionSize + origin.collisionSize,
+      () => {
+        const u = Unit.fromHandle(GetFilterUnit()!);
+        return (
+          u.inRangeOfUnit(origin, radius) && (filter != null ? filter(u) : true)
+        );
+      },
+    );
   }
   return enumGroup;
 }
 
 // Iterate over all units in range calling the callback
 export function forUnitsInRange(
-  pos: Vec2,
+  origin: Vec2 | Unit,
   radius: number,
   callback: (u: Unit) => void,
-  collisionSizeFiltering: boolean = false,
 ) {
-  const enumGroup = getUnitsInRange(pos, radius, null, collisionSizeFiltering);
-  enumGroup.for(() => {
-    callback(Unit.fromHandle(GetEnumUnit()!));
-  });
+  const enumGroup = getUnitsInRange(origin, radius);
+  enumGroup.forEach((u) => callback(u));
   enumGroup.destroy();
 }
 
 // Get a random unit in range, matching the provided filter.
 export function getRandomUnitInRange(
-  pos: Vec2,
+  origin: Vec2 | Unit,
   radius: number,
-  filter: (u: Unit) => boolean,
-  collisionSizeFiltering: boolean = false,
+  filter?: (u: Unit) => boolean,
 ): Unit | undefined {
-  const enumGroup = getUnitsInRange(
-    pos,
-    radius,
-    filter,
-    collisionSizeFiltering,
-  );
+  const enumGroup = getUnitsInRange(origin, radius, filter);
   if (enumGroup.size == 0) {
     enumGroup.destroy();
     return undefined;
@@ -313,27 +307,20 @@ export function getRandomUnitInRange(
   return u;
 }
 
-// Executes a callback on the nearest unit
+// Finds the nearest unit matching the filter.
 export function findNearestUnit(
-  pos: Vec2,
+  origin: Vec2 | Unit,
   range: number,
-  filter: ((u: Unit) => boolean) | null,
-): Unit | null {
-  const enumGroup = new Group();
-  let filterUnit: (() => boolean) | null = null;
-  if (filter != null) {
-    filterUnit = () => {
-      const u = Unit.fromHandle(GetFilterUnit()!);
-      return filter(u);
-    };
+  filter?: (u: Unit) => boolean,
+): Unit | undefined {
+  const g = getUnitsInRange(origin, range, filter);
+  if (g.size == 0) {
+    return undefined;
   }
-  enumGroup.enumUnitsInRange(pos, range, filterUnit);
-  if (enumGroup.size == 0) {
-    return null;
-  }
-  let nearest: Unit = enumGroup.first;
+  const pos = origin instanceof Unit ? origin.pos : origin;
+  let nearest: Unit = g.first;
   let bestDist = 2147483647; // max int32
-  enumGroup.for(() => {
+  g.for(() => {
     const u = Unit.fromHandle(GetEnumUnit()!);
     const distSq = pos.distanceTo(u.pos);
     if (distSq < bestDist) {
@@ -341,13 +328,13 @@ export function findNearestUnit(
       nearest = u;
     }
   });
-  enumGroup.destroy();
+  g.destroy();
   return nearest;
 }
 
 export function getUnitsInRect(
   rct: Rectangle,
-  filter: ((u: Unit) => boolean) | null = null,
+  filter?: (u: Unit) => boolean,
 ): Group {
   const enumGroup = new Group();
   if (filter != null) {
@@ -355,35 +342,35 @@ export function getUnitsInRect(
       filter(Unit.fromHandle(GetFilterUnit()!)),
     );
   } else {
-    enumGroup.enumUnitsInRect(rct, null);
+    enumGroup.enumUnitsInRect(rct);
   }
   return enumGroup;
 }
 
 export function forUnitsInRect(rct: Rectangle, callback: (u: Unit) => void) {
-  const enumGroup = new Group();
-  enumGroup.enumUnitsInRect(rct, null);
-  enumGroup.for(() => {
-    callback(Unit.fromHandle(GetEnumUnit()!));
-  });
-  enumGroup.destroy();
+  const g = getUnitsInRect(rct);
+  g.forEach((u) => callback(u));
+  g.destroy();
 }
 
-export function countUnitsInRect(rct: Rectangle) {
-  let count = 0;
-  forUnitsInRect(rct, () => {
-    count++;
-  });
+export function countUnitsInRect(
+  rct: Rectangle,
+  filter?: (u: Unit) => boolean,
+) {
+  const g = getUnitsInRect(rct, filter);
+  const count = g.size;
+  g.destroy();
   return count;
 }
 
 export function countUnitsInRange(
-  pos: Vec2,
+  origin: Vec2 | Unit,
   radius: number,
-  collisionSizeFiltering: boolean = false,
+  filter?: (u: Unit) => boolean,
 ): number {
-  let count = 0;
-  forUnitsInRange(pos, radius, () => count++, collisionSizeFiltering);
+  const g = getUnitsInRange(origin, radius, filter);
+  const count = g.size;
+  g.destroy();
   return count;
 }
 
