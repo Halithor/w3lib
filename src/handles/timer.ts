@@ -58,11 +58,11 @@ export function doPeriodicallyCounted(
   let i = 0;
   t.startPeriodic(interval, () => {
     i++;
-    if (i > count) {
+    callback(cancel, i);
+    if (i >= count) {
       cancel();
       return;
     }
-    callback(cancel, i);
   });
   return {
     cancel,
