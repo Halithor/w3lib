@@ -6,12 +6,18 @@ import { Handle } from "./handle";
 // which can be called to cancel the callback.
 export function doAfter(timeout: number, callback: () => void) {
   const t = Timer.get();
+  let released = false;
   t.start(timeout, () => {
+    released = true;
     t.release();
     callback();
   });
   return {
-    cancel: () => t.release(),
+    cancel: () => {
+      if (released) return;
+      released = true;
+      t.release();
+    },
     timer: t,
   };
 }
@@ -25,8 +31,12 @@ export function doPeriodically(
   callback: (cancel: () => void) => void,
   final?: () => void,
 ) {
+  let released = false;
   const t = Timer.get();
   const cancel = () => {
+    if (released) return;
+    released = true;
+
     if (final) {
       final();
     }
@@ -48,8 +58,12 @@ export function doPeriodicallyCounted(
   callback: (cancel: () => void, index: number) => void,
   final?: () => void,
 ) {
+  let released = false;
   const t = Timer.get();
   const cancel = () => {
+    if (released) return;
+    released = true;
+
     if (final) {
       final();
     }
