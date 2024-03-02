@@ -1,5 +1,3 @@
-import { doAfter } from "../handles";
-
 // export function throttle<A extends any[]>(
 //   timeout: number,
 //   callback: (...args: A) => void,

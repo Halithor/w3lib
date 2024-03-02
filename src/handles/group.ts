@@ -219,8 +219,11 @@ export class Group extends Handle<group> {
 
   [Symbol.iterator]() {
     let idx = 0;
-    let size = this.size;
+    const size = this.size;
+
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const self = this;
+    
     return {
       next(): IteratorResult<Unit> {
         if (idx >= size) return { value: self.random(), done: true };
