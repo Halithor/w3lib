@@ -233,8 +233,13 @@ export type DamageInfo = {
   attackType: AttackType;
   damageType: DamageType;
   weaponType: weapontype;
+  // Does this damage have a spell type
   isSpell: boolean;
+  // Is this an auto attack?
+  isAttack: boolean;
+  // Is this a melee auto attack?
   isMeleeAttack: boolean;
+  // Is this a ranged auto attack?
   isRangedAttack: boolean;
 };
 
@@ -250,13 +255,14 @@ export const eventUnitDamaged = unitEvent<{
   const attackType = BlzGetEventAttackType()!;
   const weaponType = BlzGetEventWeaponType()!;
   const isSpell = attackType == ATTACK_TYPE_NORMAL;
+  const isAttack = BlzGetEventIsAttack();
   let isMeleeAttack = false;
   let isRangedAttack = false;
-  // Need to use the damage type and attacker unit types to determine the
-  // characteristics of the damage.
-  if (damageType == DAMAGE_TYPE_NORMAL && !isSpell) {
+  
+  if (isAttack) {
     isMeleeAttack = attacker.isUnitType(UNIT_TYPE_MELEE_ATTACKER);
     isRangedAttack = attacker.isUnitType(UNIT_TYPE_RANGED_ATTACKER);
+    // Look at the weapon type, as ranged almost always use WHOKNOWS.
     if (isMeleeAttack && isRangedAttack) {
       isMeleeAttack = weaponType != WEAPON_TYPE_WHOKNOWS;
       isRangedAttack = !isMeleeAttack;
@@ -271,8 +277,9 @@ export const eventUnitDamaged = unitEvent<{
       damageType: DamageType.fromType(damageType),
       attackType: AttackType.fromType(attackType),
       weaponType,
-      isMeleeAttack,
       isSpell,
+      isAttack,
+      isMeleeAttack,
       isRangedAttack,
     },
   };
@@ -289,13 +296,14 @@ export const eventUnitDamaging = unitEvent<{
   const attackType = BlzGetEventAttackType()!;
   const weaponType = BlzGetEventWeaponType()!;
   const isSpell = attackType == ATTACK_TYPE_NORMAL;
+  const isAttack = BlzGetEventIsAttack();
   let isMeleeAttack = false;
   let isRangedAttack = false;
-  // Need to use the damage type and attacker unit types to determine the
-  // characteristics of the damage.
-  if (damageType == DAMAGE_TYPE_NORMAL && !isSpell) {
+
+  if (isAttack) {
     isMeleeAttack = attacker.isUnitType(UNIT_TYPE_MELEE_ATTACKER);
     isRangedAttack = attacker.isUnitType(UNIT_TYPE_RANGED_ATTACKER);
+    // Look at the weapon type, as ranged almost always use WHOKNOWS.
     if (isMeleeAttack && isRangedAttack) {
       isMeleeAttack = weaponType != WEAPON_TYPE_WHOKNOWS;
       isRangedAttack = !isMeleeAttack;
@@ -310,8 +318,9 @@ export const eventUnitDamaging = unitEvent<{
       damageType: DamageType.fromType(damageType),
       attackType: AttackType.fromType(attackType),
       weaponType,
-      isMeleeAttack,
       isSpell,
+      isAttack,
+      isMeleeAttack,
       isRangedAttack,
     },
   };
