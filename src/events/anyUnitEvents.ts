@@ -154,9 +154,26 @@ export const eventUnitIssuedTargetOrder = unitEvent(
     ordered: Unit.eventOrdered,
     orderId: GetIssuedOrderId(),
     order: OrderId2String(GetIssuedOrderId()),
-    target: Widget.eventOrderTarget,
+    target: orderTarget(),
   }),
 );
+
+function orderTarget(): Unit | Item | Destructable | Widget {
+  const u = GetOrderTargetUnit();
+  if (u != null) {
+    return Unit.fromHandle(u);
+  }
+  const d = GetOrderTargetDestructable();
+  if (d != null) {
+    return Destructable.fromHandle(d);
+  }
+  const i = GetOrderTargetItem();
+  if (i != null) {
+    return Item.fromHandle(i);
+  }
+  return Widget.eventOrderTarget;
+}
+
 export const eventUnitIssuedUnitOrder = unitEvent(
   EVENT_PLAYER_UNIT_ISSUED_UNIT_ORDER,
   () => ({
@@ -258,7 +275,7 @@ export const eventUnitDamaged = unitEvent<{
   const isAttack = BlzGetEventIsAttack();
   let isMeleeAttack = false;
   let isRangedAttack = false;
-  
+
   if (isAttack) {
     isMeleeAttack = attacker.isUnitType(UNIT_TYPE_MELEE_ATTACKER);
     isRangedAttack = attacker.isUnitType(UNIT_TYPE_RANGED_ATTACKER);

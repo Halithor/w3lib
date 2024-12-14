@@ -53,6 +53,7 @@ export class Subscription implements Unsubscribable {
 export class Event<T> {
   private initialized = false;
   private readonly subbers: Subscriber<T>[] = [];
+  private readonly lastSubbers: Subscriber<T>[] = [];
 
   private teardown: TeardownLogic | undefined;
 
@@ -69,6 +70,23 @@ export class Event<T> {
         : subscriberOrNext;
 
     this.subbers.push(subscriber);
+
+    if (!this.initialized) {
+      this.initialize();
+    }
+
+    return new Subscription(() => this.removeSubscription(subscriber));
+  }
+
+  subscribeLast(
+    subscriberOrNext: Subscriber<T> | ((value: T) => void),
+  ): Subscription {
+    const subscriber: Subscriber<T> =
+      typeof subscriberOrNext == "function"
+        ? new FunctionSubscriber(subscriberOrNext)
+        : subscriberOrNext;
+
+    this.lastSubbers.push(subscriber);
 
     if (!this.initialized) {
       this.initialize();
@@ -112,11 +130,26 @@ export class Event<T> {
         }
       }
     });
+    this.lastSubbers.forEach((sub) => {
+      try {
+        sub.next(value);
+      } catch (e: unknown) {
+        if (e instanceof Error) {
+          print(
+            "Last subscriber threw exception: " +
+              e.message +
+              "\n" +
+              (e.stack ? e.stack : ""),
+          );
+        }
+      }
+    });
   }
 
   protected removeSubscription(subscription: Subscriber<T>) {
     arrRemove(this.subbers, subscription);
-    if (this.subbers.length == 0) {
+    arrRemove(this.lastSubbers, subscription);
+    if (this.subbers.length == 0 && this.lastSubbers.length == 0) {
       if (this.teardown) {
         this.teardown();
         this.initialized = false;
