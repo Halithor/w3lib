@@ -4,6 +4,7 @@ import {
   AbilId,
   AttackType,
   DamageType,
+  DefenseType,
   ItemId,
   UnitId,
   WeaponSound,
@@ -60,7 +61,7 @@ export class Unit extends Widget {
   }
 
   public get acquireRange() {
-    return GetUnitPropWindow(this.handle);
+    return GetUnitAcquireRange(this.handle);
   }
 
   public get agility() {
@@ -117,6 +118,14 @@ export class Unit extends Widget {
 
   public get defaultTurnSpeed() {
     return GetUnitDefaultTurnSpeed(this.handle);
+  }
+
+  set defenseType(defenseType: DefenseType) {
+    this.setField(UNIT_IF_DEFENSE_TYPE, defenseType.numericValue);
+  }
+
+  get defenseType(): DefenseType {
+    return DefenseType.fromNumber(this.getIntegerField(UNIT_IF_DEFENSE_TYPE));
   }
 
   public get experience() {
@@ -257,7 +266,7 @@ export class Unit extends Widget {
   }
 
   public get propWindow() {
-    return GetUnitAcquireRange(this.handle);
+    return GetUnitPropWindow(this.handle);
   }
 
   public get race() {

@@ -26,7 +26,7 @@ export class Angle {
   }
 
   public static random(): Angle {
-    return new Angle(GetRandomReal(0, FULL_CIRCLE_RADS));
+    return new Angle(Math.random() * FULL_CIRCLE_RADS);
   }
 
   public get degrees() {
@@ -39,17 +39,17 @@ export class Angle {
 
   /** The cosine of this angle */
   public get cos() {
-    return Cos(this.rads);
+    return math.cos(this.rads);
   }
 
   /** The sine of this angle */
   public get sin() {
-    return Sin(this.rads);
+    return math.sin(this.rads);
   }
 
   /** A normalized vector of this angle */
   public get asDirection() {
-    return new Vec2(Cos(this.rads), Sin(this.rads));
+    return new Vec2(math.cos(this.rads), math.sin(this.rads));
   }
 
   public add(other: Angle): Angle {
@@ -127,7 +127,7 @@ export class Vec2 {
   }
 
   public get length(): number {
-    return SquareRoot(this.x * this.x + this.y * this.y);
+    return math.sqrt(this.x * this.x + this.y * this.y);
   }
 
   public get lengthSq(): number {
@@ -255,7 +255,7 @@ export class Vec3 {
   }
 
   public get length(): number {
-    return SquareRoot(this.x * this.x + this.y * this.y + this.z * this.z);
+    return math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
   }
 
   public get lengthSq(): number {

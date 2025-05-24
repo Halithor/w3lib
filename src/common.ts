@@ -301,3 +301,69 @@ export class WeaponSound {
   static readonly AxeChopMedium = new WeaponSound(WEAPON_TYPE_AXE_MEDIUM_CHOP);
   static readonly RockBashHeavy = new WeaponSound(WEAPON_TYPE_ROCK_HEAVY_BASH);
 }
+
+export class DefenseType {
+  private constructor(
+    public readonly value: defensetype,
+    public readonly numericValue: number,
+  ) {}
+
+  static readonly Divine = new DefenseType(DEFENSE_TYPE_DIVINE, 6);
+  /**
+   * Word of warning using fortified: it has weird aggro mechanics for units. It
+   * has a lower priority than most.
+   */
+  static readonly Fortified = new DefenseType(DEFENSE_TYPE_FORT, 3);
+  static readonly Hero = new DefenseType(DEFENSE_TYPE_HERO, 5);
+  static readonly Large = new DefenseType(DEFENSE_TYPE_LARGE, 2);
+  static readonly Light = new DefenseType(DEFENSE_TYPE_LIGHT, 0);
+  static readonly Medium = new DefenseType(DEFENSE_TYPE_MEDIUM, 1);
+  static readonly None = new DefenseType(DEFENSE_TYPE_NONE, 7);
+  static readonly Normal = new DefenseType(DEFENSE_TYPE_NORMAL, 4);
+
+  static fromType(value: defensetype) {
+    switch (value) {
+      case DEFENSE_TYPE_DIVINE:
+        return DefenseType.Divine;
+      case DEFENSE_TYPE_FORT:
+        return DefenseType.Fortified;
+      case DEFENSE_TYPE_HERO:
+        return DefenseType.Hero;
+      case DEFENSE_TYPE_LARGE:
+        return DefenseType.Large;
+      case DEFENSE_TYPE_LIGHT:
+        return DefenseType.Light;
+      case DEFENSE_TYPE_MEDIUM:
+        return DefenseType.Medium;
+      case DEFENSE_TYPE_NONE:
+        return DefenseType.None;
+      case DEFENSE_TYPE_NORMAL:
+        return DefenseType.Normal;
+      default:
+        return DefenseType.Normal;
+    }
+  }
+
+  static fromNumber(value: number) {
+    switch (value) {
+      case 0:
+        return DefenseType.Light;
+      case 1:
+        return DefenseType.Medium;
+      case 2:
+        return DefenseType.Large;
+      case 3:
+        return DefenseType.Fortified;
+      case 4:
+        return DefenseType.Normal;
+      case 5:
+        return DefenseType.Hero;
+      case 6:
+        return DefenseType.Divine;
+      case 7:
+        return DefenseType.None;
+      default:
+        return DefenseType.Normal;
+    }
+  }
+}

@@ -112,6 +112,7 @@ export function standardTextTagForPlayer(
   tt.lifespan = 3.0;
   tt.velocity = vec2(0, 0.03);
   tt.permanent = false;
+  tt.visible = false;
   tt.setVisibleForPlayer(player, true);
   return tt;
 }
