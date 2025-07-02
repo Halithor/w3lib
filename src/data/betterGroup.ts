@@ -9,6 +9,10 @@ export class BetterGroup {
   // value whenever random access is needed, then clear it when the set changes.
   private cachedEntries?: Unit[];
 
+  get size(): number {
+    return this.units.size;
+  }
+
   addUnit(u: Unit) {
     this.units.add(u);
     this.cachedEntries = undefined;
@@ -24,7 +28,7 @@ export class BetterGroup {
   }
 
   forEach(func: (u: Unit) => void) {
-    this.units.forEach(func);
+    this.units.forEach((u) => func(u));
   }
 
   // Iterate over the units in this group within a range.
