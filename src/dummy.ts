@@ -38,16 +38,16 @@ export class Dummy {
     return dummy;
   }
 
-  release() {
-    if (this.freed) {
+  release(dummy: Dummy) {
+    if (dummy.freed) {
       return;
     }
-    this.freed = true;
-    if (this.ability) {
-      this.unit.removeAbility(this.ability);
-      this.ability = undefined;
+    dummy.freed = true;
+    if (dummy.ability) {
+      dummy.unit.removeAbility(dummy.ability);
+      dummy.ability = undefined;
     }
-    Dummy.freeDummies.push(this);
+    Dummy.freeDummies.push(dummy);
   }
 
   private setAbility(ability: AbilId, level: number) {
@@ -71,7 +71,7 @@ export class Dummy {
 
     dummy.unit.issueImmediateOrder(order);
 
-    doAfter(recycleDelay, () => dummy.release());
+    doAfter(recycleDelay, () => dummy.release(dummy));
   }
 
   static castTarget(
@@ -85,7 +85,7 @@ export class Dummy {
     const dummy = Dummy.get(player, pos);
     dummy.setAbility(ability, level);
 
-    doAfter(recycleDelay, () => dummy.release);
+    doAfter(recycleDelay, () => dummy.release(dummy));
     if (target instanceof Vec2) {
       dummy.unit.setFacingEx(pos.angleTo(target));
       return dummy.unit.issueOrderAt(order, target);
@@ -112,6 +112,6 @@ export class Dummy {
     } else {
       dummy.unit.issueTargetOrder(order, target);
     }
-    doAfter(Math.max(channelDuration, recycleDelay), () => dummy.release());
+    doAfter(Math.max(channelDuration, recycleDelay), () => dummy.release(dummy));
   }
 }

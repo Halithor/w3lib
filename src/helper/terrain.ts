@@ -21,6 +21,10 @@ export function getTerrainType(pos: Vec2): TerrainType {
   return GetTerrainType(pos.x, pos.y);
 }
 
+export function isPointBlighted(pos: Vec2): boolean {
+  return IsPointBlighted(pos.x, pos.y);
+}
+
 export function isTerrainWalkable(pos: Vec2): boolean {
   const maxRangeSq = 100;
   // const dummyItem = new Item(itemId('wolg'), vec2(0, 0));
