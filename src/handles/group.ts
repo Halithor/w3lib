@@ -223,7 +223,7 @@ export class Group extends Handle<group> {
 
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const self = this;
-    
+
     return {
       next(): IteratorResult<Unit> {
         if (idx >= size) return { value: self.random(), done: true };
@@ -281,6 +281,16 @@ export function getUnitsInRange(
     );
   }
   return enumGroup;
+}
+
+export function getUnitsOfPlayer(
+  whichPlayer: MapPlayer,
+  filter?: (u: Unit) => boolean,
+): Group {
+  const g = new Group();
+  const f = filter != null ? () => filter(Unit.filterUnit) : undefined;
+  g.enumUnitsOfPlayer(whichPlayer, f);
+  return g;
 }
 
 // Iterate over all units in range calling the callback
@@ -372,6 +382,16 @@ export function countUnitsInRange(
   filter?: (u: Unit) => boolean,
 ): number {
   const g = getUnitsInRange(origin, radius, filter);
+  const count = g.size;
+  g.destroy();
+  return count;
+}
+
+export function countUnitsOfPlayer(
+  whichPlayer: MapPlayer,
+  filter?: (u: Unit) => boolean,
+): number {
+  const g = getUnitsOfPlayer(whichPlayer, filter);
   const count = g.size;
   g.destroy();
   return count;

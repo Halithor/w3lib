@@ -260,6 +260,22 @@ export type DamageInfo = {
   isRangedAttack: boolean;
 };
 
+class DamageInfoC implements DamageInfo {
+  get damage(): number {
+    return GetEventDamage();
+  }
+
+  constructor(
+    readonly damageType: DamageType,
+    readonly attackType: AttackType,
+    readonly weaponType: weapontype,
+    readonly isSpell: boolean,
+    readonly isAttack: boolean,
+    readonly isMeleeAttack: boolean,
+    readonly isRangedAttack: boolean,
+  ) {}
+}
+
 export const eventUnitDamaged = unitEvent<{
   target: Unit;
   attacker: Unit;
@@ -289,16 +305,25 @@ export const eventUnitDamaged = unitEvent<{
   return {
     target,
     attacker,
-    info: {
-      damage,
-      damageType: DamageType.fromType(damageType),
-      attackType: AttackType.fromType(attackType),
+    info: new DamageInfoC(
+      DamageType.fromType(damageType),
+      AttackType.fromType(attackType),
       weaponType,
       isSpell,
       isAttack,
       isMeleeAttack,
       isRangedAttack,
-    },
+    ),
+    // info: {
+    //   damage,
+    // damageType: DamageType.fromType(damageType),
+    // attackType: AttackType.fromType(attackType),
+    // weaponType,
+    // isSpell,
+    // isAttack,
+    // isMeleeAttack,
+    // isRangedAttack,
+    // },
   };
 });
 export const eventUnitDamaging = unitEvent<{
@@ -330,16 +355,25 @@ export const eventUnitDamaging = unitEvent<{
   return {
     target,
     attacker,
-    info: {
-      damage,
-      damageType: DamageType.fromType(damageType),
-      attackType: AttackType.fromType(attackType),
+    info: new DamageInfoC(
+      DamageType.fromType(damageType),
+      AttackType.fromType(attackType),
       weaponType,
       isSpell,
       isAttack,
       isMeleeAttack,
       isRangedAttack,
-    },
+    ),
+    // info: {
+    //   damage,
+    //   damageType: DamageType.fromType(damageType),
+    //   attackType: AttackType.fromType(attackType),
+    //   weaponType,
+    //   isSpell,
+    //   isAttack,
+    //   isMeleeAttack,
+    //   isRangedAttack,
+    // },
   };
 });
 

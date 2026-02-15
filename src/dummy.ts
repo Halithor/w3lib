@@ -38,7 +38,7 @@ export class Dummy {
     return dummy;
   }
 
-  release(dummy: Dummy) {
+  static release(dummy: Dummy) {
     if (dummy.freed) {
       return;
     }
@@ -71,7 +71,7 @@ export class Dummy {
 
     dummy.unit.issueImmediateOrder(order);
 
-    doAfter(recycleDelay, () => dummy.release(dummy));
+    doAfter(recycleDelay, () => Dummy.release(dummy));
   }
 
   static castTarget(
@@ -85,7 +85,7 @@ export class Dummy {
     const dummy = Dummy.get(player, pos);
     dummy.setAbility(ability, level);
 
-    doAfter(recycleDelay, () => dummy.release(dummy));
+    doAfter(recycleDelay, () => Dummy.release(dummy));
     if (target instanceof Vec2) {
       dummy.unit.setFacingEx(pos.angleTo(target));
       return dummy.unit.issueOrderAt(order, target);
@@ -112,6 +112,22 @@ export class Dummy {
     } else {
       dummy.unit.issueTargetOrder(order, target);
     }
-    doAfter(Math.max(channelDuration, recycleDelay), () => dummy.release(dummy));
+    doAfter(Math.max(channelDuration, recycleDelay), () =>
+      Dummy.release(dummy),
+    );
+  }
+
+  static provideAura(
+    player: MapPlayer,
+    pos: Vec2,
+    ability: AbilId,
+    duration: number,
+    level: number = 1,
+  ) {
+    const dummy = Dummy.get(player, pos);
+    dummy.setAbility(ability, level);
+    doAfter(duration, () => {
+      Dummy.release(dummy);
+    });
   }
 }
