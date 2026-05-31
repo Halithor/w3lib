@@ -281,7 +281,6 @@ export const eventUnitDamaged = unitEvent<{
   attacker: Unit;
   info: DamageInfo;
 }>(EVENT_PLAYER_UNIT_DAMAGED, () => {
-  const damage = GetEventDamage();
   const target = Unit.fromHandle(BlzGetEventDamageTarget()!);
   const attacker = Unit.fromHandle(GetEventDamageSource()!);
   const damageType = BlzGetEventDamageType()!;
@@ -314,16 +313,6 @@ export const eventUnitDamaged = unitEvent<{
       isMeleeAttack,
       isRangedAttack,
     ),
-    // info: {
-    //   damage,
-    // damageType: DamageType.fromType(damageType),
-    // attackType: AttackType.fromType(attackType),
-    // weaponType,
-    // isSpell,
-    // isAttack,
-    // isMeleeAttack,
-    // isRangedAttack,
-    // },
   };
 });
 export const eventUnitDamaging = unitEvent<{
@@ -331,7 +320,6 @@ export const eventUnitDamaging = unitEvent<{
   attacker: Unit;
   info: DamageInfo;
 }>(EVENT_PLAYER_UNIT_DAMAGING, () => {
-  const damage = GetEventDamage();
   const target = Unit.fromHandle(BlzGetEventDamageTarget()!);
   const attacker = Unit.fromHandle(GetEventDamageSource()!);
   const damageType = BlzGetEventDamageType()!;
@@ -364,16 +352,6 @@ export const eventUnitDamaging = unitEvent<{
       isMeleeAttack,
       isRangedAttack,
     ),
-    // info: {
-    //   damage,
-    //   damageType: DamageType.fromType(damageType),
-    //   attackType: AttackType.fromType(attackType),
-    //   weaponType,
-    //   isSpell,
-    //   isAttack,
-    //   isMeleeAttack,
-    //   isRangedAttack,
-    // },
   };
 });
 
