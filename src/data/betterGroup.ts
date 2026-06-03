@@ -13,6 +13,11 @@ export class BetterGroup {
     return this.units.size;
   }
 
+  clear() {
+    this.units.clear();
+    this.cachedEntries = undefined;
+  }
+
   addUnit(u: Unit) {
     this.units.add(u);
     this.cachedEntries = undefined;
