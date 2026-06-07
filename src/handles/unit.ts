@@ -20,7 +20,7 @@ import { Sound } from "./sound";
 import { Widget } from "./widget";
 
 export class Unit extends Widget {
-  public declare readonly handle: unit;
+  declare public readonly handle: unit;
   static underConstructionUnits: Group;
   static upgradingUnits: Group;
 
