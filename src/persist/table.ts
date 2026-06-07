@@ -1,10 +1,16 @@
 import { decode, encode, Entry } from "./buffer";
+import { Serializer } from "./serializer";
 
-export interface Key<T> {
+export interface Record<T> {
   id: number;
+  serializer: Serializer<T>;
+}
 
-  encode(value: T): string;
-  decode(value: string): T;
+export function newRecord<T>(id: number, serializer: Serializer<T>): Record<T> {
+  return {
+    id,
+    serializer,
+  };
 }
 
 export class Table {
@@ -23,32 +29,32 @@ export class Table {
     return encode(this.entries);
   }
 
-  get<T>(key: Key<T>): T | null {
-    const entry = this.find(key);
+  get<T>(record: Record<T>): T | null {
+    const entry = this.find(record);
     if (entry === null) {
       return null;
     }
 
-    return key.decode(entry.value);
+    return record.serializer.decode(entry.value);
   }
 
-  set<T>(key: Key<T>, value: T) {
-    const asString = key.encode(value);
+  set<T>(record: Record<T>, value: T) {
+    const asString = record.serializer.encode(value);
 
-    const entry = this.find(key);
+    const entry = this.find(record);
     if (entry !== null) {
       entry.value = asString;
     } else {
       this.entries.push({
-        key: key.id,
+        key: record.id,
         value: asString,
       });
     }
   }
 
-  private find(key: Key<unknown>): Entry | null {
+  private find(record: Record<unknown>): Entry | null {
     for (const entry of this.entries) {
-      if (entry.key === key.id) {
+      if (entry.key === record.id) {
         return entry;
       }
     }

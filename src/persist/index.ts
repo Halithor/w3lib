@@ -1,2 +1,2 @@
-export * from "./standard";
+export * from "./serializer";
 export * from "./table";
