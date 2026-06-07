@@ -6,6 +6,12 @@ export interface BitfieldSerializer<
   create(value?: number): Bitfield<Names>;
 }
 
+export function isBitfieldSerializer(
+  serializer: Serializer<unknown>,
+): serializer is BitfieldSerializer<readonly string[]> {
+  return typeof (serializer as { create?: unknown }).create === "function";
+}
+
 export function bitfield<const Names extends readonly string[]>(
   ...names: Names
 ): BitfieldSerializer<Names> {
