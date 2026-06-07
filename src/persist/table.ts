@@ -1,4 +1,5 @@
 import { decode, encode, Entry } from "./buffer";
+import { DecodeError } from "./error";
 import { Serializer } from "./serializer";
 
 export interface Record<T> {
@@ -19,7 +20,7 @@ export class Table {
   constructor(blob: string) {
     const entries = decode(blob);
     if (entries === null) {
-      throw new Error("TODO");
+      throw new DecodeError();
     }
 
     this.entries = entries;

@@ -1,3 +1,5 @@
+import { DecodeError } from "./error";
+
 export class Reader {
   index: number = 0;
   value: string;
@@ -9,7 +11,7 @@ export class Reader {
   mustRead(count: number): string {
     const value = this.read(count);
     if (value.length !== count) {
-      throw new Error("TODO");
+      throw new DecodeError();
     }
 
     return value;
