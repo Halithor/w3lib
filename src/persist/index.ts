@@ -1,6 +1,7 @@
 import { Serializer } from "./serializer";
 import { newRecord, Table } from "./table";
 
+export * from "./bitfield";
 export * from "./serializer";
 
 export function newStore<const Fields extends readonly Field[]>(
