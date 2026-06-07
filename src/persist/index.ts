@@ -1,3 +1,8 @@
+import {
+  Bitfield,
+  BitfieldSerializer,
+  isBitfieldSerializer,
+} from "./bitfield";
 import { Serializer } from "./serializer";
 import { newRecord, Table } from "./table";
 
@@ -20,6 +25,10 @@ export function newStore<const Fields extends readonly Field[]>(
 
     store[`get${title}`] = accessor.get;
     store[`set${title}`] = accessor.set;
+
+    if (isBitfieldSerializer(serializer)) {
+      store[`with${title}`] = accessor.with(serializer);
+    }
   }
 
   return store as Store<Fields>;
@@ -31,6 +40,15 @@ function bind<T>(table: Table, id: number, serializer: Serializer<T>) {
   return {
     get: () => table.get(record),
     set: (value: T) => table.set(record, value),
+    with:
+      (serializer: BitfieldSerializer<readonly string[]>) =>
+      (mutate: (flags: Bitfield) => void) => {
+        const flags = (table.get(record) as Bitfield | null) ?? serializer.create();
+
+        mutate(flags);
+
+        table.set(record, flags as T);
+      },
   };
 }
 
@@ -41,6 +59,13 @@ export type Store<Fields extends readonly Field[]> = {
 } & {
   [F in Fields[number] as `set${Capitalize<F[0]>}`]: (
     value: FieldType<F>,
+  ) => void;
+} & {
+  [F in Extract<
+    Fields[number],
+    readonly [string, number, BitfieldSerializer<readonly string[]>]
+  > as `with${Capitalize<F[0]>}`]: (
+    mutate: (flags: FieldType<F>) => void,
   ) => void;
 };
 

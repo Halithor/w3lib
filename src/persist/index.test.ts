@@ -1,6 +1,8 @@
 import { describe, expect, test } from "vitest";
-import { newStore } from "./index";
+import { bitfield, newStore } from "./index";
 import { NumberSerializer, StringSerializer } from "./serializer";
+
+const flags = bitfield("active", "hidden", "locked");
 
 describe("newStore", () => {
   test("exposes typed getters and setters", () => {
@@ -28,6 +30,34 @@ describe("newStore", () => {
     ]);
 
     expect(store.getFoo()).toBe(65);
+  });
+
+  describe("with", () => {
+    test("mutates a bitfield field and stores it back", () => {
+      const store = newStore("", ["bitfield", 1, flags]);
+
+      store.withBitfield((f) => {
+        f.setActive();
+        f.setLocked();
+      });
+
+      const stored = store.getBitfield();
+      expect(stored?.getActive()).toBe(true);
+      expect(stored?.getHidden()).toBe(false);
+      expect(stored?.getLocked()).toBe(true);
+    });
+
+    test("starts from the existing value", () => {
+      const store = newStore("", ["bitfield", 1, flags]);
+      store.setBitfield(flags.create());
+
+      store.withBitfield((f) => f.setActive());
+      store.withBitfield((f) => f.setHidden());
+
+      const stored = store.getBitfield();
+      expect(stored?.getActive()).toBe(true);
+      expect(stored?.getHidden()).toBe(true);
+    });
   });
 
   describe("toString", () => {
