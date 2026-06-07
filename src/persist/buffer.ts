@@ -1,3 +1,4 @@
+import { DecodeError } from "./error";
 import { asNumber, asString } from "./helper";
 import { Reader } from "./reader";
 
@@ -49,7 +50,7 @@ function decodeNextEntry(reader: Reader): Entry | null {
   }
 
   if (rawKey.length !== keyLength) {
-    throw new Error("TODO");
+    throw new DecodeError();
   }
 
   const length = asNumber(reader.mustRead(payloadLength));

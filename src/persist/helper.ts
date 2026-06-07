@@ -1,3 +1,5 @@
+import { DecodeError } from "./error";
+
 export function asNumber(value: string): number {
   let result = 0;
   for (let i = 0; i < value.length; i++) {
@@ -10,7 +12,7 @@ export function asNumber(value: string): number {
 
 export function asString(value: number, width: number): string {
   if (value >= Math.pow(2, width * 8)) {
-    throw new Error("TODO");
+    throw new DecodeError();
   }
 
   let result = "";

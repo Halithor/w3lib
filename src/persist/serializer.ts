@@ -1,3 +1,4 @@
+import { DecodeError } from "./error";
 import { asNumber, asString, minWidth } from "./helper";
 
 export interface Serializer<T> {
@@ -52,7 +53,7 @@ class UnionSerializer<T> implements Serializer<T> {
       }
     }
 
-    throw new Error("TODO");
+    throw new DecodeError();
   }
 
   decode(value: string): T {
@@ -64,7 +65,7 @@ class UnionSerializer<T> implements Serializer<T> {
       }
     }
 
-    throw new Error("TODO");
+    throw new DecodeError();
   }
 }
 
