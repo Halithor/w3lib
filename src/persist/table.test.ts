@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
-import { Table } from "./table";
-import { NumberKey } from "./standard";
+import { newRecord, Table } from "./table";
+import { NumberSerializer } from "./serializer";
 
 describe("get", () => {
   test("returns the decoded value", () => {
@@ -8,20 +8,20 @@ describe("get", () => {
       "\u0000\u0001\u0000\u0001A" + "\u0000\u0002\u0000\u0001B",
     );
 
-    expect(subject.get(new NumberKey(1))).toBe(65);
-    expect(subject.get(new NumberKey(2))).toBe(66);
+    expect(subject.get(newRecord(1, NumberSerializer))).toBe(65);
+    expect(subject.get(newRecord(2, NumberSerializer))).toBe(66);
   });
 
   test("returns null when no value is present", () => {
     const subject = new Table("\u0000\u0001\u0000\u0001A");
 
-    expect(subject.get(new NumberKey(2))).toBeNull();
+    expect(subject.get(newRecord(2, NumberSerializer))).toBeNull();
   });
 });
 
 describe("set", () => {
   test("updates the value when already present", () => {
-    const key = new NumberKey(1);
+    const key = newRecord(1, NumberSerializer);
 
     const subject = new Table("\u0000\u0001\u0000\u0001A");
 
@@ -33,7 +33,7 @@ describe("set", () => {
   });
 
   test("adds the key when missing", () => {
-    const key = new NumberKey(2);
+    const key = newRecord(2, NumberSerializer);
 
     const subject = new Table("\u0000\u0001\u0000\u0001A");
 
