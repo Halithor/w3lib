@@ -20,6 +20,7 @@ export function bitfield<const Names extends readonly string[]>(
       const state = { value };
 
       const bitfield: { [key: string]: unknown } = {
+		__isBitfield: true,
         valueOf: () => state.value,
       };
 
@@ -37,7 +38,7 @@ export function bitfield<const Names extends readonly string[]>(
     },
 
     accepts(value: unknown): value is Bitfield<Names> {
-      return typeof value === "object" && value !== null;
+      return typeof value === "object" && value !== null && (value as Bitfield<Names>).__isBitfield;
     },
 
     encode(value: Bitfield<Names>): string {
@@ -51,6 +52,7 @@ export function bitfield<const Names extends readonly string[]>(
 }
 
 export type Bitfield<Names extends readonly string[] = readonly string[]> = {
+  __isBitfield: boolean;
   valueOf(): number;
 } & {
   [N in Names[number] as `get${Capitalize<N>}`]: () => boolean;
