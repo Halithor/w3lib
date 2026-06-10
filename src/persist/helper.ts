@@ -17,7 +17,7 @@ export function asString(value: number, width: number): string {
 
   let result = "";
   for (let i = width - 1; i >= 0; i--) {
-    result += String.fromCharCode((value >> (i * 8)) & 0xff);
+    result += String.fromCharCode((value >>> (i * 8)) & 0xff);
   }
 
   return result;
