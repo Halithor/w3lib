@@ -43,14 +43,14 @@ class SyncIncomingPacket {
   public constructor(prefix: string, data: string) {
     const isChunk = prefix === SYNC_PREFIX_CHUNK;
     const header = base64Decode(
-      isChunk ? data.substr(0, 10) : data.substr(0, 5),
+      isChunk ? data.substring(0, 10) : data.substring(0, 5),
     );
     const reader = new BinaryReader(header);
     const id = reader.readUInt16();
     this.req = SyncRequest.fromIndex(id);
     this.chunks = isChunk ? reader.readUInt16() : 0;
     this.chunk = isChunk ? reader.readUInt16() : 0;
-    this.data = isChunk ? data.substr(10) : data.substr(5);
+    this.data = isChunk ? data.substring(10) : data.substring(5);
   }
 }
 
@@ -226,7 +226,7 @@ export class SyncRequest {
         this.send(
           new SyncOutgoingPacket(
             this,
-            data.substr(i * SYNC_MAX_CHUNK_SIZE, SYNC_MAX_CHUNK_SIZE),
+            data.substring(i * SYNC_MAX_CHUNK_SIZE, SYNC_MAX_CHUNK_SIZE),
             i,
             chunks,
           ),

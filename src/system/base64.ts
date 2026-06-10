@@ -45,7 +45,7 @@ export function base64Decode(input: string) {
   for (; i > 0 && input[i] !== "="; i--) {
     /* do nothing */
   }
-  const str = input.substr(0, i - 1);
+  const str = input.substring(0, i - 1);
   let output = "";
   if (str.length % 4 === 1) {
     print(
