@@ -5,6 +5,7 @@ import { degrees, vec2, Vec2 } from "./math/index";
 
 // The UnitId of the dummy
 const dummyId = unitId("dumm");
+const specialDummyId = unitId("dumn");
 // Seconds to delay until recycling
 const recycleDelay = 5;
 
@@ -14,11 +15,13 @@ export class Dummy {
   private unit: Unit;
   private freed: boolean = false;
   private ability?: AbilId;
+  private special: boolean = false;
 
-  private constructor() {
+  private constructor(special: boolean = false) {
+    this.special = true;
     this.unit = new Unit(
       MapPlayer.neutralPassive,
-      dummyId,
+      !special ? dummyId : specialDummyId,
       vec2(0, 0),
       degrees(0),
     );
@@ -26,13 +29,18 @@ export class Dummy {
     this.unit.removeAbility(HEIGHT_ENABLER);
   }
 
-  static get(owner: MapPlayer, pos: Vec2): Dummy {
-    const dummy =
-      Dummy.freeDummies.length == 0 ? new Dummy() : Dummy.freeDummies.pop();
+  static get(owner: MapPlayer, pos: Vec2, special: boolean = false): Dummy {
+    const index = Dummy.freeDummies.findIndex(dummy => dummy.special === special);
+
+    const dummy = index === -1
+      ? new Dummy(special)
+      : Dummy.freeDummies.splice(index, 1)[0];
+    
     if (!dummy) throw new Error("getting dummy popped nothing!");
 
     dummy.freed = false;
     dummy.unit.resetCooldown();
+    // dummy.unit.resetCooldown(); <- Needs to reset attack cooldown
     dummy.unit.setPosition(pos);
     dummy.unit.setOwner(owner, true);
     return dummy;
@@ -65,8 +73,9 @@ export class Dummy {
     ability: AbilId,
     order: string | number,
     level: number = 1,
+    special: boolean = false,
   ) {
-    const dummy = Dummy.get(player, pos);
+    const dummy = Dummy.get(player, pos, special);
     dummy.setAbility(ability, level);
 
     dummy.unit.issueImmediateOrder(order);
@@ -81,8 +90,9 @@ export class Dummy {
     ability: AbilId,
     order: string | number,
     level: number = 1,
+    special: boolean = false,
   ): boolean {
-    const dummy = Dummy.get(player, pos);
+    const dummy = Dummy.get(player, pos, special);
     dummy.setAbility(ability, level);
 
     doAfter(recycleDelay, () => Dummy.release(dummy));
@@ -103,8 +113,9 @@ export class Dummy {
     ability: AbilId,
     order: string | number,
     level: number = 1,
+    special: boolean = false,
   ) {
-    const dummy = Dummy.get(player, pos);
+    const dummy = Dummy.get(player, pos, special);
     dummy.setAbility(ability, level);
 
     if (target instanceof Vec2) {
@@ -123,8 +134,9 @@ export class Dummy {
     ability: AbilId,
     duration: number,
     level: number = 1,
+    special: boolean = false,
   ) {
-    const dummy = Dummy.get(player, pos);
+    const dummy = Dummy.get(player, pos, special);
     dummy.setAbility(ability, level);
     doAfter(duration, () => {
       Dummy.release(dummy);
